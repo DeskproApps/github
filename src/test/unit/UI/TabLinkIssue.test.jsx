@@ -1,9 +1,8 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
-
+import render from '../render';
 import TabLinkIssue from '../../../main/javascript/UI/TabLinkIssue';
 
-test('successfully renders an issue list item', done => {
+test('successfully renders a link tab', () => {
   const repos = [
     {
       full_name: 'DeskproApps/github'
@@ -13,7 +12,7 @@ test('successfully renders an issue list item', done => {
     }
   ];
 
-  const component = renderer.create(
+  const component = render(
     <TabLinkIssue
       repos={repos}
       onError={() => {}}
@@ -23,6 +22,4 @@ test('successfully renders an issue list item', done => {
 
   const tree = component.toJSON();
   expect(tree).toMatchSnapshot();
-
-  done();
 });

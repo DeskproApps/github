@@ -10,8 +10,7 @@ exports[`successfully renders an issue list item 1`] = `
     title="Unlink issue"
   />
   <a
-    className="dp-github-link"
-    href="https://github.com/deskpro/deskproapps-dpat/pull/14"
+    href="https://github.com/deskpro/apps-dpat/pull/14"
     rel="noopener noreferrer"
     target="_blank"
   >
@@ -27,30 +26,17 @@ exports[`successfully renders an issue list item 1`] = `
       />
     </h4>
   </a>
-  <p>
+  <div>
     Repo: 
     deskpro
     /
-    deskproapps-dpat
-  </p>
-  <p>
-    Project:
-  </p>
-  <p>
+    apps-dpat
+  </div>
+  <div>
     Status: 
     open
-  </p>
-  <p>
-    Milestone: 
-    
-  </p>
-  <p>
-    Assignee: 
-    
-  </p>
-  <p>
-    Labels:
-    <div />
-  </p>
+  </div>
+  
+  
 </li>
 `;
