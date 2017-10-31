@@ -1,0 +1,475 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`successfully renders an issue list item 1`] = `
+<div
+  className="up-container"
+>
+  <div
+    className="dp-form-group"
+  >
+    <label
+      className="dp-input__label"
+      htmlFor="repo"
+    >
+      Repository:
+      
+    </label>
+    <div
+      className="dp-select"
+    >
+      <div
+        className="Select dp-select Select--single is-clearable is-searchable"
+        style={undefined}
+      >
+        <div
+          className="Select-control"
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={undefined}
+        >
+          <span
+            className="Select-multi-value-wrapper"
+            id="react-select-2--value"
+          >
+            <div
+              className="Select-placeholder"
+            >
+              Please select
+            </div>
+            <div
+              className="Select-input"
+              style={
+                Object {
+                  "display": "inline-block",
+                }
+              }
+            >
+              <input
+                aria-activedescendant="react-select-2--value"
+                aria-describedby={undefined}
+                aria-expanded="false"
+                aria-haspopup="false"
+                aria-label={undefined}
+                aria-labelledby={undefined}
+                aria-owns=""
+                className={undefined}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                role="combobox"
+                style={
+                  Object {
+                    "boxSizing": "content-box",
+                    "width": "5px",
+                  }
+                }
+                tabIndex={undefined}
+                value=""
+              />
+              <div
+                style={
+                  Object {
+                    "height": 0,
+                    "left": 0,
+                    "overflow": "scroll",
+                    "position": "absolute",
+                    "top": 0,
+                    "visibility": "hidden",
+                    "whiteSpace": "pre",
+                  }
+                }
+              >
+                
+              </div>
+            </div>
+          </span>
+          <span
+            className="Select-arrow-zone"
+            onMouseDown={[Function]}
+          >
+            <span
+              className="Select-arrow"
+              onMouseDown={[Function]}
+            />
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="dp-form-group"
+  >
+    <label
+      className="dp-input__label"
+      htmlFor="project"
+    >
+      Project:
+      
+    </label>
+    <div
+      className="dp-select"
+    >
+      <div
+        className="Select dp-select Select--single is-clearable is-searchable"
+        style={undefined}
+      >
+        <div
+          className="Select-control"
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={undefined}
+        >
+          <span
+            className="Select-multi-value-wrapper"
+            id="react-select-3--value"
+          >
+            <div
+              className="Select-placeholder"
+            >
+              Please select
+            </div>
+            <div
+              className="Select-input"
+              style={
+                Object {
+                  "display": "inline-block",
+                }
+              }
+            >
+              <input
+                aria-activedescendant="react-select-3--value"
+                aria-describedby={undefined}
+                aria-expanded="false"
+                aria-haspopup="false"
+                aria-label={undefined}
+                aria-labelledby={undefined}
+                aria-owns=""
+                className={undefined}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                role="combobox"
+                style={
+                  Object {
+                    "boxSizing": "content-box",
+                    "width": "5px",
+                  }
+                }
+                tabIndex={undefined}
+                value=""
+              />
+              <div
+                style={
+                  Object {
+                    "height": 0,
+                    "left": 0,
+                    "overflow": "scroll",
+                    "position": "absolute",
+                    "top": 0,
+                    "visibility": "hidden",
+                    "whiteSpace": "pre",
+                  }
+                }
+              >
+                
+              </div>
+            </div>
+          </span>
+          <span
+            className="Select-arrow-zone"
+            onMouseDown={[Function]}
+          >
+            <span
+              className="Select-arrow"
+              onMouseDown={[Function]}
+            />
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="dp-form-group"
+  >
+    <label
+      className="dp-input__label"
+      htmlFor="title"
+    >
+      Title:
+      
+    </label>
+    <div
+      className="dp-input"
+    >
+      <input
+        id="title"
+        name="title"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        value={undefined}
+      />
+    </div>
+  </div>
+  <div
+    className="dp-form-group"
+  >
+    <label
+      className="dp-input__label"
+      htmlFor="body"
+    >
+      Description:
+      
+    </label>
+    <div
+      className="dp-textarea"
+      id="body"
+    >
+      <textarea
+        name="body"
+        onChange={[Function]}
+        value=""
+      />
+    </div>
+  </div>
+  <div
+    className="dp-form-group"
+  >
+    <label
+      className="dp-input__label"
+      htmlFor="milestone"
+    >
+      Milestone:
+      
+    </label>
+    <div
+      className="dp-select"
+    >
+      <div
+        className="Select dp-select Select--single is-clearable is-searchable"
+        style={undefined}
+      >
+        <div
+          className="Select-control"
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={undefined}
+        >
+          <span
+            className="Select-multi-value-wrapper"
+            id="react-select-4--value"
+          >
+            <div
+              className="Select-placeholder"
+            >
+              Please select
+            </div>
+            <div
+              className="Select-input"
+              style={
+                Object {
+                  "display": "inline-block",
+                }
+              }
+            >
+              <input
+                aria-activedescendant="react-select-4--value"
+                aria-describedby={undefined}
+                aria-expanded="false"
+                aria-haspopup="false"
+                aria-label={undefined}
+                aria-labelledby={undefined}
+                aria-owns=""
+                className={undefined}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                role="combobox"
+                style={
+                  Object {
+                    "boxSizing": "content-box",
+                    "width": "5px",
+                  }
+                }
+                tabIndex={undefined}
+                value=""
+              />
+              <div
+                style={
+                  Object {
+                    "height": 0,
+                    "left": 0,
+                    "overflow": "scroll",
+                    "position": "absolute",
+                    "top": 0,
+                    "visibility": "hidden",
+                    "whiteSpace": "pre",
+                  }
+                }
+              >
+                
+              </div>
+            </div>
+          </span>
+          <span
+            className="Select-arrow-zone"
+            onMouseDown={[Function]}
+          >
+            <span
+              className="Select-arrow"
+              onMouseDown={[Function]}
+            />
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="dp-form-group"
+  >
+    <label
+      className="dp-input__label"
+      htmlFor="assignee"
+    >
+      Assignee:
+      
+    </label>
+    <div
+      className="dp-select"
+    >
+      <div
+        className="Select dp-select Select--single is-clearable is-searchable"
+        style={undefined}
+      >
+        <div
+          className="Select-control"
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={undefined}
+        >
+          <span
+            className="Select-multi-value-wrapper"
+            id="react-select-5--value"
+          >
+            <div
+              className="Select-placeholder"
+            >
+              Please select
+            </div>
+            <div
+              className="Select-input"
+              style={
+                Object {
+                  "display": "inline-block",
+                }
+              }
+            >
+              <input
+                aria-activedescendant="react-select-5--value"
+                aria-describedby={undefined}
+                aria-expanded="false"
+                aria-haspopup="false"
+                aria-label={undefined}
+                aria-labelledby={undefined}
+                aria-owns=""
+                className={undefined}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                role="combobox"
+                style={
+                  Object {
+                    "boxSizing": "content-box",
+                    "width": "5px",
+                  }
+                }
+                tabIndex={undefined}
+                value=""
+              />
+              <div
+                style={
+                  Object {
+                    "height": 0,
+                    "left": 0,
+                    "overflow": "scroll",
+                    "position": "absolute",
+                    "top": 0,
+                    "visibility": "hidden",
+                    "whiteSpace": "pre",
+                  }
+                }
+              >
+                
+              </div>
+            </div>
+          </span>
+          <span
+            className="Select-arrow-zone"
+            onMouseDown={[Function]}
+          >
+            <span
+              className="Select-arrow"
+              onMouseDown={[Function]}
+            />
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="dp-form-group"
+  >
+    <label
+      className="dp-input__label"
+      htmlFor="labels"
+    >
+      Labels
+      
+    </label>
+    <div
+      className="dp-tag-set"
+    >
+      <div
+        className="dp-search-button"
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        style={undefined}
+      >
+        <button
+          className="dp-button dp-button--l dp-button--primary dp-button--shape-default dp-button--square"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <i
+            className="fa fa-plus dp-icon dp-icon--s"
+          />
+        </button>
+        <div />
+      </div>
+    </div>
+  </div>
+  <button
+    className="dp-button dp-button--l dp-button--primary dp-button--shape-default dp-github-btn"
+    disabled={false}
+    onClick={[Function]}
+  >
+    Create
+  </button>
+</div>
+`;

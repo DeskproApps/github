@@ -1,0 +1,173 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { sdkConnect } from '@deskpro/apps-sdk-react';
+import { Container, Group, TagSet } from '@deskpro/react-components';
+import { Form, Select, Input, Textarea, Button, validators } from '@deskpro/react-components/lib/bindings/redux-form';
+import { reposToOptions, projectsToOptions, contributorsToOptions, milestonesToOptions } from '../utils/forms';
+import { githubFetchRepo, githubSaveIssue, splitRepoFullName } from '../utils/github';
+
+/**
+ * Renders a tab containing a form to create a new Github issue which will be linked
+ * to the open ticket.
+ */
+class TabCreateIssue extends React.PureComponent {
+  static propTypes = {
+    /**
+     * Whether or not the tab is hidden or not.
+     */
+    hidden:  PropTypes.bool,
+    /**
+     * List of Github repos the authenticated user belongs to.
+     */
+    repos:   PropTypes.array,
+    /**
+     * Instance of sdk storage.
+     */
+    storage: PropTypes.object.isRequired,
+    /**
+     * Instance of sdk route.
+     */
+    route:   PropTypes.object.isRequired,
+    /**
+     * Instance of sdk ui.
+     */
+    ui:      PropTypes.object.isRequired,
+    /**
+     * Instance of sdk context.
+     */
+    context: PropTypes.object.isRequired
+  };
+
+  static defaultProps = {
+    hidden: false,
+    repos:  []
+  };
+
+  /**
+   * Constructor
+   *
+   * @param {*} props
+   */
+  constructor(props) {
+    super(props);
+    this.state  = {
+      projects:     [],
+      issues:       [],
+      milestones:   [],
+      contributors: []
+    };
+  }
+
+  /**
+   * Makes an API call to GitHub to get the projects, issues, milestones, etc for
+   * the given repo and stores the values in component state
+   *
+   * @param {string} repo
+   */
+  loadRepoEntities = (repo) => {
+    const info = splitRepoFullName(repo);
+    githubFetchRepo(info.userName, info.repoName)
+      .then(({ projects, issues, milestones, contributors }) => {
+        return this.setState({ projects, issues, milestones, contributors });
+      }).catch(this.props.ui.error);
+  };
+
+  /**
+   * Called when the repo value changes
+   *
+   * @param {{value: string}} value
+   */
+  handleRepoChange = (value) => {
+    this.loadRepoEntities(value);
+  };
+
+  /**
+   * Called when the form is submitted, the method passes the form values
+   * to this.props.onCreateIssue()
+   */
+  handleSubmit = (issue) => {
+    const { storage, route, context } = this.props;
+
+    return githubSaveIssue(issue, context.entityId, context.props.tabUrl)
+      .then((newIssue) => {
+        const issues = storage.entity.issues
+          ? storage.entity.issues.slice(0)
+          : [];
+        issues.push(newIssue);
+        return storage.setEntity({ issues }, () => {
+          route.to('home');
+        });
+      })
+      .catch(this.props.ui.error);
+  };
+
+  /**
+   * @returns {XML}
+   */
+  render() {
+    const { repos, hidden } = this.props;
+    const { projects, contributors, milestones } = this.state;
+
+    if (hidden) {
+      return null;
+    }
+
+    return (
+      <Container className="dp-github-container">
+        <Form name="create_issue" onSubmit={this.handleSubmit}>
+          <Select
+            label="Repository:"
+            id="repo"
+            name="repo"
+            validate={validators.required}
+            options={reposToOptions(repos)}
+            onChange={this.handleRepoChange}
+          />
+          <Select
+            label="Project:"
+            id="project"
+            name="project"
+            options={projectsToOptions(projects)}
+          />
+          <Input
+            label="Title:"
+            id="title"
+            name="title"
+            validate={validators.required}
+          />
+          <Textarea
+            label="Description:"
+            id="body"
+            name="body"
+            validate={validators.required}
+          />
+          <Select
+            label="Milestone:"
+            id="milestone"
+            name="milestone"
+            options={milestonesToOptions(milestones)}
+          />
+          <Select
+            label="Assignee:"
+            id="assignee"
+            name="assignee"
+            options={contributorsToOptions(contributors)}
+          />
+          <Group label="Labels">
+            <TagSet
+              id="labels"
+              name="labels"
+              tags={[]}
+              options={[]}
+            />
+          </Group>
+          <Button>
+            Create
+          </Button>
+        </Form>
+      </Container>
+    );
+  }
+}
+
+export default sdkConnect(TabCreateIssue);

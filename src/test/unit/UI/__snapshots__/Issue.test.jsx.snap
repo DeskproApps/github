@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`successfully renders an issue list item 1`] = `
+<li
+  className="dp-list__element dp-github-issue"
+>
+  <i
+    className="fa fa-times dp-icon dp-icon--s dp-github-delete-icon"
+    onClick={[Function]}
+    title="Unlink issue"
+  />
+  <a
+    className="dp-github-link"
+    href="https://github.com/deskpro/deskproapps-dpat/pull/14"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    <h4
+      className="dp-heading"
+    >
+      #
+      1
+       - 
+      bug fix
+      <i
+        className="fa fa-external-link-square dp-icon dp-icon--s"
+      />
+    </h4>
+  </a>
+  <p>
+    Repo: 
+    deskpro
+    /
+    deskproapps-dpat
+  </p>
+  <p>
+    Project:
+  </p>
+  <p>
+    Status: 
+    open
+  </p>
+  <p>
+    Milestone: 
+    
+  </p>
+  <p>
+    Assignee: 
+    
+  </p>
+  <p>
+    Labels:
+    <div />
+  </p>
+</li>
+`;

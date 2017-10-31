@@ -1,0 +1,89 @@
+{
+  "name": "deskpro-app-github",
+  "version": "0.1.0",
+  "description": "This application adds support for viewing and creating GitHub issues.",
+  "main": "lib/main/javascript/index.js",
+  "scripts": {
+    "dev": "dpat server .",
+    "lint": "eslint src/main/javascript/* --ext .js,.jsx --cache --cache-location=.cache/eslint",
+    "lint:fix": "npm run lint -- --fix",
+    "package": "dpat clean . && dpat compile . && dpat verify ./dist && dpat package .",
+    "test": "dpat test ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeskproApps/github.git"
+  },
+  "keywords": [
+    "deskpro",
+    "deskpro app"
+  ],
+  "author": {
+    "name": "DeskPRO Apps",
+    "email": "apps@deskpro.com",
+    "url": "https://www.deskpro.com"
+  },
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/DeskproApps/github/issues"
+  },
+  "homepage": "https://github.com/DeskproApps/github",
+  "deskpro": {
+    "version": "2.1.0",
+    "title": "GitHub",
+    "isSingle": true,
+    "scope": "agent",
+    "storage": [
+      {
+        "name": "oauth:github",
+        "isBackendOnly": true,
+        "permRead": "EVERYBODY",
+        "permWrite": "OWNER"
+      },
+      {
+        "name": "settings",
+        "isBackendOnly": false,
+        "permRead": "EVERYBODY",
+        "permWrite": "OWNER"
+      },
+      {
+        "name": "user_settings",
+        "isBackendOnly": false,
+        "permRead": "OWNER",
+        "permWrite": "OWNER"
+      },
+      {
+        "name": "entity:issues",
+        "isBackendOnly": false,
+        "permRead": "EVERYBODY",
+        "permWrite": "EVERYBODY"
+      }
+    ],
+    "targets": [
+      {
+        "target": "ticket-sidebar",
+        "url": "html/index.html"
+      }
+    ],
+    "settings": [],
+    "deskproApiTags": [],
+    "externalApis": []
+  },
+  "devDependencies": {
+    "@deskpro/apps-dpat": "^0.9.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.2",
+    "eslint-plugin-compat": "^1.0.4",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^7.1.0",
+    "react-test-renderer": "^15.6.1"
+  },
+  "dependencies": {
+    "@deskpro/apps-sdk-react": "^0.1.2",
+    "@deskpro/react-components": "^1.1.1",
+    "prop-types": "^15.5.10",
+    "github-api": "^3.0.0"
+  }
+}
