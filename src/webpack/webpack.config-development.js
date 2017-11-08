@@ -52,7 +52,7 @@ module.exports = function (env)
         `webpack-dev-server/client?http://localhost:31080`,
         path.resolve(PROJECT_ROOT_PATH, 'src/webpack/entrypoint.js')
       ]
-      // 'install-vendor' bundle is create by CommonsChunkPlugin
+      // 'vendor' bundle is create by CommonsChunkPlugin
     },
     module: {
       loaders: [
