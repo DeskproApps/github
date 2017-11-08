@@ -31,7 +31,7 @@ class PageSettings extends React.PureComponent {
     const connection = Object.assign({}, settings, {
       urlAccessToken: OAUTH_ACCESS_URI,
       urlAuthorize:   OAUTH_AUTH_URI,
-      scopes:         'public_repo'
+      scopes:         ['public_repo']
     });
     this.props.oauth.register('github', connection);
     this.props.route.to('auth');
