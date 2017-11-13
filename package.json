@@ -1,6 +1,6 @@
 {
   "name": "deskpro-app-github",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "This application adds support for viewing and creating GitHub issues.",
   "main": "lib/main/javascript/index.js",
   "scripts": {
