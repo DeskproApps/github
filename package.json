@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@deskpro/apps-dpat": "^0.9.1",
-    "@deskpro/apps-sdk-core": "^1.0.0-beta.23",
+    "@deskpro/apps-sdk-core": "^1.0.0-beta.25",
     "babel-eslint": "^8.0.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^15.0.2",
@@ -85,12 +85,13 @@
     "react-test-renderer": "^16.0.0"
   },
   "dependencies": {
-    "@deskpro/apps-sdk-react": "^0.1.6",
+    "@deskpro/apps-sdk-react": "^0.1.9",
     "@deskpro/react-components": "^1.1.2",
     "github-api": "^3.0.0",
     "prop-types": "^15.5.10",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
-    "redux-form": "^7.1.2"
+    "redux-form": "^7.1.2",
+    "redux-thunk": "^2.2.0"
   }
 }
