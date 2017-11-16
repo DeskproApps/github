@@ -1,42 +1,65 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`successfully renders an issue list item 1`] = `
-<li
-  className="dp-list__element dp-github-issue"
+<ul
+  className="dp-list dp-column-drawer-list"
 >
-  <i
-    className="fa fa-times dp-icon dp-icon--s dp-github-delete-icon"
-    onClick={[Function]}
-    title="Unlink issue"
-  />
-  <a
-    href="https://github.com/deskpro/apps-dpat/pull/14"
-    rel="noopener noreferrer"
-    target="_blank"
+  <li
+    className="dp-column-drawer--with-controls"
+    style={
+      Object {
+        "display": "block",
+      }
+    }
   >
-    <h4
-      className="dp-heading"
-    >
-      #
-      1
-       - 
-      bug fix
-      <i
-        className="fa fa-external-link-square dp-icon dp-icon--s"
-      />
-    </h4>
-  </a>
-  <div>
-    Repo: 
-    deskpro
-    /
-    apps-dpat
-  </div>
-  <div>
-    Status: 
-    open
-  </div>
-  
-  
-</li>
+    <div>
+      <div
+        style={
+          Object {
+            "display": "block",
+          }
+        }
+      >
+        <li
+          className="dp-list__element dp-github-issue"
+        >
+          <i
+            className="fa fa-times dp-icon dp-icon--s dp-github-delete-icon"
+            onClick={[Function]}
+            title="Unlink issue"
+          />
+          <a
+            href="https://github.com/deskpro/apps-dpat/pull/14"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <h4
+              className="dp-heading"
+            >
+              #
+              1
+               - 
+              bug fix
+              <i
+                className="fa fa-external-link-square dp-icon dp-icon--s"
+              />
+            </h4>
+          </a>
+          <div>
+            Repo: 
+            deskpro
+            /
+            apps-dpat
+          </div>
+          <div>
+            Status: 
+            open
+          </div>
+          
+          
+        </li>
+      </div>
+    </div>
+  </li>
+</ul>
 `;

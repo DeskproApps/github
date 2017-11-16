@@ -1,6 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-
+import { DeskproSDK, testDpapp, testStore } from '@deskpro/apps-sdk-react';
 import Issue from '../../../main/javascript/UI/Issue';
 
 test('successfully renders an issue list item', done => {
@@ -19,7 +19,9 @@ test('successfully renders an issue list item', done => {
   };
 
   const component = renderer.create(
-    <Issue issue={issue} />
+    <DeskproSDK dpapp={testDpapp} store={testStore} ready>
+      <Issue issue={issue} />
+    </DeskproSDK>
   );
 
   const tree = component.toJSON();

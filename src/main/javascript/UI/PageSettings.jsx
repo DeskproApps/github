@@ -61,7 +61,7 @@ class PageSettings extends React.PureComponent {
             enter the following value:
           </p>
           <p>
-            <code>{oauth.providers.github.urlRedirect}</code>
+            <code>{oauth.providers.github ? oauth.providers.github.urlRedirect : ''}</code>
           </p>
           <p>
             Click the "Register application" button, and find the "Client ID" and "Client Secret"

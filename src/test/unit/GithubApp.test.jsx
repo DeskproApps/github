@@ -1,10 +1,13 @@
 import React from 'react';
-import render from './render';
+import renderer from 'react-test-renderer';
+import { DeskproSDK, testDpapp, testStore } from '@deskpro/apps-sdk-react';
 import GithubApp from '../../main/javascript/GithubApp';
 
 test('successfully render the application in initial state', () => {
-  const component = render(
-    <GithubApp />
+  const component = renderer.create(
+    <DeskproSDK dpapp={testDpapp} store={testStore} ready>
+      <GithubApp />
+    </DeskproSDK>
   );
 
   const tree = component.toJSON();

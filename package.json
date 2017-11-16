@@ -80,12 +80,12 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.1.0",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-test-renderer": "^16.0.0"
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "react-test-renderer": "^15.6.2"
   },
   "dependencies": {
-    "@deskpro/apps-sdk-react": "^0.1.9",
+    "@deskpro/apps-sdk-react": "^0.2.1",
     "@deskpro/react-components": "^1.1.2",
     "github-api": "^3.0.0",
     "prop-types": "^15.5.10",
