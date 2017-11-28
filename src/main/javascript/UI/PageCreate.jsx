@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Tabs, TabLink, Container } from '@deskpro/react-components';
 import { sdkConnect } from '@deskpro/apps-sdk-react';
-import { githubFetchRepos } from '../utils/github';
+import { githubIsAuthenticated, githubAuthenticate, githubFetchRepos } from '../utils/github';
 import TabCreateIssue from './TabCreateIssue';
 import TabLinkIssue from './TabLinkIssue';
 
@@ -13,9 +13,19 @@ import TabLinkIssue from './TabLinkIssue';
 class PageCreate extends React.Component {
   static propTypes = {
     /**
+     * Instance of sdk storage.
+     * @see https://deskpro.gitbooks.io/deskpro-apps/content/api/props/storage.html
+     */
+    storage: PropTypes.object,
+    /**
+     * Instance of sdk route.
+     * @see https://deskpro.gitbooks.io/deskpro-apps/content/api/props/route.html
+     */
+    route:   PropTypes.object,
+    /**
      * Instance of sdk ui.
      */
-    ui: PropTypes.object.isRequired
+    ui:      PropTypes.object.isRequired
   };
 
   /**
@@ -42,10 +52,28 @@ class PageCreate extends React.Component {
    * Fetches all the repos and loads them into the component state
    */
   loadRepos = () => {
-    return githubFetchRepos()
-      .then((repos) => {
-        return this.setState({ repos });
-      }).catch(this.props.ui.error);
+    const { storage, route, ui } = this.props;
+
+    if (!githubIsAuthenticated() && storage.app.user_settings.access_token) {
+      githubAuthenticate(storage.app.user_settings.access_token)
+        .then(() => {
+          return githubFetchRepos()
+            .then((repos) => {
+              return this.setState({ repos });
+            }).catch(ui.error);
+        })
+        .catch((e) => {
+          if (String(e) !== 'access_token') {
+            ui.error('Invalid GitHub token');
+          }
+          route.to('settings');
+        });
+    } else {
+      return githubFetchRepos()
+        .then((repos) => {
+          return this.setState({ repos });
+        }).catch(ui.error);
+    }
   };
 
   /**

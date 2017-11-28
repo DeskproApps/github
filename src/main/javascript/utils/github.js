@@ -36,7 +36,7 @@ export function splitRepoFullName(repoFullName) {
 export function githubAuthenticate(accessToken) {
   return new Promise((resolve, reject) => {
     if (!accessToken) {
-      return reject('accessToken');
+      return reject('access_token');
     }
 
     github = new GitHub({
@@ -48,6 +48,10 @@ export function githubAuthenticate(accessToken) {
       .then(resolve)
       .catch(reject);
   });
+}
+
+export function githubIsAuthenticated() {
+  return github !== null;
 }
 
 /**

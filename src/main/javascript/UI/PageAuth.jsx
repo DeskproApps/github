@@ -35,12 +35,14 @@ class PageAuth extends React.Component {
 
     oauth.access('github')
       .then((resp) => {
-        if (resp && resp.accessToken) {
+        if (resp && resp.access_token) {
           storage.setApp({
-            user_settings: { accessToken: resp.accessToken }
+            user_settings: { access_token: resp.access_token }
+          }, () => {
+            route.to('home');
           });
         }
-        return route.to('home');
+        return resp;
       }).catch(ui.error);
   };
 

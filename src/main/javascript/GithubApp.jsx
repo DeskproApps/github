@@ -63,7 +63,7 @@ export default class GithubApp extends React.PureComponent {
 
     if (
       (!prevApp.user_settings && nowApp.user_settings) ||
-      (nowApp.user_settings && (prevApp.user_settings.accessToken !== nowApp.user_settings.accessToken))
+      (nowApp.user_settings && (prevApp.user_settings.access_token !== nowApp.user_settings.access_token))
       ) {
       return this.githubAuthenticate();
     }
@@ -78,10 +78,10 @@ export default class GithubApp extends React.PureComponent {
   githubAuthenticate = () => {
     const { storage, ui, route } = this.props;
 
-    githubAuthenticate(storage.app.user_settings.accessToken)
+    githubAuthenticate(storage.app.user_settings.access_token)
       .then(() => route.to('home'))
       .catch((e) => {
-        if (String(e) !== 'accessToken') {
+        if (String(e) !== 'access_token') {
           ui.error('Invalid GitHub token');
         }
         route.to('settings');

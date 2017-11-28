@@ -70,8 +70,8 @@
     "externalApis": []
   },
   "devDependencies": {
-    "@deskpro/apps-dpat": "^0.9.1",
-    "@deskpro/apps-sdk-core": "^1.0.0-beta.25",
+    "@deskpro/apps-dpat": "^0.9.6",
+    "@deskpro/apps-sdk-core": "^1.0.0-beta.26",
     "babel-eslint": "^8.0.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^15.0.2",
@@ -85,7 +85,7 @@
     "react-test-renderer": "^15.6.2"
   },
   "dependencies": {
-    "@deskpro/apps-sdk-react": "^0.2.1",
+    "@deskpro/apps-sdk-react": "^0.2.2",
     "@deskpro/react-components": "^1.1.2",
     "github-api": "^3.0.0",
     "prop-types": "^15.5.10",
