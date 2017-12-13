@@ -1,6 +1,6 @@
 {
   "name": "deskpro-app-github",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "This application adds support for viewing and creating GitHub issues.",
   "main": "lib/main/javascript/index.js",
   "scripts": {
@@ -72,6 +72,7 @@
   "devDependencies": {
     "@deskpro/apps-dpat": "^0.9.6",
     "@deskpro/apps-sdk-core": "^1.0.0-beta.26",
+    "@deskpro/apps-sdk-react": "0.2.4",
     "babel-eslint": "^8.0.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^15.0.2",
@@ -85,7 +86,6 @@
     "react-test-renderer": "^15.6.2"
   },
   "dependencies": {
-    "@deskpro/apps-sdk-react": "^0.2.2",
     "@deskpro/react-components": "1.2.4",
     "github-api": "^3.0.0",
     "prop-types": "^15.5.10",
