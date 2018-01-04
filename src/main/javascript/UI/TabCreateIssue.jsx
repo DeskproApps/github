@@ -65,11 +65,13 @@ class TabCreateIssue extends React.PureComponent {
    * @param {string} repo
    */
   loadRepoEntities = (repo) => {
-    const info = splitRepoFullName(repo);
-    githubFetchRepo(info.userName, info.repoName)
-      .then(({ projects, issues, milestones, contributors }) => {
-        return this.setState({ projects, issues, milestones, contributors });
-      }).catch(this.props.ui.error);
+    if (repo) {
+      const info = splitRepoFullName(repo);
+      githubFetchRepo(info.userName, info.repoName)
+        .then(({ projects, issues, milestones, contributors }) => {
+          return this.setState({projects, issues, milestones, contributors});
+        }).catch(this.props.ui.error);
+    }
   };
 
   /**
@@ -112,6 +114,13 @@ class TabCreateIssue extends React.PureComponent {
       return null;
     }
 
+    const selectParse = (value) => {
+      if (value && value.value !== undefined) {
+        return value.value;
+      }
+      return null;
+    };
+
     return (
       <Container className="dp-github-container">
         <Form name="create_issue" onSubmit={this.handleSubmit}>
@@ -119,6 +128,7 @@ class TabCreateIssue extends React.PureComponent {
             label="Repository:"
             id="repo"
             name="repo"
+            parse={selectParse}
             validate={validators.required}
             options={reposToOptions(repos)}
             onChange={this.handleRepoChange}
@@ -127,6 +137,7 @@ class TabCreateIssue extends React.PureComponent {
             label="Project:"
             id="project"
             name="project"
+            parse={selectParse}
             options={projectsToOptions(projects)}
           />
           <Input
@@ -145,12 +156,14 @@ class TabCreateIssue extends React.PureComponent {
             label="Milestone:"
             id="milestone"
             name="milestone"
+            parse={selectParse}
             options={milestonesToOptions(milestones)}
           />
           <Select
             label="Assignee:"
             id="assignee"
             name="assignee"
+            parse={selectParse}
             options={contributorsToOptions(contributors)}
           />
           <Group label="Labels">

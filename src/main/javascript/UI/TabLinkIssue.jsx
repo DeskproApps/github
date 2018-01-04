@@ -58,11 +58,13 @@ class TabLinkIssue extends React.PureComponent {
    * @param {string} repo
    */
   loadRepoIssues = (repo) => {
-    const info = splitRepoFullName(repo);
-    githubFetchRepo(info.userName, info.repoName)
-      .then(({ issues }) => {
-        return this.setState({ issueData: issues });
-      }).catch(this.props.ui.error);
+    if (repo) {
+      const info = splitRepoFullName(repo);
+      githubFetchRepo(info.userName, info.repoName)
+        .then(({ issues }) => {
+          return this.setState({ issueData: issues });
+        }).catch(this.props.ui.error);
+    }
   };
 
   /**
@@ -100,6 +102,13 @@ class TabLinkIssue extends React.PureComponent {
       return null;
     }
 
+    const selectParse = (value) => {
+      if (value && value.value !== undefined) {
+        return value.value;
+      }
+      return null;
+    };
+
     return (
       <Container className="dp-github-container">
         <Form name="link_issue" onSubmit={this.handleSubmit}>
@@ -107,6 +116,7 @@ class TabLinkIssue extends React.PureComponent {
             label="Repository:"
             id="repo"
             name="repo"
+            parse={selectParse}
             validate={validators.required}
             onChange={this.handleRepoChange}
             options={reposToOptions(repos)}
@@ -116,6 +126,7 @@ class TabLinkIssue extends React.PureComponent {
             label="Issue:"
             id="number"
             name="number"
+            parse={selectParse}
             validate={validators.required}
             options={issuesToOptions(issueData)}
           />

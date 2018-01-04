@@ -14,7 +14,7 @@ test('successfully renders a link tab', () => {
   ];
 
   const component = renderer.create(
-    <DeskproSDK dpapp={testDpapp} store={testStore} ready>
+    <DeskproSDK dpapp={testDpapp} store={testStore}>
       <TabLinkIssue
         repos={repos}
         onError={() => {}}

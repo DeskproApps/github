@@ -5,7 +5,7 @@ import GithubApp from '../../main/javascript/GithubApp';
 
 test('successfully render the application in initial state', () => {
   const component = renderer.create(
-    <DeskproSDK dpapp={testDpapp} store={testStore} ready>
+    <DeskproSDK dpapp={testDpapp} store={testStore}>
       <GithubApp />
     </DeskproSDK>
   );

@@ -35,7 +35,7 @@ test('successfully renders the create tab', () => {
   global.addEventListener = () => true;
 
   const component = renderer.create(
-    <DeskproSDK dpapp={testDpapp} store={testStore} ready>
+    <DeskproSDK dpapp={testDpapp} store={testStore}>
       <TabCreateIssue
         repos={repos}
         onError={() => {}}
