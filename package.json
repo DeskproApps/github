@@ -1,6 +1,6 @@
 {
   "name": "deskpro-app-github",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "This application adds support for viewing and creating GitHub issues.",
   "main": "lib/main/javascript/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "lint": "eslint src/main/javascript/* --ext .js,.jsx --cache --cache-location=.cache/eslint",
     "lint:fix": "npm run lint -- --fix",
     "package": "dpat clean . && dpat compile . && dpat verify ./dist && dpat package .",
-    "test": "dpat test ."
+    "test": "dpat test .",
+    "version": "version-changelog CHANGELOG.md && changelog-verify CHANGELOG.md && git add CHANGELOG.md"
   },
   "repository": {
     "type": "git",
@@ -93,5 +94,9 @@
     "redux": "^3.7.2",
     "redux-form": "^7.1.2",
     "redux-thunk": "^2.2.0"
+  },
+  "optionalDependencies": {
+    "changelog-verify": "^1.1.0",
+    "version-changelog": "^2.1.0"
   }
 }
