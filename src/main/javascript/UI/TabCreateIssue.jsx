@@ -2,9 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sdkConnect } from '@deskpro/apps-sdk-react';
 import { Container, Group, TagSet } from '@deskpro/react-components';
-import { Form, Select, Input, Textarea, Button, validators } from '@deskpro/react-components/lib/bindings/redux-form';
+import { reduxForm } from '@deskpro/react-components/dist/bindings';
 import { reposToOptions, projectsToOptions, contributorsToOptions, milestonesToOptions } from '../utils/forms';
-import { githubFetchRepo, githubSaveIssue, splitRepoFullName } from '../utils/github';
+import { githubFetchRepo, githubSaveIssue, splitRepoFullName, githubIssueToCustomField } from '../utils/github';
+
+const { Form, Select, Input, Textarea, Button, validators } = reduxForm;
+
+const selectParse = (value) => {
+  if (value && value.value !== undefined) {
+    return value.value;
+  }
+  return null;
+};
 
 /**
  * Renders a tab containing a form to create a new Github issue which will be linked
@@ -20,10 +29,6 @@ class TabCreateIssue extends React.PureComponent {
      * List of Github repos the authenticated user belongs to.
      */
     repos:   PropTypes.array,
-    /**
-     * Instance of sdk storage.
-     */
-    storage: PropTypes.object.isRequired,
     /**
      * Instance of sdk route.
      */
@@ -69,7 +74,7 @@ class TabCreateIssue extends React.PureComponent {
       const info = splitRepoFullName(repo);
       githubFetchRepo(info.userName, info.repoName)
         .then(({ projects, issues, milestones, contributors }) => {
-          return this.setState({projects, issues, milestones, contributors});
+          return this.setState({ projects, issues, milestones, contributors });
         }).catch(this.props.ui.error);
     }
   };
@@ -88,17 +93,19 @@ class TabCreateIssue extends React.PureComponent {
    * to this.props.onCreateIssue()
    */
   handleSubmit = (issue) => {
-    const { storage, route, context } = this.props;
+    const { route, context } = this.props;
 
     return githubSaveIssue(issue, context.entityId, context.props.tabUrl)
       .then((newIssue) => {
-        const issues = storage.entity.issues
-          ? storage.entity.issues.slice(0)
-          : [];
-        issues.push(newIssue);
-        return storage.setEntity({ issues }, () => {
-          route.to('home');
-        });
+        return context.customFields.getAppField('githubIssues', [])
+          .then((issues) => {
+            issues.push(githubIssueToCustomField(newIssue));
+
+            return context.customFields.setAppField('githubIssues', issues)
+              .then(() => {
+                return route.to('home');
+              });
+          });
       })
       .catch(this.props.ui.error);
   };
@@ -114,13 +121,6 @@ class TabCreateIssue extends React.PureComponent {
       return null;
     }
 
-    const selectParse = (value) => {
-      if (value && value.value !== undefined) {
-        return value.value;
-      }
-      return null;
-    };
-
     return (
       <Container className="dp-github-container">
         <Form name="create_issue" onSubmit={this.handleSubmit}>
@@ -129,9 +129,9 @@ class TabCreateIssue extends React.PureComponent {
             id="repo"
             name="repo"
             parse={selectParse}
-            validate={validators.required}
             options={reposToOptions(repos)}
             onChange={this.handleRepoChange}
+            onBlur={() => { console.log('blurry'); }}
           />
           <Select
             label="Project:"

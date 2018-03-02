@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Routes, Route } from '@deskpro/apps-sdk-react';
 import { Loader } from '@deskpro/react-components';
-import { PageHome, PageCreate, PageSettings, PageAuth } from './UI';
+import { PageHome, PageCreate, PageAuth } from './UI';
 import { githubAuthenticate } from './utils/github';
 
 /**
@@ -33,13 +33,6 @@ export default class GithubApp extends React.PureComponent {
   componentDidMount() {
     const { storage, route } = this.props;
 
-    // The app setting will be empty the first time the app is run.
-    // Route to the settings page on the first run so the admin can setup
-    // oauth creds.
-    if (!storage.app.settings) {
-      return route.to('settings');
-    }
-
     // The user does not have an oauth access token yet. Send them to the
     // authentication page.
     if (!storage.app.user_settings) {
@@ -64,7 +57,7 @@ export default class GithubApp extends React.PureComponent {
     if (
       (!prevApp.user_settings && nowApp.user_settings) ||
       (nowApp.user_settings && (prevApp.user_settings.access_token !== nowApp.user_settings.access_token))
-      ) {
+    ) {
       return this.githubAuthenticate();
     }
   }
@@ -89,12 +82,11 @@ export default class GithubApp extends React.PureComponent {
   };
 
   /**
-   * @returns {XML}
+   * @returns {*}
    */
   render() {
     return (
       <Routes>
-        <Route location="settings" component={PageSettings} />
         <Route location="create" component={PageCreate} />
         <Route location="auth" component={PageAuth} />
         <Route location="home" component={PageHome} />

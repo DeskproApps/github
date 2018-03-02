@@ -2,9 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sdkConnect } from '@deskpro/apps-sdk-react';
 import { Container } from '@deskpro/react-components';
-import { Form, Select, Button, validators } from '@deskpro/react-components/lib/bindings/redux-form';
+import { reduxForm } from '@deskpro/react-components/dist/bindings';
 import { reposToOptions, issuesToOptions } from '../utils/forms';
-import { githubFetchRepo, splitRepoFullName } from '../utils/github';
+import { githubFetchRepo, splitRepoFullName, githubIssueToCustomField } from '../utils/github';
+
+const { Form, Select, Button, validators } = reduxForm;
 
 /**
  * Renders a tab containing a form which is used to link an existing Github issue
@@ -21,17 +23,17 @@ class TabLinkIssue extends React.PureComponent {
      */
     repos:   PropTypes.array,
     /**
-     * Instance of sdk storage.
-     */
-    storage: PropTypes.object.isRequired,
-    /**
      * Instance of sdk route.
      */
     route:   PropTypes.object.isRequired,
     /**
      * Instance of sdk ui.
      */
-    ui:      PropTypes.object.isRequired
+    ui:      PropTypes.object.isRequired,
+    /**
+     * Instance of sdk context.
+     */
+    context: PropTypes.object.isRequired
   };
 
   static defaultProps = {
@@ -80,15 +82,16 @@ class TabLinkIssue extends React.PureComponent {
    * Called when the form is submitted
    */
   handleSubmit = (issue) => {
-    const { storage, route } = this.props;
+    const { ui, route, context } = this.props;
 
-    const issues = storage.entity.issues
-      ? storage.entity.issues.slice(0)
-      : [];
-    issues.push(issue);
-    storage.setEntity({ issues }, () => {
-      route.to('home');
-    });
+    const customField = githubIssueToCustomField(issue);
+    context.customFields.getAppField('githubIssues', [])
+      .then((issues) => {
+        return context.customFields.setAppField('githubIssues', [...issues, customField])
+          .then(() => {
+            return route.to('home');
+          });
+      }).catch(ui.error);
   };
 
   /**
@@ -119,6 +122,7 @@ class TabLinkIssue extends React.PureComponent {
             parse={selectParse}
             validate={validators.required}
             onChange={this.handleRepoChange}
+            onBlur={() => {}}
             options={reposToOptions(repos)}
             required
           />

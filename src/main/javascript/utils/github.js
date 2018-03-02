@@ -25,6 +25,16 @@ export function splitRepoFullName(repoFullName) {
 }
 
 /**
+ * Creates the string representation of the given repo object
+ *
+ * @param {*} repoInfo
+ * @returns {string}
+ */
+export function combineRepoFullName(repoInfo) {
+  return `${repoInfo.userName}/${repoInfo.repoName}`;
+}
+
+/**
  * Authenticates with GitHub using the given settings
  *
  * Returns a promise which resolves when the authentication succeeds, and
@@ -155,4 +165,29 @@ export function githubSaveIssue(issue, entityId, tabUrl) {
       return issues.createIssueComment(newIssue.number, comment)
         .then(() => newIssue);
     });
+}
+
+/**
+ * Turns the given issue object to a custom field string
+ *
+ * @param {*} issue
+ * @returns {string}
+ */
+export function githubIssueToCustomField(issue) {
+  return `${issue.repo} ${issue.number}`;
+}
+
+/**
+ * Turns a custom field into an issue object
+ *
+ * @param {String} customField
+ * @returns {{repo: *|string, number: *|string}}
+ */
+export function githubCustomFieldToIssue(customField) {
+  const parts = customField.split(' ');
+
+  return {
+    repo:   parts[0],
+    number: parts[1]
+  };
 }

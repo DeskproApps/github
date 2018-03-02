@@ -7,7 +7,7 @@
     "dev": "dpat server .",
     "lint": "eslint src/main/javascript/* --ext .js,.jsx --cache --cache-location=.cache/eslint",
     "lint:fix": "npm run lint -- --fix",
-    "package": "dpat clean . && dpat compile . && dpat verify ./dist && dpat package .",
+    "package": "dpat clean . && dpat compile . && dpat bundle-installer . && dpat verify ./dist && dpat package .",
     "test": "dpat test .",
     "version": "version-changelog CHANGELOG.md && changelog-verify CHANGELOG.md && git add CHANGELOG.md"
   },
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/DeskproApps/github",
   "deskpro": {
-    "version": "2.1.0",
+    "version": "2.3.0",
     "title": "GitHub",
     "isSingle": true,
     "scope": "agent",
@@ -38,12 +38,6 @@
       {
         "name": "oauth:github",
         "isBackendOnly": true,
-        "permRead": "EVERYBODY",
-        "permWrite": "OWNER"
-      },
-      {
-        "name": "settings",
-        "isBackendOnly": false,
         "permRead": "EVERYBODY",
         "permWrite": "OWNER"
       },
@@ -60,34 +54,60 @@
         "permWrite": "EVERYBODY"
       }
     ],
+    "settings": [
+      {
+        "name": "clientId",
+        "defaultValue": "",
+        "title": "The client id",
+        "required": true,
+        "type": "text"
+      },
+      {
+        "name": "clientSecret",
+        "defaultValue": "",
+        "title": "The client secret",
+        "required": true,
+        "type": "text"
+      }
+    ],
+    "customFields": [
+      {
+        "type": "dataList",
+        "attachedTo": "ticket",
+        "alias": "githubIssues",
+        "title": "Github Issues"
+      }
+    ],
     "targets": [
       {
         "target": "ticket-sidebar",
         "url": "html/index.html"
       }
     ],
-    "settings": [],
     "deskproApiTags": [],
     "externalApis": []
   },
   "devDependencies": {
-    "@deskpro/apps-dpat": "^0.9.6",
+    "@deskpro/apps-dpat": "^0.9.7",
+    "@deskpro/apps-installer": "github:deskpro/apps-installer#v0.4.2",
     "@deskpro/apps-sdk-core": "^1.0.0-beta.26",
-    "@deskpro/apps-sdk-react": "0.2.7",
+    "@deskpro/apps-sdk-react": "0.2.8",
     "babel-eslint": "^8.0.1",
-    "eslint": "^3.19.0",
+    "eslint": "^4.18.1",
     "eslint-config-airbnb": "^15.0.2",
     "eslint-plugin-compat": "^1.0.4",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.1.0",
-    "react": "^15.6.2",
-    "react-dom": "^15.6.2",
-    "react-test-renderer": "^15.6.2"
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-select": "^1.2.1",
+    "react-test-renderer": "^15.6.2",
+    "redux-logger": "^3.0.6"
   },
   "dependencies": {
-    "@deskpro/react-components": "1.2.7",
+    "@deskpro/react-components": "1.3.10",
     "github-api": "^3.0.0",
     "prop-types": "^15.5.10",
     "react-redux": "^5.0.6",
