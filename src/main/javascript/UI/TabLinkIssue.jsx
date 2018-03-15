@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sdkConnect } from '@deskpro/apps-sdk-react';
-import { Container } from '@deskpro/react-components';
-import { reduxForm } from '@deskpro/react-components/dist/bindings';
+import { Container, Button } from '@deskpro/react-components';
+import { Form, Select, validators } from '@deskpro/redux-components';
 import { reposToOptions, issuesToOptions } from '../utils/forms';
 import { githubFetchRepo, splitRepoFullName, githubIssueToCustomField } from '../utils/github';
-
-const { Form, Select, Button, validators } = reduxForm;
 
 /**
  * Renders a tab containing a form which is used to link an existing Github issue
@@ -122,7 +120,6 @@ class TabLinkIssue extends React.PureComponent {
             parse={selectParse}
             validate={validators.required}
             onChange={this.handleRepoChange}
-            onBlur={() => {}}
             options={reposToOptions(repos)}
             required
           />

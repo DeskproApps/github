@@ -4,6 +4,8 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+- uses @deskpro/redux-components
+
 ## [0.2.0][] - 2018-03-02
 
  - adds support for new custom fields

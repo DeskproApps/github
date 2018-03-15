@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sdkConnect } from '@deskpro/apps-sdk-react';
-import { Container, Group, TagSet } from '@deskpro/react-components';
-import { reduxForm } from '@deskpro/react-components/dist/bindings';
+import { Container, Group, TagSet, Button } from '@deskpro/react-components';
+import { Form, Select, Input, Textarea, validators } from '@deskpro/redux-components';
 import { reposToOptions, projectsToOptions, contributorsToOptions, milestonesToOptions } from '../utils/forms';
 import { githubFetchRepo, githubSaveIssue, splitRepoFullName, githubIssueToCustomField } from '../utils/github';
-
-const { Form, Select, Input, Textarea, Button, validators } = reduxForm;
 
 const selectParse = (value) => {
   if (value && value.value !== undefined) {
@@ -131,7 +129,6 @@ class TabCreateIssue extends React.PureComponent {
             parse={selectParse}
             options={reposToOptions(repos)}
             onChange={this.handleRepoChange}
-            onBlur={() => { console.log('blurry'); }}
           />
           <Select
             label="Project:"
