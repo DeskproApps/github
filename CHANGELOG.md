@@ -4,6 +4,8 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+- upgrades to @deskpro/redux-components v1.0.2
+
 ## [0.3.0][] - 2018-03-15
 
 - uses @deskpro/redux-components
