@@ -4,6 +4,8 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+- uses @deskpro/apps-sdk-react v0.2.11
+
 ## [0.3.1][] - 2018-03-16
 
 - upgrades to @deskpro/redux-components v1.0.2
