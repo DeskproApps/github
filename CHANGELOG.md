@@ -4,6 +4,8 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+## [0.3.3][] - 2018-03-26
+
 - uses @deskpro/apps-sdk-react v0.2.12
 
 ## [0.3.2][] - 2018-03-23
@@ -27,7 +29,8 @@ This project is following [Semantic Versioning](http://semver.org)
  - default `process.env.NODE_ENV` to `production` when packaging the app for distribution with webpack  
 
 
-[Unreleased]: https://github.com/DeskproApps/github/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/DeskproApps/github/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/DeskproApps/github/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/DeskproApps/github/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/DeskproApps/github/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/DeskproApps/github/compare/v0.2.0...v0.3.0
