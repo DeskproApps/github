@@ -4,6 +4,8 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+- uses @deskpro/apps-sdk-react v0.2.12
+
 ## [0.3.2][] - 2018-03-23
 
 - uses @deskpro/apps-sdk-react v0.2.11
