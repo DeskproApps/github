@@ -4,6 +4,17 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+### Added
+
+    - travis will atttach builds to Github PR's when enabled via s3 environment variables
+    - adds @deskpro/redux-components
+
+### Changed
+
+    - upgrade to @deskpro/apps-sdk-react version 0.2.13
+    - upgrade to @deskpro/apps-dpat version 0.10.3
+    - upgrade to @deskpro/apps-dpat version 0.10.3    
+
 ## [0.3.3][] - 2018-03-26
 
 - uses @deskpro/apps-sdk-react v0.2.12

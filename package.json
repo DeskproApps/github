@@ -4,6 +4,7 @@
   "description": "This application adds support for viewing and creating GitHub issues.",
   "main": "lib/main/javascript/index.js",
   "scripts": {
+    "dpat": "dpat",
     "dev": "dpat server .",
     "lint": "eslint src/main/javascript/* --ext .js,.jsx --cache --cache-location=.cache/eslint",
     "lint:fix": "npm run lint -- --fix",
@@ -88,10 +89,10 @@
     "externalApis": []
   },
   "devDependencies": {
-    "@deskpro/apps-dpat": "^0.9.7",
+    "@deskpro/apps-dpat": "0.10.3",
     "@deskpro/apps-installer": "github:deskpro/apps-installer#v0.4.3",
-    "@deskpro/apps-sdk-core": "^1.0.0-beta.28",
-    "@deskpro/apps-sdk-react": "0.2.12",
+    "@deskpro/apps-sdk-core": "1.0.0-beta.29",
+    "@deskpro/apps-sdk-react": "0.2.13",
     "babel-eslint": "^8.0.1",
     "eslint": "^4.18.1",
     "eslint-config-airbnb": "^15.0.2",
