@@ -14,8 +14,8 @@ This project is following [Semantic Versioning](http://semver.org)
 ### Changed
 
     - upgrade to @deskpro/apps-sdk-react version 0.2.13
-    - upgrade to @deskpro/apps-dpat version 0.10.3
-    - upgrade to @deskpro/apps-dpat version 0.10.3    
+    - upgrade to @deskpro/apps-dpat version 0.10.4
+    - upgrade to @deskpro/apps-sdk-core version 1.0.0-beta.29  
 
 ## [0.3.3][] - 2018-03-26
 

@@ -89,7 +89,7 @@
     "externalApis": []
   },
   "devDependencies": {
-    "@deskpro/apps-dpat": "0.10.3",
+    "@deskpro/apps-dpat": "0.10.4",
     "@deskpro/apps-installer": "github:deskpro/apps-installer#v0.4.3",
     "@deskpro/apps-sdk-core": "1.0.0-beta.29",
     "@deskpro/apps-sdk-react": "0.2.13",
