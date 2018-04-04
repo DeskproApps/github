@@ -93,7 +93,7 @@ class TabCreateIssue extends React.PureComponent {
   handleSubmit = (issue) => {
     const { route, context } = this.props;
 
-    return githubSaveIssue(issue, context.entityId, context.props.tabUrl)
+    return githubSaveIssue(issue, context.object.id, context.props.tabUrl)
       .then((newIssue) => {
         return context.customFields.getAppField('githubIssues', [])
           .then((issues) => {
