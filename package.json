@@ -69,6 +69,13 @@
         "title": "The client secret",
         "required": true,
         "type": "text"
+      },
+      {
+        "name": "urlRedirect",
+        "defaultValue": "",
+        "title": "The Youtrack redirect URL",
+        "required": true,
+        "type": "text"
       }
     ],
     "customFields": [
