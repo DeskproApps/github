@@ -4,6 +4,12 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+## [0.3.5][] - 2018-08-31
+
+ - use the new apps structure
+ - use @deskpro/apps-sdk@0.8.0
+ - use @deskpro/apps-components@0.8.0
+
 ## [0.3.4][] - 2018-04-03
 
 ### Added
@@ -46,7 +52,8 @@ This project is following [Semantic Versioning](http://semver.org)
  - default `process.env.NODE_ENV` to `production` when packaging the app for distribution with webpack  
 
 
-[Unreleased]: https://github.com/DeskproApps/github/compare/v0.3.4...HEAD
+[Unreleased]: https://github.com/DeskproApps/github/compare/v0.3.5...HEAD
+[0.3.5]: https://github.com/DeskproApps/github/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/DeskproApps/github/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/DeskproApps/github/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/DeskproApps/github/compare/v0.3.1...v0.3.2
