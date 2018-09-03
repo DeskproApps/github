@@ -1,7 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { DeskproSDK, testDpapp, testStore } from '@deskpro/apps-sdk-react';
-import Issue from '../../../main/javascript/UI/Issue';
+import Issue from '../../../src/UI/Issue';
 
 test('successfully renders an issue list item', done => {
   const issue = {
@@ -18,11 +17,7 @@ test('successfully renders an issue list item', done => {
     }
   };
 
-  const component = renderer.create(
-    <DeskproSDK dpapp={testDpapp} store={testStore} ready>
-      <Issue issue={issue} />
-    </DeskproSDK>
-  );
+  const component = renderer.create(<Issue issue={issue} />);
 
   const tree = component.toJSON();
   expect(tree).toMatchSnapshot();

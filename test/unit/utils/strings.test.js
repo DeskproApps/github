@@ -1,4 +1,4 @@
-import { trimString } from '../../../main/javascript/utils/strings';
+import { trimString } from '../../../src/utils/strings';
 
 test('successfully trim long strings', done => {
   [

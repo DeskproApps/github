@@ -1,7 +1,10 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { DeskproSDK, testDpapp, testStore } from '@deskpro/apps-sdk-react';
-import TabCreateIssue from '../../../main/javascript/UI/TabCreateIssue';
+import { Provider } from "react-redux";
+import TabCreateIssue from '../../../src/UI/TabCreateIssue';
+import { createAppFromProps } from '@deskpro/apps-sdk';
+import { createMemoryHistory as createHistory } from "history";
+import store from '../../../src/store';
 
 global.getComputedStyle = () => {
   return {
@@ -34,14 +37,37 @@ test('successfully renders the create tab', () => {
 
   global.addEventListener = () => true;
 
+  const history = createHistory({
+    initialEntries: ["loading"],
+    initialIndex: 0
+  });
+
+  const dpapp = createAppFromProps({
+    instanceProps: {
+      appId:          '1',
+      appTitle:       'title',
+      appPackageName: 'com.deskpro.app',
+      instanceId:     '1',
+    },
+    contextProps: {
+      type: 'ticket',
+      entityId: '1',
+      locationId: '1',
+      tabId: 'tab-1',
+      tabUrl: 'https://127.0.0.1',
+    }
+  });
+
   const component = renderer.create(
-    <DeskproSDK dpapp={testDpapp} store={testStore}>
+    <Provider store={store}>
       <TabCreateIssue
-        repos={repos}
-        onError={() => {}}
-        onCreateIssue={() => {}}
+        repos=          {repos}
+        onError=        {() => {}}
+        onCreateIssue=  {() => {}}
+        history=        {history}
+        dpapp=          {dpapp}
       />
-    </DeskproSDK>, { createNodeMock }
+    </Provider>, { createNodeMock }
   );
 
   const tree = component.toJSON();

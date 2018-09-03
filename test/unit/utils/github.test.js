@@ -1,4 +1,4 @@
-import * as github from '../../../main/javascript/utils/github';
+import * as github  from '../../../src/utils/github';
 
 test('splitRepoFullName successfully splits a repo full name', done => {
   [

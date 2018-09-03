@@ -1,4 +1,4 @@
-import * as forms from '../../../main/javascript/utils/forms';
+import * as forms from '../../../src/utils/forms';
 
 test('reposToOptions successfully squashes repos', done => {
   const repos = [

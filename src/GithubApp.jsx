@@ -1,15 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Router, Route, Switch } from 'react-router'
-import { createMemoryHistory as createHistory } from "history";
+import { Router, Route, Switch,  } from 'react-router'
 import { Loader} from '@deskpro/apps-components';
 import { PageHome, PageCreate, PageAuth } from './UI';
 import { githubAuthenticate, setAccessToken  } from './utils/github';
-
-const history = createHistory({
-  initialEntries: ["loading"],
-  initialIndex: 0
-});
 
 /**
  * Renders an app which links GitHub issues to tickets.
@@ -17,6 +11,8 @@ const history = createHistory({
 export default class GithubApp extends React.PureComponent
 {
   static propTypes = {
+    /** router history object */
+    history: PropTypes.object,
     /**
      * instance of app client.
      */
@@ -27,9 +23,9 @@ export default class GithubApp extends React.PureComponent
    * Invoked immediately after a component is mounted
    */
   componentDidMount() {
+    const { dpapp, history } = this.props;
 
-    const { storage } = this.props.dpapp;
-    storage.getAppStorage('user_settings').then(settings => {
+    dpapp.storage.getAppStorage('user_settings').then(settings => {
       if (! settings) {
         history.push("auth", null);
         history.go(1);
@@ -48,7 +44,7 @@ export default class GithubApp extends React.PureComponent
    * routes to the settings page.
    */
   githubAuthenticate = () => {
-    const { dpapp } = this.props;
+    const { dpapp, history } = this.props;
 
     githubAuthenticate()
       .then(() => {
@@ -74,12 +70,14 @@ export default class GithubApp extends React.PureComponent
    * @returns {*}
    */
   render() {
+    const { history } = this.props;
     return (
       <Router history={history} >
         <Switch>
           <Route path="create" render={this.renderPageCreate} />
           <Route path="auth" render={this.renderPageAuth} />
           <Route path="home" render={this.renderPageHome} />
+          <Route path="loading" render={() => <Loader />} />
           <Route render={() => <Loader />} />
         </Switch>
       </Router>
