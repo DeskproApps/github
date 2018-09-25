@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { Provider } from "react-redux";
-import TabCreateIssue from '../../../src/UI/TabCreateIssue';
+import PageCreateIssue from '../../../src/UI/PageCreateIssue';
 import { createAppFromProps } from '@deskpro/apps-sdk';
 import { createMemoryHistory as createHistory } from "history";
 import store from '../../../src/store';
@@ -60,7 +60,7 @@ test('successfully renders the create tab', () => {
 
   const component = renderer.create(
     <Provider store={store}>
-      <TabCreateIssue
+      <PageCreateIssue
         repos=          {repos}
         onError=        {() => {}}
         onCreateIssue=  {() => {}}

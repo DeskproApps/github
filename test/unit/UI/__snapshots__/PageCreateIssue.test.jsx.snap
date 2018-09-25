@@ -25,6 +25,32 @@ exports[`successfully renders the create tab 1`] = `
   <div
     className="dp-PanelBody"
   >
+    <div
+      className="dp-ActionBar dp-Level"
+    >
+      <div
+        className="dp-LevelLeft"
+      >
+        <span
+          className="dp-ActionBarTitle"
+        >
+          Create issue
+        </span>
+      </div>
+      <div
+        className="dp-ActionList dp-LevelRight"
+      >
+        <a
+          className="dp-ActionListItem dp-ActionListIcon dp---is-hoverable"
+          onClick={[Function]}
+          title=""
+        >
+          <i
+            className="dp-IconClose"
+          />
+        </a>
+      </div>
+    </div>
     <form
       className="dp-form"
       onSubmit={[Function]}
