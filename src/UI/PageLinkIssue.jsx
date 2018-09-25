@@ -10,8 +10,7 @@ import {
   splitRepoFullName,
   linkGithubIssueFormToCustomField,
   githubIsAuthenticated, githubAuthenticate, githubFetchRepos,
-  githubSearchIssue, githubFetchIssue, githubCustomFieldToIssue,
-  debounce
+  githubFetchIssue, githubIssueToCustomField
 } from '../utils/github';
 
 /**
@@ -109,15 +108,21 @@ class PageLinkIssue extends React.PureComponent {
     this.loadRepoIssues(value);
   };
 
-  handleSearch = (value) => {
-    console.log("Search");
-    if (value) {
-      githubSearchIssue(value);
-    }
-  };
-
   linkIssue = (issue) => {
-    console.log(issue);
+    const { dpapp, history }  = this.props;
+    const customFields        = dpapp.context.get('ticket').customFields;
+
+    issue.repo = `${issue.repoInfo.userName}/${issue.repoInfo.repoName}`;
+    return customFields.getAppField('githubIssues', [])
+      .then((issues) => {
+        issues.push(githubIssueToCustomField(issue));
+
+        return customFields.setAppField('githubIssues', issues)
+          .then(() => {
+            history.push("home", null);
+            history.go(1);
+          });
+      });
   };
 
   /**
@@ -159,22 +164,8 @@ class PageLinkIssue extends React.PureComponent {
       return null;
     }
 
-    // const selectParse = (value) => {
-    //   if (value && value.value !== undefined) {
-    //     return value.value;
-    //   }
-    //   return null;
-    // };
-
     return (
       <Panel border={"none"} >
-        <Form name="search_issue">
-          <Input
-            label="Search for a card"
-            icon="search"
-            onChange={debounce(this.handleSearch, 200)}
-          />
-        </Form>
         <Form name="link_issue" onSubmit={this.handleSubmit}>
           <Select
             label=    "Repository:"

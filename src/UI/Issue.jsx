@@ -21,10 +21,14 @@ class Issue extends React.PureComponent
     onLink: false,
   };
 
-  state = {
-    menuOpen: false,
-    confirmUnlink: false,
-  };
+  constructor(props) {
+    super(props);
+    this.menu = React.createRef();
+    this.state = {
+      menuOpen: false,
+      confirmUnlink: false,
+    };
+  }
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.closeMenu);
@@ -45,9 +49,13 @@ class Issue extends React.PureComponent
     document.addEventListener('mousedown', this.closeMenu);
   };
 
-  closeMenu = () => {
+  closeMenu = (e) => {
+    if (this.menu.current && this.menu.current.contains(e.target)) {
+      return;
+    }
     this.setState({
-      menuOpen: false
+      menuOpen: false,
+      confirmUnlink: false
     });
     document.removeEventListener('mousedown', this.closeMenu);
   };
@@ -68,6 +76,7 @@ class Issue extends React.PureComponent
           <Menu
             onClick={this.toggleMenu}
             isOpen={menuOpen}
+            ref={this.menu}
           >
             <Action label="Open" icon="open" onClick={() => window.open(issue.html_url, "_blank")} />
             { onUnlink && !confirmUnlink && <Action label="Unlink" icon="unlink" onClick={this.confirmUnlink} /> }
