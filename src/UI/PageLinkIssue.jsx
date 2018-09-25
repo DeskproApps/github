@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Panel } from '@deskpro/apps-components';
+import { Action, ActionBar, Panel } from '@deskpro/apps-components';
 import { Form, Select, required } from '../Forms';
 import Issue from './Issue';
 
@@ -153,6 +153,12 @@ class PageLinkIssue extends React.PureComponent {
     });
   };
 
+  backHome = () => {
+    const { history }  = this.props;
+    history.push("home", null);
+    history.go(1);
+  };
+
   /**
    * @returns {XML}
    */
@@ -166,6 +172,10 @@ class PageLinkIssue extends React.PureComponent {
 
     return (
       <Panel border={"none"} >
+        <ActionBar title="Link issue">
+          <Action icon="close" onClick={this.backHome} />
+        </ActionBar>
+
         <Form name="link_issue" onSubmit={this.handleSubmit}>
           <Select
             label=    "Repository:"

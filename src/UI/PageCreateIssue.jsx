@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Loader, Panel, Button, Tabs, TabMenu, List } from '@deskpro/apps-components';
+import { ActionBar, Action, Panel, Button } from '@deskpro/apps-components';
 
-import { Form, Select, Input, Textarea, Group, required } from '../Forms';
+import { Form, Select, Input, Textarea, required } from '../Forms';
 
 import { reposToOptions, projectsToOptions, contributorsToOptions, milestonesToOptions } from '../utils/forms';
 import { githubFetchRepo, githubSaveIssue, splitRepoFullName, githubIssueToCustomField } from '../utils/github';
@@ -105,6 +105,12 @@ class PageCreateIssue extends React.PureComponent
       .catch(dpapp.ui.showErrorNotification);
   };
 
+  backHome = () => {
+    const { history }  = this.props;
+    history.push("home", null);
+    history.go(1);
+  };
+
   /**
    * @returns {XML}
    */
@@ -118,6 +124,9 @@ class PageCreateIssue extends React.PureComponent
 
     return (
       <Panel border={"none"} >
+        <ActionBar title="Create issue">
+          <Action icon="close" onClick={this.backHome} />
+        </ActionBar>
         <Form name="create_issue" onSubmit={this.handleSubmit}>
           <Select
             label=    "Repository:"
