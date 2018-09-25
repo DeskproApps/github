@@ -4,6 +4,7 @@ import { Action, Panel, Button, List } from '@deskpro/apps-components';
 
 import { githubFetchIssue, githubCustomFieldToIssue, combineRepoFullName } from '../utils/github';
 import Issue from './Issue';
+import githubLogo from '../main/resources/icon.png';
 
 const confirm = window && typeof window.confirm === 'function' ? window.confirm : () => true;
 /**
@@ -116,6 +117,7 @@ class PageHome extends React.PureComponent
             <Issue
               issue={issue}
               key={issue.number}
+              iconUrl={githubLogo}
               onUnlink={() => { this.handleUnlinkIssue(issue); }}
             />
           ))}

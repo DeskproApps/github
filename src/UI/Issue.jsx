@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListItem, Action, ActionBar, Menu, DataList } from '@deskpro/apps-components';
+import { ListItem, Action, ActionBar, Menu, DataList, Panel } from '@deskpro/apps-components';
 
 
 import { trimString } from '../utils/strings';
+import githubLogo from "../main/resources/icon.png";
 
 /**
  * Renders a single issue which has been linked to the open ticket.
@@ -12,6 +13,7 @@ class Issue extends React.PureComponent
 {
   static propTypes = {
     issue:    PropTypes.object.isRequired,
+    iconUrl:  PropTypes.string,
     onUnlink: PropTypes.func,
     onLink:   PropTypes.func,
   };
@@ -19,6 +21,7 @@ class Issue extends React.PureComponent
   static defaultProps = {
     onUnlink: false,
     onLink: false,
+    iconUrl: false,
   };
 
   constructor(props) {
@@ -67,12 +70,15 @@ class Issue extends React.PureComponent
   };
 
   render() {
-    const { issue, onUnlink, onLink } = this.props;
+    const { issue, onUnlink, onLink, iconUrl } = this.props;
     const { confirmUnlink, menuOpen } = this.state;
     return (
       <ListItem className="dp-github-issue">
 
-        <ActionBar title={<a href={issue.html_url} target="_blank">#{issue.number} - {trimString(issue.title, 22)}</a>}>
+        <ActionBar
+          title={<a href={issue.html_url} target="_blank">#{issue.number} - {trimString(issue.title, 22)}</a>}
+          iconUrl={iconUrl}
+        >
           <Menu
             onClick={this.toggleMenu}
             isOpen={menuOpen}

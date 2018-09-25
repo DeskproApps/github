@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Loader, Panel, Button, Tabs, TabMenu, List } from '@deskpro/apps-components';
-import { Form, Select, Input, Textarea, Group, required } from '../Forms';
+import { Panel } from '@deskpro/apps-components';
+import { Form, Select, required } from '../Forms';
 import Issue from './Issue';
 
-import { reposToOptions, issuesToOptions } from '../utils/forms';
+import { reposToOptions } from '../utils/forms';
 import {
   githubFetchRepo,
   splitRepoFullName,
