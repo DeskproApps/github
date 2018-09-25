@@ -206,3 +206,22 @@ export function githubCustomFieldToIssue(customField) {
     number: parseInt(parts[1])
   };
 }
+
+export function githubSearchIssue(q) {
+  if (!github) {
+    return Promise.reject();
+  }
+  return github
+    .search({page: 1, per_page: 10})
+    .forIssues({q:`${q} type:issue`});
+}
+
+export const debounce = (func, delay) => {
+  let inDebounce;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(inDebounce);
+    inDebounce = setTimeout(() => func.apply(context, args), delay)
+  }
+};

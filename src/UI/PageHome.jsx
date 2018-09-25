@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Loader, Panel, Button, Tabs, TabMenu, List } from '@deskpro/apps-components';
+import { Action, Panel, Button, List } from '@deskpro/apps-components';
 
 import { githubFetchIssue, githubCustomFieldToIssue, combineRepoFullName } from '../utils/github';
 import Issue from './Issue';
@@ -49,10 +49,10 @@ class PageHome extends React.PureComponent
 
     customFields.getAppField('githubIssues', [])
       .then((issues) => {
-        if (!issues || issues.length === 0) {
-          history.push("create", null);
-          history.go(1);
-        }
+        // if (!issues || issues.length === 0) {
+        //   history.push("create", null);
+        //   history.go(1);
+        // }
 
         const promises = issues.map((issue) => {
           return githubFetchIssue(githubCustomFieldToIssue(issue));
@@ -60,6 +60,18 @@ class PageHome extends React.PureComponent
 
         return Promise.all(promises).then(issueData => this.setState({ issueData }))
       }).catch(dpapp.ui.showErrorNotification);
+  };
+
+  openLink = () => {
+    const { history } = this.props;
+    history.push("link", null);
+    history.go(1);
+  };
+
+  openCreate = () => {
+    const { history } = this.props;
+    history.push("create_issue", null);
+    history.go(1);
   };
 
   /**
@@ -73,21 +85,19 @@ class PageHome extends React.PureComponent
     const { dpapp } = this.props;
     const customFields = dpapp.context.get('ticket').customFields;
 
-    if (confirm('Are you sure you want to unlink this issue?')) {
-      const repo = combineRepoFullName(issue.repoInfo);
-      customFields.getAppField('githubIssues', [])
-        .then((issues) => {
-          const newIssues = issues.filter((i) => {
-            const ii = githubCustomFieldToIssue(i);
-            return !(ii.number === issue.number && ii.repo === repo);
-          });
+    const repo = combineRepoFullName(issue.repoInfo);
+    customFields.getAppField('githubIssues', [])
+      .then((issues) => {
+        const newIssues = issues.filter((i) => {
+          const ii = githubCustomFieldToIssue(i);
+          return !(ii.number === issue.number && ii.repo === repo);
+        });
 
-          return customFields.setAppField('githubIssues', newIssues)
-            .then(() => {
-              return this.loadIssues();
-            });
-        }).catch(dpapp.ui.showErrorNotification);
-    }
+        return customFields.setAppField('githubIssues', newIssues)
+          .then(() => {
+            return this.loadIssues();
+          });
+      }).catch(dpapp.ui.showErrorNotification);
   };
 
   /**
@@ -99,6 +109,8 @@ class PageHome extends React.PureComponent
 
     return (
       <Panel title={"Linked Issues"} border={"none"} className="dp-github-container">
+        <Action icon={"search"} label={"Find"} onClick={this.openLink}/>
+        <Action icon={"add"} label={"Create"} onClick={this.openCreate}/>
         <List className="dp-github-issues">
           {issueData.map((issue) => (
             <Issue
@@ -108,15 +120,6 @@ class PageHome extends React.PureComponent
             />
           ))}
         </List>
-
-        <div className="dp-form-group">
-          <Button onClick={() => {
-            history.push("create", null);
-            history.go(1);
-          }}>
-            Link another issue
-          </Button>
-        </div>
 
       </Panel>
     );

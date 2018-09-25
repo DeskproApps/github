@@ -5,7 +5,7 @@ import AutosizeTextarea from 'react-textarea-autosize';
 import classNames from 'classnames';
 
 import Group from './Group';
-import { objectKeyFilter } from './utils';
+import { objectKeyFilter } from '@deskpro/js-utils/dist/objects';
 
 
 

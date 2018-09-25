@@ -9,6 +9,10 @@
 # production
 /build
 
+# package folders
+/dist
+/target
+
 # misc
 .DS_Store
 .env.local
