@@ -57,8 +57,26 @@ class PageHome extends React.PureComponent
           return githubFetchIssue(githubCustomFieldToIssue(issue));
         });
 
+        this.updateBadge();
+
         return Promise.all(promises).then(issueData => this.setState({ issueData }))
-      }).catch(dpapp.ui.showErrorNotification);
+      })
+      .then(() => {
+        this.updateBadge();
+      })
+      .catch(dpapp.ui.showErrorNotification);
+  };
+
+  updateBadge = () => {
+    const { issueData } = this.state;
+    const { ui } = this.props.dpapp;
+
+    if (issueData.length) {
+      ui.showBadgeCount();
+      ui.badgeCount = issueData.length;
+    } else {
+      ui.hideBadgeCount();
+    }
   };
 
   openLink = () => {
