@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Action, Panel, Button, List } from '@deskpro/apps-components';
+import { Action, Panel, List } from '@deskpro/apps-components';
 
-import { githubFetchIssue, githubCustomFieldToIssue, combineRepoFullName } from '../utils/github';
+import { githubFetchIssue, githubCustomFieldToIssue, repoFromUrl } from '../utils/github';
 import Issue from './Issue';
-import githubLogo from '../main/resources/icon.png';
 
-const confirm = window && typeof window.confirm === 'function' ? window.confirm : () => true;
 /**
  * Renders a page which displays the issues which have been linked to the
  * open ticket.
@@ -45,7 +43,7 @@ class PageHome extends React.PureComponent
    * method gets the full details for each issue from the GitHub API.
    */
   loadIssues = () => {
-    const { dpapp, history } = this.props;
+    const { dpapp } = this.props;
     const customFields = dpapp.context.get('ticket').customFields;
 
     customFields.getAppField('githubIssues', [])
@@ -71,7 +69,7 @@ class PageHome extends React.PureComponent
 
   openCreate = () => {
     const { history } = this.props;
-    history.push("create_issue", null);
+    history.push("create", null);
     history.go(1);
   };
 
@@ -86,7 +84,7 @@ class PageHome extends React.PureComponent
     const { dpapp } = this.props;
     const customFields = dpapp.context.get('ticket').customFields;
 
-    const repo = combineRepoFullName(issue.repoInfo);
+    const repo = repoFromUrl(issue.repositoryUrl);
     customFields.getAppField('githubIssues', [])
       .then((issues) => {
         const newIssues = issues.filter((i) => {
@@ -106,7 +104,6 @@ class PageHome extends React.PureComponent
    */
   render() {
     const { issueData } = this.state;
-    const { history } = this.props;
 
     return (
       <Panel title={"Linked Issues"} border={"none"} className="dp-github-container">
@@ -117,7 +114,6 @@ class PageHome extends React.PureComponent
             <Issue
               issue={issue}
               key={issue.number}
-              iconUrl={githubLogo}
               onUnlink={() => { this.handleUnlinkIssue(issue); }}
             />
           ))}

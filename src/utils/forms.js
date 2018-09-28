@@ -1,4 +1,6 @@
 import { trimString } from './strings';
+import { Avatar } from "@deskpro/apps-components";
+import React from "react";
 
 /**
  * @param {Array} repos
@@ -7,8 +9,8 @@ import { trimString } from './strings';
 export function reposToOptions(repos) {
   return repos.map(repo => (
     {
-      label: repo.full_name,
-      value: repo.full_name
+      label: repo.fullName,
+      value: repo.fullName,
     }
   ));
 }
@@ -26,6 +28,14 @@ export function projectsToOptions(projects) {
   ));
 }
 
+const renderContributor = (contributor) => {
+  let avatar = '';
+  if (contributor.avatarUrl) {
+    avatar = [<Avatar key="avatar" shape="round" src={contributor.avatarUrl} />, <span key="space"> </span>];
+  }
+  return <span>{avatar} {contributor.login}</span>
+};
+
 /**
  * @param {Array} contributors
  * @returns {Array}
@@ -33,8 +43,8 @@ export function projectsToOptions(projects) {
 export function contributorsToOptions(contributors) {
   return contributors.map(contributor => (
     {
-      label: contributor,
-      value: contributor
+      label: renderContributor(contributor),
+      value: contributor.login,
     }
   ));
 }

@@ -95,15 +95,15 @@
     lodash "^4.17.5"
     to-fast-properties "^2.0.0"
 
-"@deskpro/apps-components-style@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@deskpro/apps-components-style/-/apps-components-style-0.8.0.tgz#b87027b3d11cdf9e2ae10b2a9fd34b7f1374acfc"
+"@deskpro/apps-components-style@^0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@deskpro/apps-components-style/-/apps-components-style-0.8.3.tgz#fa865c7032a9952fd72e06fbf6e431f6fd968d7f"
 
-"@deskpro/apps-components@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@deskpro/apps-components/-/apps-components-0.8.0.tgz#8dbc8a0e8c1e86fddea571041b8bb97e734fc556"
+"@deskpro/apps-components@0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@deskpro/apps-components/-/apps-components-0.8.3.tgz#4d3726b7424ffea17a4e53f235096b52d20c048a"
   dependencies:
-    "@deskpro/apps-components-style" "^0.8.0"
+    "@deskpro/apps-components-style" "^0.8.3"
     classnames "^2.2.6"
     react-custom-scrollbars "^4.2.1"
 
@@ -170,6 +170,18 @@
   optionalDependencies:
     fsevents "^1.1.3"
 
+"@deskpro/apps-sdk@0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@deskpro/apps-sdk/-/apps-sdk-0.8.3.tgz#838806ecf57323e5d691457eac0e8a547e90801e"
+  dependencies:
+    element-resize-detector "^1.1.12"
+    eventemitter3 "2.0.3"
+    get-size "^2.0.2"
+    invariant "^2.2.4"
+    post-robot "^7.0.8"
+    query-string "^5.1.1"
+    warning "^4.0.1"
+
 "@deskpro/apps-sdk@^0.7.2":
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/@deskpro/apps-sdk/-/apps-sdk-0.7.2.tgz#ef4b6126d6bf1a05772c9e9a91df92bbd82fcc92"
@@ -194,9 +206,9 @@
     query-string "^5.1.1"
     warning "^4.0.1"
 
-"@deskpro/js-utils@^1.0.4":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@deskpro/js-utils/-/js-utils-1.0.5.tgz#8b7c47c07aa731614af8fc543d36da01d8763027"
+"@deskpro/js-utils@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@deskpro/js-utils/-/js-utils-1.0.6.tgz#5562440fb85284a1f4cf666a0b3a56f84e66e586"
 
 "@emotion/babel-utils@^0.6.4":
   version "0.6.9"
@@ -615,12 +627,6 @@ aws-sign2@~0.7.0:
 aws4@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
-
-axios@^0.15.2:
-  version "0.15.3"
-  resolved "http://registry.npmjs.org/axios/-/axios-0.15.3.tgz#2c9d638b2e191a08ea1d6cc988eadd6ba5bdc053"
-  dependencies:
-    follow-redirects "1.0.0"
 
 axobject-query@^0.1.0:
   version "0.1.0"
@@ -3239,6 +3245,13 @@ fbjs@^0.8.16:
     setimmediate "^1.0.5"
     ua-parser-js "^0.7.18"
 
+fetch-vcr@^1.1.0:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/fetch-vcr/-/fetch-vcr-1.1.2.tgz#8cfee49c45b464366b97fe550487dde15b948d21"
+  dependencies:
+    node-fetch "^1.6.3"
+    whatwg-fetch "^2.0.3"
+
 figures@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/figures/-/figures-2.0.0.tgz#3ab1a2d2a62c8bfb431a0c94cb797a2fce27c962"
@@ -3350,12 +3363,6 @@ flat-cache@^1.2.1:
 flatten@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
-
-follow-redirects@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.0.0.tgz#8e34298cbd2e176f254effec75a1c78cc849fd37"
-  dependencies:
-    debug "^2.2.0"
 
 follow-redirects@^1.0.0:
   version "1.5.7"
@@ -3496,15 +3503,6 @@ getpass@^0.1.1:
   resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
   dependencies:
     assert-plus "^1.0.0"
-
-github-api@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/github-api/-/github-api-3.0.0.tgz#2832f98d0d3a83f1485e2db32c9259e4b9c40a75"
-  dependencies:
-    axios "^0.15.2"
-    debug "^2.2.0"
-    js-base64 "^2.1.9"
-    utf8 "^2.1.1"
 
 github-url-from-git@^1.4.0:
   version "1.5.0"
@@ -5105,6 +5103,10 @@ lodash@3.x:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
+lodash@^4.16.4:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
+
 loglevel@^1.4.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
@@ -5456,12 +5458,16 @@ no-case@^2.2.0:
   dependencies:
     lower-case "^1.1.1"
 
-node-fetch@^1.0.1:
+node-fetch@^1.0.1, node-fetch@^1.6.3:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-1.7.3.tgz#980f6f72d85211a5347c6b2bc18c5b84c3eb47ef"
   dependencies:
     encoding "^0.1.11"
     is-stream "^1.0.1"
+
+node-fetch@^2.0.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.2.0.tgz#4ee79bde909262f9775f731e3656d0db55ced5b5"
 
 node-forge@0.7.5:
   version "0.7.5"
@@ -5703,6 +5709,14 @@ object.values@^1.0.4:
 obuf@^1.0.0, obuf@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
+
+octokat@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/octokat/-/octokat-0.10.0.tgz#a56846178199f36ddfc8979c9749ffea65736508"
+  dependencies:
+    fetch-vcr "^1.1.0"
+    lodash "^4.16.4"
+    node-fetch "^2.0.0"
 
 on-finished@~2.3.0:
   version "2.3.0"
@@ -8019,10 +8033,6 @@ user-home@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/user-home/-/user-home-1.1.1.tgz#2b5be23a32b63a7c9deb8d0f28d485724a3df190"
 
-utf8@^2.1.1:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/utf8/-/utf8-2.1.2.tgz#1fa0d9270e9be850d9b05027f63519bf46457d96"
-
 util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
@@ -8265,7 +8275,7 @@ whatwg-fetch@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz#9c84ec2dcf68187ff00bc64e1274b442176e1c84"
 
-whatwg-fetch@>=0.10.0:
+whatwg-fetch@>=0.10.0, whatwg-fetch@^2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.4.tgz#dde6a5df315f9d39991aa17621853d720b85566f"
 

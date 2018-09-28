@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Router, Route, Switch,  } from 'react-router'
+import { Router, Route, Switch,  } from 'react-router';
 import { Loader} from '@deskpro/apps-components';
 import { PageHome, PageAuth, PageLinkIssue, PageCreateIssue } from './UI';
 import { githubAuthenticate, setAccessToken  } from './utils/github';
@@ -79,7 +79,7 @@ export default class GithubApp extends React.PureComponent
           <Route path="auth" render={this.renderPageAuth} />
           <Route path="home" render={this.renderPageHome} />
           <Route path="link" render={this.renderPageLink} />
-          <Route path="create_issue" render={this.renderPageCreateIssue} />
+          <Route path="create" render={this.renderPageCreateIssue} />
           <Route path="loading" render={() => <Loader />} />
           <Route render={() => <Loader />} />
         </Switch>

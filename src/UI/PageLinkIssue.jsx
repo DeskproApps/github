@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Action, ActionBar, Panel } from '@deskpro/apps-components';
+import { Action, ActionBar, Panel, Separator } from '@deskpro/apps-components';
+import debounce from '@deskpro/js-utils/dist/debounce';
 import { Form, Select, required } from '../Forms';
 import Issue from './Issue';
 
 import { reposToOptions } from '../utils/forms';
 import {
-  githubFetchRepo,
-  splitRepoFullName,
   linkGithubIssueFormToCustomField,
   githubIsAuthenticated, githubAuthenticate, githubFetchRepos,
-  githubFetchIssue, githubIssueToCustomField
+  githubIssueToCustomField, githubSearchIssue, githubAddCommentToIssue
 } from '../utils/github';
+import Input from "../Forms/Input";
 
 /**
  * Renders a tab containing a form which is used to link an existing Github issue
@@ -56,8 +56,8 @@ class PageLinkIssue extends React.PureComponent {
       githubAuthenticate()
         .then(() => {
           return githubFetchRepos()
-            .then((repos) => {
-              return this.setState({ repos });
+            .then(({ items }) => {
+              return this.setState({ repos: items });
             }).catch(dpapp.ui.showErrorNotification);
         })
         .catch((e) => {
@@ -69,32 +69,8 @@ class PageLinkIssue extends React.PureComponent {
         });
     } else {
       return githubFetchRepos()
-        .then((repos) => {
-          return this.setState({ repos });
-        }).catch(dpapp.ui.showErrorNotification);
-    }
-  };
-
-  /**
-   * Makes an API call to GitHub to get all the issues for the given repo and stores
-   * them in component state
-   *
-   * @param {string} repo
-   */
-  loadRepoIssues = (repo) => {
-    const { dpapp }  = this.props;
-
-    if (repo) {
-      const info = splitRepoFullName(repo);
-      githubFetchRepo(info.userName, info.repoName)
-        .then(({ issues }) => {
-
-          const promises = issues.map((issue) => {
-            issue.repo = issue.repository_url.split('/').slice(-2).join('/');
-            return githubFetchIssue(issue);
-          });
-
-          return Promise.all(promises).then(issueData => this.setState({ issueData }))
+        .then(({ items }) => {
+          return this.setState({ repos: items });
         }).catch(dpapp.ui.showErrorNotification);
     }
   };
@@ -102,21 +78,28 @@ class PageLinkIssue extends React.PureComponent {
   /**
    * Called when the repo value changes
    *
-   * @param {{value: string}} value
+   * @param {{fullName: string}} fullName
    */
-  handleRepoChange = (value) => {
-    this.loadRepoIssues(value);
+  handleRepoChange = (fullName) => {
+    const repo = this.state.repos.find(r => r.fullName === fullName);
+    repo.issues.fetch()
+      .then(issues => {
+        this.setState({ issueData: issues.items });
+      });
   };
 
   linkIssue = (issue) => {
     const { dpapp, history }  = this.props;
+    const contextObject       = dpapp.context.get('ticket');
     const customFields        = dpapp.context.get('ticket').customFields;
+    const { tabUrl }          = dpapp.context.hostUI;
 
-    issue.repo = `${issue.repoInfo.userName}/${issue.repoInfo.repoName}`;
     return customFields.getAppField('githubIssues', [])
       .then((issues) => {
         issues.push(githubIssueToCustomField(issue));
 
+        const comment = `Linked to ticket [#${contextObject.id}](${tabUrl}).`;
+        githubAddCommentToIssue(issue, comment);
         return customFields.setAppField('githubIssues', issues)
           .then(() => {
             history.push("home", null);
@@ -125,32 +108,23 @@ class PageLinkIssue extends React.PureComponent {
       });
   };
 
-  /**
-   * Called when the form is submitted
-   */
-  handleSubmit = (values) => {
-    const { dpapp, history }  = this.props;
+  doSearch = (value) => {
+    const { dpapp }  = this.props;
 
-    if (! values.number.value) {
-      return ;
+    githubSearchIssue(value)
+      .then((items) => {
+        this.setState({ issueData: items });
+      }).catch(dpapp.ui.showErrorNotification);
+  };
+
+  debouncedSearch = debounce(this.doSearch, 1000);
+
+  handleSearch = (value) => {
+    if (value) {
+      this.debouncedSearch(value)
+    } else {
+      this.setState({ issueData: [] });
     }
-
-    const contextObject       = dpapp.context.get('ticket');
-    const customFields        = dpapp.context.get('ticket').customFields;
-    const { tabUrl }          = dpapp.context.hostUI;
-
-    const customField = linkGithubIssueFormToCustomField(values);
-    customFields.getAppField('githubIssues', [])
-      .then((issues) => {
-        return customFields.setAppField('githubIssues', issues.concat([customField]))
-          .then(() => {
-            history.push("home", null);
-            history.go(1);
-          });
-      }).catch(e => {
-        console.error(e);
-      dpapp.ui.showErrorNotification(e);
-    });
   };
 
   backHome = () => {
@@ -172,11 +146,15 @@ class PageLinkIssue extends React.PureComponent {
 
     return (
       <Panel border={"none"} >
-        <ActionBar title="Link issue">
+        <ActionBar title="Search for an issue">
           <Action icon="close" onClick={this.backHome} />
         </ActionBar>
-
-        <Form name="link_issue" onSubmit={this.handleSubmit}>
+        <Form name="search_issue">
+          <Input type="search" name="search" onChange={this.handleSearch}/>
+        </Form>
+        <Separator title="or" />
+        <ActionBar title="Link issue" />
+        <Form name="link_issue">
           <Select
             label=    "Repository:"
             name=     "repo"
@@ -187,7 +165,7 @@ class PageLinkIssue extends React.PureComponent {
             required
           />
         </Form>
-        {issueData.map(issue => <Issue issue={issue} onLink={() => this.linkIssue(issue)}/>)}
+        {issueData.map(issue => <Issue key={issue.id} issue={issue} onLink={() => this.linkIssue(issue)}/>)}
       </Panel>
     );
   }
