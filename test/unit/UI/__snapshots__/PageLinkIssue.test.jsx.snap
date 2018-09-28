@@ -34,7 +34,7 @@ exports[`successfully renders a link tab 1`] = `
         <span
           className="dp-ActionBarTitle"
         >
-          Link issue
+          Search for an issue
         </span>
       </div>
       <div
@@ -50,6 +50,56 @@ exports[`successfully renders a link tab 1`] = `
           />
         </a>
       </div>
+    </div>
+    <form
+      className="dp-form"
+      onSubmit={[Function]}
+    >
+      <div
+        className="dp-form-group"
+        type="search"
+      >
+        
+        
+        <div
+          className="dp-input"
+        >
+          <input
+            name="search"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onDragStart={[Function]}
+            onDrop={[Function]}
+            onFocus={[Function]}
+            value=""
+          />
+        </div>
+      </div>
+    </form>
+    <div
+      className="dp-Hr"
+    >
+      <span
+        className="dp-HrTitle"
+      >
+        or
+      </span>
+    </div>
+    <div
+      className="dp-ActionBar dp-Level"
+    >
+      <div
+        className="dp-LevelLeft"
+      >
+        <span
+          className="dp-ActionBarTitle"
+        >
+          Link issue
+        </span>
+      </div>
+      <div
+        className="dp-ActionList dp-LevelRight"
+      />
     </div>
     <form
       className="dp-form"

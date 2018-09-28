@@ -28,12 +28,11 @@ export function projectsToOptions(projects) {
   ));
 }
 
-const renderContributor = (contributor) => {
-  let avatar = '';
-  if (contributor.avatarUrl) {
-    avatar = [<Avatar key="avatar" shape="round" src={contributor.avatarUrl} />, <span key="space"> </span>];
+export const renderUser = (user) => {
+  if (user.avatarUrl) {
+    return <span><Avatar key="avatar" shape="round" src={user.avatarUrl} /> {user.login}</span>
   }
-  return <span>{avatar} {contributor.login}</span>
+  return user.login
 };
 
 /**
@@ -43,7 +42,7 @@ const renderContributor = (contributor) => {
 export function contributorsToOptions(contributors) {
   return contributors.map(contributor => (
     {
-      label: renderContributor(contributor),
+      label: renderUser(contributor),
       value: contributor.login,
     }
   ));

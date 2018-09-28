@@ -13,6 +13,24 @@ exports[`successfully renders an issue list item 1`] = `
       <div
         className="dp-LevelLeft"
       >
+        <i
+          className="dp-Icon dp-ActionBarIcon"
+        >
+          <img
+            alt={
+              <a
+                href="https://github.com/deskpro/apps-dpat/pull/14"
+                target="_blank"
+              >
+                #
+                1
+                 - 
+                bug fix
+              </a>
+            }
+            src="icon.png"
+          />
+        </i>
         <span
           className="dp-ActionBarTitle"
         >

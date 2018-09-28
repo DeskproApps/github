@@ -5,6 +5,7 @@ import { Avatar, ListItem, Action, ActionBar, Menu, DataList } from '@deskpro/ap
 
 import { trimString } from '../utils/strings';
 import { repoFromUrl } from '../utils/github';
+import { renderUser } from '../utils/forms';
 import githubLogo from "../main/resources/icon.png";
 
 /**
@@ -68,14 +69,6 @@ class Issue extends React.PureComponent
     });
   };
 
-  renderAssignee = (assignee) => {
-    let avatar = '';
-    if (assignee.avatarUrl) {
-      avatar = [<Avatar key="avatar" shape="round" src={assignee.avatarUrl} />, <span key="space"> </span>];
-    }
-    return <span>{avatar} {assignee.login}</span>
-  };
-
   render() {
     const { issue, onUnlink, onLink } = this.props;
     const { confirmUnlink, menuOpen } = this.state;
@@ -93,10 +86,10 @@ class Issue extends React.PureComponent
             isOpen={menuOpen}
             ref={this.menu}
           >
-            <Action label="Open" icon="open" onClick={() => window.open(issue.htmlUrl, "_blank")} />
-            { onUnlink && !confirmUnlink && <Action label="Unlink" icon="unlink" onClick={this.confirmUnlink} /> }
-            { onUnlink && confirmUnlink && <Action label="Are you sure?" onClick={onUnlink} /> }
-            { onLink && <Action label="Link" icon="link" onClick={onLink} /> }
+            <Action key="open" label="Open" icon="open" onClick={() => window.open(issue.htmlUrl, "_blank")} />
+            { onUnlink && !confirmUnlink && <Action key="unlink" label="Unlink" icon="unlink" onClick={this.confirmUnlink} /> }
+            { onUnlink && confirmUnlink && <Action key="unlink" label="Are you sure?" onClick={onUnlink} /> }
+            { onLink && <Action key="link" label="Link" icon="link" onClick={onLink} /> }
           </Menu>
         </ActionBar>
 
@@ -115,7 +108,7 @@ class Issue extends React.PureComponent
           } : null,
           issue.assignee ? {
             label: "Assignee",
-            value: this.renderAssignee(issue.assignee)
+            value: renderUser(issue.assignee)
           } : null,
         ].filter(x => !!x)} />
 

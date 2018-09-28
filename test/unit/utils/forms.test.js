@@ -2,8 +2,8 @@ import * as forms from '../../../src/utils/forms';
 
 test('reposToOptions successfully squashes repos', done => {
   const repos = [
-    { full_name: 'DeskproApps/github' },
-    { full_name: 'DeskproApps/trello' }
+    { fullName: 'DeskproApps/github' },
+    { fullName: 'DeskproApps/trello' }
   ];
   const expected = [
     { label: 'DeskproApps/github', value: 'DeskproApps/github'},
@@ -44,8 +44,12 @@ test('milestonesToOptions successfully squashes milestones', done => {
 
 test('contributorsToOptions successfully squashes contributors', done => {
   const contributors = [
-    'headzoo',
-    'chroder'
+    {
+      login: 'headzoo'
+    },
+    {
+      login: 'chroder'
+    }
   ];
   const expected = [
     { label: 'headzoo', value: 'headzoo' },

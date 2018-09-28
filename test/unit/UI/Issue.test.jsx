@@ -10,11 +10,8 @@ test('successfully renders an issue list item', done => {
     milestone: '',
     assignee:  '',
     labels:    [],
-    html_url:  'https://github.com/deskpro/apps-dpat/pull/14',
-    repoInfo:  {
-      userName: 'deskpro',
-      repoName: 'apps-dpat'
-    }
+    htmlUrl:  'https://github.com/deskpro/apps-dpat/pull/14',
+    repositoryUrl: 'https://github.com/deskpro/apps-dpat'
   };
 
   const component = renderer.create(<Issue issue={issue} />);
