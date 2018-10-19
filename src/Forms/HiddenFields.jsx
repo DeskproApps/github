@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { objectKeyFilter } from './utils';
+import { objectKeyFilter } from '@deskpro/js-utils/dist/objects';
 import { Button } from '@deskpro/apps-components';
 
 /**

@@ -13,33 +13,71 @@ exports[`successfully renders an issue list item 1`] = `
       <div
         className="dp-LevelLeft"
       >
+        <i
+          className="dp-Icon dp-ActionBarIcon"
+        >
+          <img
+            alt={
+              <a
+                href="https://github.com/deskpro/apps-dpat/pull/14"
+                target="_blank"
+              >
+                #
+                1
+                 - 
+                bug fix
+              </a>
+            }
+            src="icon.png"
+          />
+        </i>
         <span
           className="dp-ActionBarTitle"
         >
-          #1 - bug fix
+          <a
+            href="https://github.com/deskpro/apps-dpat/pull/14"
+            target="_blank"
+          >
+            #
+            1
+             - 
+            bug fix
+          </a>
         </span>
       </div>
       <div
         className="dp-ActionList dp-LevelRight"
       >
-        <a
-          className="dp-ActionListItem dp-ActionListIcon dp---is-hoverable"
-          onClick={[Function]}
-          title="Unlink issue"
+        <div
+          className="dp-ActionListItem"
         >
-          <i
-            className="dp-IconUnlink"
-          />
-        </a>
-        <a
-          className="dp-ActionListItem dp-ActionListIcon dp---is-hoverable"
-          onClick={[Function]}
-          title="Go to issue"
-        >
-          <i
-            className="dp-IconOpen"
-          />
-        </a>
+          <div
+            className="dp-Menu"
+          >
+            <i
+              className="dp-IconSettings"
+              onClick={[Function]}
+            />
+            <div
+              className="dp-ActionList dp-ActionList--is-vertical dp---is-hidden"
+            >
+              <a
+                className="dp-ActionListItem dp-ActionListIcon dp---is-hoverable"
+                onClick={[Function]}
+                title=""
+              >
+                <i
+                  className="dp-IconOpen"
+                />
+                <span
+                  className="dp-ActionListLabel"
+                >
+                  Open
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { objectKeyFilter, childrenRecursiveMap } from './utils';
+import { objectKeyFilter } from '@deskpro/js-utils/dist/objects';
+import { childrenRecursiveMap } from './utils';
 
 class Group extends React.Component {
   static propTypes = {

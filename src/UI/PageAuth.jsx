@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Loader, Panel, Button, Tabs, TabMenu } from '@deskpro/apps-components';
+import { Panel, Button } from '@deskpro/apps-components';
 
 /**
  * Renders the authentication page.

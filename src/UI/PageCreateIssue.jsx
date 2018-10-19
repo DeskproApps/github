@@ -1,24 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Loader, Panel, Button, Tabs, TabMenu, List } from '@deskpro/apps-components';
+import { ActionBar, Action, Panel, Button } from '@deskpro/apps-components';
 
-import { Form, Select, Input, Textarea, Group, required } from '../Forms';
+import { Form, Select, Input, Textarea, required } from '../Forms';
 
 import { reposToOptions, projectsToOptions, contributorsToOptions, milestonesToOptions } from '../utils/forms';
-import { githubFetchRepo, githubSaveIssue, splitRepoFullName, githubIssueToCustomField } from '../utils/github';
-
-const selectParse = (value) => {
-  if (value && value.value !== undefined) {
-    return value.value;
-  }
-  return null;
-};
+import { githubIsAuthenticated,
+  githubAuthenticate, githubSaveIssue, githubFetchRepos,
+  githubIssueToCustomField, repoFromUrl } from '../utils/github';
 
 /**
  * Renders a tab containing a form to create a new Github issue which will be linked
  * to the open ticket.
  */
-class TabCreateIssue extends React.PureComponent
+class PageCreateIssue extends React.PureComponent
 {
 
   static propTypes = {
@@ -26,10 +21,6 @@ class TabCreateIssue extends React.PureComponent
      * Whether or not the tab is hidden or not.
      */
     hidden:  PropTypes.bool,
-    /**
-     * List of Github repos the authenticated user belongs to.
-     */
-    repos:   PropTypes.array,
 
     history: PropTypes.object.isRequired,
 
@@ -39,10 +30,10 @@ class TabCreateIssue extends React.PureComponent
 
   static defaultProps = {
     hidden: false,
-    repos:  []
   };
 
   state  = {
+    repos:        [],
     projects:     [],
     issues:       [],
     milestones:   [],
@@ -50,21 +41,57 @@ class TabCreateIssue extends React.PureComponent
   };
 
   /**
-   * Makes an API call to GitHub to get the projects, issues, milestones, etc for
-   * the given repo and stores the values in component state
-   *
-   * @param {string} repo
+   * Invoked immediately after a component is mounted
    */
-  loadRepoEntities = (repo) => {
-    const { dpapp }  = this.props;
+  componentDidMount() {
+    this.loadRepos();
+  }
 
-    if (repo) {
-      const info = splitRepoFullName(repo);
-      githubFetchRepo(info.userName, info.repoName)
-        .then(({ projects, issues, milestones, contributors }) => {
-          return this.setState({ projects, issues, milestones, contributors });
+  /**
+   * Fetches all the repos and loads them into the component state
+   */
+  loadRepos = () => {
+    const { dpapp, history } = this.props;
+
+    if (!githubIsAuthenticated()) {
+      githubAuthenticate()
+        .then(() => {
+          return githubFetchRepos()
+            .then(({ items }) => {
+              return this.setState({ repos: items });
+            }).catch(dpapp.ui.showErrorNotification);
+        })
+        .catch((e) => {
+          if (String(e) !== 'access_token') {
+            dpapp.ui.showNotification('Invalid GitHub token', 'error');
+          }
+          history.push("home", null);
+          history.go(1);
+        });
+    } else {
+      return githubFetchRepos()
+        .then(({ items }) => {
+          return this.setState({ repos: items });
         }).catch(dpapp.ui.showErrorNotification);
     }
+  };
+
+  loadRepoEntities = (fullName) => {
+    const repo = this.state.repos.find(r => r.fullName === fullName);
+    const promises = [
+      repo.projects.fetch(),
+      repo.issues.fetch(),
+      repo.milestones.fetch(),
+      repo.contributors.fetch(),
+    ];
+    return Promise.all(promises).then(
+      data => this.setState({
+        projects:     data[0].items,
+        issues:       data[1].items,
+        milestones:   data[2].items,
+        contributors: data[3].items
+      })
+    );
   };
 
   /**
@@ -86,11 +113,21 @@ class TabCreateIssue extends React.PureComponent
     const customFields        = dpapp.context.get('ticket').customFields;
     const { tabUrl }          = dpapp.context.hostUI;
 
-    const { repo, project, ...others } = values;
-    const issue = { repo: repo.value, project: project.value, ...others }
+    const { repo, project, milestone, assignee, ...others } = values;
+    const issue = { repo: repo.value, ...others };
+    if (project) {
+      issue.project = project.value;
+    }
+    if (milestone) {
+      issue.milestone = milestone.value;
+    }
+    if (assignee) {
+      issue.assignee = assignee.value;
+    }
 
     return githubSaveIssue(issue, contextObject.id, tabUrl)
       .then((newIssue) => {
+        newIssue.repo = repoFromUrl(newIssue.repositoryUrl);
         return customFields.getAppField('githubIssues', [])
           .then((issues) => {
             issues.push(githubIssueToCustomField(newIssue));
@@ -105,12 +142,18 @@ class TabCreateIssue extends React.PureComponent
       .catch(dpapp.ui.showErrorNotification);
   };
 
+  backHome = () => {
+    const { history }  = this.props;
+    history.push("home", null);
+    history.go(1);
+  };
+
   /**
    * @returns {XML}
    */
   render() {
-    const { repos, hidden } = this.props;
-    const { projects, contributors, milestones } = this.state;
+    const { hidden } = this.props;
+    const { repos, projects, contributors, milestones } = this.state;
 
     if (hidden) {
       return null;
@@ -118,6 +161,9 @@ class TabCreateIssue extends React.PureComponent
 
     return (
       <Panel border={"none"} >
+        <ActionBar title="Create issue">
+          <Action icon="close" onClick={this.backHome} />
+        </ActionBar>
         <Form name="create_issue" onSubmit={this.handleSubmit}>
           <Select
             label=    "Repository:"
@@ -125,6 +171,7 @@ class TabCreateIssue extends React.PureComponent
             // parse=    {selectParse}
             options=  {reposToOptions(repos)}
             onChange= {this.handleRepoChange}
+            validate={required}
           />
           <Select
             label=  "Project:"
@@ -176,4 +223,4 @@ class TabCreateIssue extends React.PureComponent
   }
 }
 
-export default TabCreateIssue;
+export default PageCreateIssue;

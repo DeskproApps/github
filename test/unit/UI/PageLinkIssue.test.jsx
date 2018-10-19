@@ -3,7 +3,7 @@ import renderer from 'react-test-renderer';
 import { Provider } from "react-redux";
 import { createAppFromProps } from '@deskpro/apps-sdk';
 import { createMemoryHistory as createHistory } from "history";
-import TabLinkIssue from '../../../src/UI/TabLinkIssue';
+import PageLinkIssue from '../../../src/UI/PageLinkIssue';
 import store from '../../../src/store';
 
 test('successfully renders a link tab', () => {
@@ -39,7 +39,7 @@ test('successfully renders a link tab', () => {
 
   const component = renderer.create(
     <Provider store={store}>
-      <TabLinkIssue
+      <PageLinkIssue
         repos=      {repos}
         onError=    {() => {}}
         onLinkIssue={() => {}}

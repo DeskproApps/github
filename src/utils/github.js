@@ -1,4 +1,4 @@
-import GitHub from 'github-api';
+import Octokat from 'octokat';
 
 let github = null;
 
@@ -30,14 +30,8 @@ export function splitRepoFullName(repoFullName) {
   };
 }
 
-/**
- * Creates the string representation of the given repo object
- *
- * @param {*} repoInfo
- * @returns {string}
- */
-export function combineRepoFullName(repoInfo) {
-  return `${repoInfo.userName}/${repoInfo.repoName}`;
+export function repoFromUrl(repositoryUrl) {
+  return repositoryUrl.split('/').slice(-2).join('/');
 }
 
 /**
@@ -54,12 +48,12 @@ export function githubAuthenticate() {
       return reject('access_token');
     }
 
-    github = new GitHub({
+    github = new Octokat({
       token: accessToken
     });
     github
-      .getUser()
-      .getProfile()
+      .user
+      .fetch()
       .then(resolve)
       .catch(reject);
   });
@@ -82,41 +76,10 @@ export function githubFetchRepos() {
   }
 
   return github
-    .getUser()
-    .listRepos()
-    .then(resp => resp.data);
-}
-
-/**
- * Returns a promise which resolves to an object containing the repo entities
- *
- * The resolved object contains the repo projects, contributors, issues, and
- * milestones.
- *
- * @param {string} userName
- * @param {string} repoName
- * @returns {Promise}
- */
-export function githubFetchRepo(userName, repoName) {
-  const repo   = github.getRepo(userName, repoName);
-  const issues = github.getIssues(userName, repoName);
-
-  return Promise.all([repo.listProjects(), repo.getContributors(), issues.listIssues(), issues.listMilestones()])
-    .then((values) => {
-      const contributors = [];
-      if (values[1] && values[1].data) {
-        for (let i = 0; i < values[1].data.length; i += 1) {
-          contributors.push(values[1].data[i].login);
-        }
-      }
-
-      return {
-        projects:   values[0].data,
-        issues:     values[2].data,
-        milestones: values[3].data,
-        contributors
-      };
-    });
+    .user
+    .repos
+    .fetch({per_page: 100})
+    .then(data => data);
 }
 
 /**
@@ -131,14 +94,10 @@ export function githubFetchIssue(issue) {
   }
 
   const info   = splitRepoFullName(issue.repo);
-  const issues = github.getIssues(info.userName, info.repoName);
 
-  return issues.getIssue(issue.number)
-    .then((resp) => {
-      return Object.assign({}, resp.data, {
-        repoInfo: info
-      });
-    });
+  return github.repos(info.userName, info.repoName).issues(issue.number)
+    .fetch()
+    .then((data) => data);
 }
 
 /**
@@ -159,17 +118,19 @@ export function githubSaveIssue(issue, entityId, tabUrl) {
   }
 
   const info  = splitRepoFullName(issue.repo);
-  const issues = github.getIssues(info.userName, info.repoName);
 
-  return issues.createIssue(issue)
-    .then((resp) => {
-      const newIssue = Object.assign({}, resp.data, {
-        repo: issue.repo
-      });
+  delete(issue.repo);
+
+  return github.repos(info.userName, info.repoName).issues.create(issue)
+    .then((newIssue) => {
       const comment = `Linked to ticket [#${entityId}](${tabUrl}).`;
-      return issues.createIssueComment(newIssue.number, comment)
-        .then(() => newIssue);
+      return githubAddCommentToIssue(newIssue, comment);
     });
+}
+
+export function githubAddCommentToIssue(issue, comment) {
+  return github.fromUrl(issue.commentsUrl).create({body: comment})
+    .then(() => issue);
 }
 
 /**
@@ -203,6 +164,19 @@ export function githubCustomFieldToIssue(customField) {
 
   return {
     repo:   parts[0],
-    number: parseInt(parts[1])
+    number: parseInt(parts[1], 10)
   };
+}
+
+export function githubSearchIssue(q) {
+  if (!github) {
+    return Promise.reject();
+  }
+  return github
+    .search
+    .issues
+    .fetch({q: `${q} type:issue`, perPage: 50})
+    .then(data => {
+      return data.items;
+    });
 }

@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Loader, Panel, Button, Tabs, TabMenu, List } from '@deskpro/apps-components';
+import { Action, Panel, List } from '@deskpro/apps-components';
 
-import { githubFetchIssue, githubCustomFieldToIssue, combineRepoFullName } from '../utils/github';
+import { githubFetchIssue, githubCustomFieldToIssue, repoFromUrl } from '../utils/github';
 import Issue from './Issue';
 
-const confirm = window && typeof window.confirm === 'function' ? window.confirm : () => true;
 /**
  * Renders a page which displays the issues which have been linked to the
  * open ticket.
@@ -44,22 +43,52 @@ class PageHome extends React.PureComponent
    * method gets the full details for each issue from the GitHub API.
    */
   loadIssues = () => {
-    const { dpapp, history } = this.props;
+    const { dpapp } = this.props;
     const customFields = dpapp.context.get('ticket').customFields;
 
     customFields.getAppField('githubIssues', [])
       .then((issues) => {
-        if (!issues || issues.length === 0) {
-          history.push("create", null);
-          history.go(1);
-        }
+        // if (!issues || issues.length === 0) {
+        //   history.push("create", null);
+        //   history.go(1);
+        // }
 
         const promises = issues.map((issue) => {
           return githubFetchIssue(githubCustomFieldToIssue(issue));
         });
 
+        this.updateBadge();
+
         return Promise.all(promises).then(issueData => this.setState({ issueData }))
-      }).catch(dpapp.ui.showErrorNotification);
+      })
+      .then(() => {
+        this.updateBadge();
+      })
+      .catch(dpapp.ui.showErrorNotification);
+  };
+
+  updateBadge = () => {
+    const { issueData } = this.state;
+    const { ui } = this.props.dpapp;
+
+    if (issueData.length) {
+      ui.showBadgeCount();
+      ui.badgeCount = issueData.length;
+    } else {
+      ui.hideBadgeCount();
+    }
+  };
+
+  openLink = () => {
+    const { history } = this.props;
+    history.push("link", null);
+    history.go(1);
+  };
+
+  openCreate = () => {
+    const { history } = this.props;
+    history.push("create", null);
+    history.go(1);
   };
 
   /**
@@ -73,21 +102,19 @@ class PageHome extends React.PureComponent
     const { dpapp } = this.props;
     const customFields = dpapp.context.get('ticket').customFields;
 
-    if (confirm('Are you sure you want to unlink this issue?')) {
-      const repo = combineRepoFullName(issue.repoInfo);
-      customFields.getAppField('githubIssues', [])
-        .then((issues) => {
-          const newIssues = issues.filter((i) => {
-            const ii = githubCustomFieldToIssue(i);
-            return !(ii.number === issue.number && ii.repo === repo);
-          });
+    const repo = repoFromUrl(issue.repositoryUrl);
+    customFields.getAppField('githubIssues', [])
+      .then((issues) => {
+        const newIssues = issues.filter((i) => {
+          const ii = githubCustomFieldToIssue(i);
+          return !(ii.number === issue.number && ii.repo === repo);
+        });
 
-          return customFields.setAppField('githubIssues', newIssues)
-            .then(() => {
-              return this.loadIssues();
-            });
-        }).catch(dpapp.ui.showErrorNotification);
-    }
+        return customFields.setAppField('githubIssues', newIssues)
+          .then(() => {
+            return this.loadIssues();
+          });
+      }).catch(dpapp.ui.showErrorNotification);
   };
 
   /**
@@ -95,10 +122,11 @@ class PageHome extends React.PureComponent
    */
   render() {
     const { issueData } = this.state;
-    const { history } = this.props;
 
     return (
       <Panel title={"Linked Issues"} border={"none"} className="dp-github-container">
+        <Action icon={"search"} label={"Find"} onClick={this.openLink}/>
+        <Action icon={"add"} label={"Create"} onClick={this.openCreate}/>
         <List className="dp-github-issues">
           {issueData.map((issue) => (
             <Issue
@@ -108,15 +136,6 @@ class PageHome extends React.PureComponent
             />
           ))}
         </List>
-
-        <div className="dp-form-group">
-          <Button onClick={() => {
-            history.push("create", null);
-            history.go(1);
-          }}>
-            Link another issue
-          </Button>
-        </div>
 
       </Panel>
     );

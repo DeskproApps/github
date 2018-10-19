@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Field, fieldPropTypes } from 'redux-form';
 import Group from './Group';
 import classNames from 'classnames';
-import { objectKeyFilter } from './utils';
+import { objectKeyFilter } from '@deskpro/js-utils/dist/objects';
 
 class InputComponent extends React.Component
 {
