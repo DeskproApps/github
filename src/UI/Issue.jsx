@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, ListItem, Action, ActionBar, Menu, DataList } from '@deskpro/apps-components';
+import { ListItem, Action, ActionBar, Menu, DataList } from '@deskpro/apps-components';
 
 
 import { trimString } from '../utils/strings';
 import { repoFromUrl } from '../utils/github';
 import { renderUser } from '../utils/forms';
-import githubLogo from "../main/resources/icon.png";
+import githubLogo from "../githubLogo.png";
 
 /**
  * Renders a single issue which has been linked to the open ticket.
@@ -117,7 +117,7 @@ class Issue extends React.PureComponent
             Labels:
             <div>
               {issue.labels.map((label) => (
-                <span key={label.name} style={{ backgroundColor: `#${label.color}` }}>{label.name}</span>
+                <span key={label.name} style={{ backgroundColor: `#${label.color}`, marginRight: '1em' }}>{label.name}</span>
               ))}
             </div>
           </div>
