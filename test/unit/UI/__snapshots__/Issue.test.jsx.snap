@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`successfully renders an issue list item 1`] = `
+<div
+  className="dp-ListItem dp---is-hoverable dp-github-issue"
+>
+  <div
+    className="dp-ListItemRow"
+  >
+    <div
+      className="dp-ActionBar dp-Level"
+    >
+      <div
+        className="dp-LevelLeft"
+      >
+        <i
+          className="dp-Icon dp-ActionBarIcon"
+        >
+          <img
+            alt={
+              <a
+                href="https://github.com/deskpro/apps-dpat/pull/14"
+                target="_blank"
+              >
+                #
+                1
+                 - 
+                bug fix
+              </a>
+            }
+            src="githubLogo.png"
+          />
+        </i>
+        <span
+          className="dp-ActionBarTitle"
+        >
+          <a
+            href="https://github.com/deskpro/apps-dpat/pull/14"
+            target="_blank"
+          >
+            #
+            1
+             - 
+            bug fix
+          </a>
+        </span>
+      </div>
+      <div
+        className="dp-ActionList dp-LevelRight"
+      >
+        <div
+          className="dp-ActionListItem"
+        >
+          <div
+            className="dp-Menu"
+          >
+            <i
+              className="dp-IconSettings"
+              onClick={[Function]}
+            />
+            <div
+              className="dp-ActionList dp-ActionList--is-vertical dp---is-hidden"
+            >
+              <a
+                className="dp-ActionListItem dp-ActionListIcon dp---is-hoverable"
+                onClick={[Function]}
+                title=""
+              >
+                <i
+                  className="dp-IconOpen"
+                />
+                <span
+                  className="dp-ActionListLabel"
+                >
+                  Open
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="dp-ListItemRow"
+  >
+    <dl
+      className="dp-DataDefList"
+    >
+      <dt
+        className="dp-DataDefListKey"
+      >
+        Repo
+      </dt>
+      <dd
+        className="dp-DataDefListValue"
+      >
+        deskpro/apps-dpat
+      </dd>
+      <dt
+        className="dp-DataDefListKey"
+      >
+        Status
+      </dt>
+      <dd
+        className="dp-DataDefListValue"
+      >
+        open
+      </dd>
+    </dl>
+  </div>
+</div>
+`;

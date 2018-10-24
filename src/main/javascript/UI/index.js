@@ -1,3 +1,0 @@
-export { default as PageHome } from './PageHome';
-export { default as PageCreate } from './PageCreate';
-export { default as PageAuth } from './PageAuth';
