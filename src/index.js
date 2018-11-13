@@ -19,7 +19,7 @@ createApp(dpapp => props => {
   ReactDOM.render(
     <AppFrame {...props}>
       <Provider store={store}>
-        {dpapp.getProperty('isPreRender') ? <AppPlaceholder /> : <App dpapp={dpapp}  history={history}/>}
+        {dpapp.getProperty('isPreRender') ? <AppPlaceholder /> : <App dpapp={dpapp} history={history}/>}
       </Provider>
     </AppFrame>,
     document.getElementById('root')
