@@ -62,7 +62,7 @@ export default class GithubApp extends React.PureComponent
 
   renderPageHome = (props) => <PageHome {...props} dpapp={this.props.dpapp}/>;
 
-  renderPageCreateIssue = (props) => <PageCreateIssue {...props} dpapp={this.props.dpapp}/>;
+  renderPageCreate = (props) => <PageCreateIssue {...props} dpapp={this.props.dpapp}/>;
 
   renderPageLink = (props) => <PageLinkIssue {...props} dpapp={this.props.dpapp}/>;
 
@@ -79,7 +79,7 @@ export default class GithubApp extends React.PureComponent
           <Route path="auth" render={this.renderPageAuth} />
           <Route path="home" render={this.renderPageHome} />
           <Route path="link" render={this.renderPageLink} />
-          <Route path="create" render={this.renderPageCreateIssue} />
+          <Route path="create" render={this.renderPageCreate} />
           <Route path="loading" render={() => <Loader />} />
           <Route render={() => <Loader />} />
         </Switch>
