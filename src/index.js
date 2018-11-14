@@ -7,6 +7,7 @@ import { createMemoryHistory as createHistory } from "history";
 
 import './styles.css';
 import App from './GithubApp';
+import { AppPlaceholder } from './UI';
 import store from './store';
 
 const history = createHistory({
@@ -18,7 +19,7 @@ createApp(dpapp => props => {
   ReactDOM.render(
     <AppFrame {...props}>
       <Provider store={store}>
-        <App dpapp={dpapp} history={history} />
+        {dpapp.getProperty('isPreRender') ? <AppPlaceholder /> : <App dpapp={dpapp} history={history}/>}
       </Provider>
     </AppFrame>,
     document.getElementById('root')
