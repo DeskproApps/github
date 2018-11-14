@@ -20,8 +20,7 @@ after_success:
 deploy:
   skip_cleanup: true
   provider: releases
-  api_key:
-    secure: mSDOZfcdW6/4QggXRxU4ykV+skQbn3PX09c/wFZZ+JSxYy5V4xZNwNIgPeO7U/niP6ILZ+wh2f4JR/MXMa3WjT9OxaXcYgqfsGcicDcBdKq37vky9b/qLxLfQpBkrtaRe/bJBB8TrpnY7RKAz/EiBFD0EdIGkH2KUGC+2SP9PF9B3Vy2EMXKPva3vd1ZFjdzqmB2kMxwUzNuyxZXF7Adqr+0+tYP5crB27SzcbvGAuNm7ickfrnm/i/pwv7O8q8nZ72cYM957lfSPEDi1XNpW+S3SAppB2frTyg1NlEIMLH/IGRu5SQGPew4ZjZo1f2OzdLuVn1N8WjKsq2tW7kv3IoZTIFdrxYkv87LZhwEbbqIuYmL5i0aH0rZ0amcruI2GPfK7CgtkQn0qrjnF6lJRgj5x7TuLxGn/Hn7J72SDBeTbYRx6BXTHsxzY9l2+8p+/Qti2VLufiQrjyOXBmUxh5o3vrpbFO5b4rcPZLKmYPEVGPqSzg4V8TVpec3fFo1742ZuWQ57LBQMwTSJV/vLAkD6c/9uqUtSLX4pgiOKyArzC5oRS8BnSl/bGWvE1fF5YjdVSx/RqrMiWHAY2KYM8YwRlDg3dEKJbE9CZbr3LB5Sv7k+oyq8YmUx1rJ0cyJS2j9hD2lePvCzagJXc2OOMx221Hq3dtkVqolk7b9gbBk=
+  api_key: $GITHUB_TOKEN
   file: build/app.zip
   on:
     repo: DeskproApps/github
