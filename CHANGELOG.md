@@ -4,6 +4,16 @@ This project is following [Semantic Versioning](http://semver.org)
 
 ## [Unreleased][]
 
+## [0.4.0][] - 2018-11-14
+
+### Added
+
+ - show an application placeholder before the app gets a change to load
+
+### Changed
+
+ - upgrade dependencies
+
 ## [0.3.5][] - 2018-08-31
 
  - use the new apps structure
@@ -52,7 +62,8 @@ This project is following [Semantic Versioning](http://semver.org)
  - default `process.env.NODE_ENV` to `production` when packaging the app for distribution with webpack  
 
 
-[Unreleased]: https://github.com/DeskproApps/github/compare/v0.3.5...HEAD
+[Unreleased]: https://github.com/DeskproApps/github/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/DeskproApps/github/compare/v0.3.5...v0.4.0
 [0.3.5]: https://github.com/DeskproApps/github/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/DeskproApps/github/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/DeskproApps/github/compare/v0.3.2...v0.3.3
