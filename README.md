@@ -1,7 +1,7 @@
-My App
+GitHub App
 ===
 
-TODO: Include a summary of app functionality and a screenshot
+Link new and existing GitHub issues to Deskpro tickets. Manage GitHub issues directly from Deskpro.
 
 Basic Usage
 ---
