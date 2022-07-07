@@ -1,27 +1,40 @@
 {
-  "name": "@deskpro-apps/my_app",
-  "title": "My App",
-  "description": "My Deskpro app",
+  "name": "@deskpro-apps/github",
+  "title": "GitHub",
+  "description": "This application adds support for viewing and creating GitHub issues.",
   "version": "1.0.0",
   "scope": "agent",
   "isSingleInstall": false,
+  "hasDevMode": true,
   "targets": [{
     "target": "ticket_sidebar",
     "entrypoint": "index.html"
   }],
   "settings": {
-    "example": {
-      "title": "Example Setting",
-      "description": "Example backend only setting",
+    "client_id": {
+      "title": "Client ID",
       "type": "string",
-      "isRequired": false,
-      "isBackendOnly": true
+      "isRequired": true,
+      "isBackendOnly": false
+    },
+    "client_secret": {
+      "title": "Client secret",
+      "type": "string",
+      "isRequired": true,
+      "isBackendOnly": false
+    }
+  },
+  "entityAssociations": {
+    "linkedGithubIssue": {
+      "title": "Linked Github Issue",
+      "entity": "ticket",
+      "type": "external_id"
     }
   },
   "proxy": {
     "whitelist": [{
-      "url": "https://example.com/.*",
-      "methods": ["GET", "POST", "PUT"],
+      "url": "https://api.github.com/.*",
+      "methods": ["GET", "POST", "PATCH"],
       "timeout": 10
     }]
   }
