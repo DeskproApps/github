@@ -21,6 +21,7 @@ const LogInError = styled(P5)`
 const LogInPage: FC = () => {
     const { client } = useDeskproAppClient();
     const { callback } = useDeskproOAuth2Auth("code", /code=(?<token>[0-9a-f]+)$/);
+
     const [state, dispatch] = useStore();
     const [error, setError] = useState<string | null>(null);
 
@@ -79,6 +80,7 @@ const LogInPage: FC = () => {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
+                            "Content-Type": "application/json",
                         }
                     }));
             })
