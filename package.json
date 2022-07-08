@@ -1,6 +1,6 @@
 {
-  "name": "horizon-vite-app-template",
-  "version": "0.0.0",
+  "name": "@deskpro-apps/github",
+  "version": "0.0.1",
   "license": "BSD-3-Clause",
   "scripts": {
     "start": "vite",

@@ -2,13 +2,22 @@
   "name": "@deskpro-apps/github",
   "title": "GitHub",
   "description": "This application adds support for viewing and creating GitHub issues.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scope": "agent",
   "isSingleInstall": false,
   "hasDevMode": true,
   "targets": [{
     "target": "ticket_sidebar",
-    "entrypoint": "index.html"
+    "entrypoint": "index.html",
+    "options": {
+      "actions": {
+        "linkTicket": {
+          "type": "ticket_addition",
+          "title": "GitHub Issue",
+          "description": "Link ticket to a GitHub issue"
+        }
+      }
+    }
   }],
   "settings": {
     "client_id": {
@@ -34,7 +43,11 @@
   "proxy": {
     "whitelist": [{
       "url": "https://api.github.com/.*",
-      "methods": ["GET", "POST", "PATCH"],
+      "methods": ["GET", "POST"],
+      "timeout": 10
+    }, {
+      "url": "https://github.com/.*",
+      "methods": ["GET", "POST"],
       "timeout": 10
     }]
   }
