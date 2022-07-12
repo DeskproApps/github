@@ -36,6 +36,8 @@ const LogInPage: FC = () => {
             return;
         }
 
+        client.deregisterElement("trelloMenu");
+
         client?.registerElement("myRefreshButton", {
             type: "refresh_button"
         });

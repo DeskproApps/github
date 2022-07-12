@@ -33,3 +33,8 @@ export type StoreReducer = Reducer<State, Action>;
 export type AppElementPayload =
     | { type: "logout" }
     | { type: "changePage", page: Page, params?: PageParams };
+
+export interface ReplyBoxNoteSelection {
+    id: string;
+    selected: boolean;
+};

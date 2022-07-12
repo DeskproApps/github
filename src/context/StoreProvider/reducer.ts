@@ -7,7 +7,6 @@ export const initialState: State = {
 };
 
 export const reducer: StoreReducer = (state: State, action: Action): State => {
-    console.log(">>> reducer:", action);
     return match<[State, Action]>([state, action])
         .with([__, { type: "changePage" }], ([prevState, action]) => ({
             ...prevState,

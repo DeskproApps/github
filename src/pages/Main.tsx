@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import { match } from "ts-pattern";
+import { useDebouncedCallback } from "use-debounce";
 import {
     Context,
+    TargetAction,
     useDeskproAppClient,
     useDeskproAppEvents,
 } from "@deskpro/app-sdk";
-import { AppElementPayload } from "../context/StoreProvider/types";
+import { AppElementPayload, ReplyBoxNoteSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
+import { placeholders } from "../services/github/constants";
 import { LogInPage } from "./LogIn";
 import { HomePage } from "./Home";
 import { AddIssuePage } from "./AddIssue";
@@ -20,6 +23,16 @@ export const Main = () => {
         console.error(`Trello: ${state._error}`);
     }
 
+    const debounceTargetAction = useDebouncedCallback<(a: TargetAction<ReplyBoxNoteSelection[]>) => void>(
+        (action: TargetAction) => {
+            match<string>(action.name)
+                .with("linkTicket", () => dispatch({ type: "changePage", page: "add_issue" }))
+                .run()
+            ;
+        },
+        500,
+    );
+
     useDeskproAppEvents({
         onShow: () => {
             client && setTimeout(() => client.resize(), 200);
@@ -32,12 +45,19 @@ export const Main = () => {
         onElementEvent(id: string, type: string, payload?: AppElementPayload) {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
+            } else if (payload?.type === "logout") {
+                if (client) {
+                    client.deleteUserState(placeholders.OAUTH_TOKEN_PATH)
+                        .then(() => dispatch({ type: "setAuth", isAuth: false }))
+                        .catch((error) => dispatch({ type: "error", error }));
+                }
             }
         },
+        onTargetAction: (a) => debounceTargetAction(a as TargetAction),
     });
 
     useEffect(() => {
-        dispatch({ type: "changePage", page: !state.isAuth ? "log_in" : "add_issue" });
+        dispatch({ type: "changePage", page: !state.isAuth ? "log_in" : "home" });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isAuth]);
 
