@@ -3,15 +3,16 @@ import styled from "styled-components";
 import {
     P5,
     H3,
-    Fetch,
-    proxyFetch,
     useDeskproAppClient,
     useDeskproOAuth2Auth,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { getQueryParams } from "../utils";
-import { Loading, AnchorButton } from "../components/common";
-import { baseRequest } from "../services/github/baseRequest";
+import { AnchorButton } from "../components/common";
+import {
+    getCurrentUserService,
+    getAccessTokenService,
+} from "../services/github";
 
 const LogInError = styled(P5)`
     margin-bottom: 8px;
@@ -26,6 +27,9 @@ const LogInPage: FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const [authUrl, setAuthUrl] = useState<string|null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const clientId =  state?.context?.settings?.client_id;
 
     useEffect(() => {
         if (!client) {
@@ -39,7 +43,6 @@ const LogInPage: FC = () => {
 
     useEffect(() => {
         const callbackUrl = callback?.callbackUrl;
-        const clientId =  state?.context?.settings?.client_id;
 
         if (callbackUrl && clientId) {
             setAuthUrl(`https://github.com/login/oauth/authorize?${getQueryParams({
@@ -49,49 +52,36 @@ const LogInPage: FC = () => {
         } else {
             setAuthUrl(null);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [callback?.callbackUrl, state?.context?.settings?.client_id]);
 
     if (error) {
-        console.error(`Trello: ${error}`);
+        console.error(`Github: ${error}`);
     }
 
     const onSignIn = () => {
-        if (!callback) {
+        if (!callback || !client) {
             return;
         }
 
         callback?.poll()
-            .then((data) => {
-                // statePath: "oauth2/code"
-                // statePathPlaceholder: "[user[oauth2/code]]"
-                console.log(">>> login:code", data);
-                const { statePathPlaceholder } = data;
+            .then(() => {
+                setLoading(true);
 
-                const clientId =  state?.context?.settings?.client_id;
-                const clientSecret =  state?.context?.settings?.client_secret;
-                const requestUrl = `https://github.com/login/oauth/access_token?${getQueryParams({
-                    client_id: clientId,
-                    client_secret: clientSecret,
-                    code: statePathPlaceholder,
-                })}`
-                // @ts-ignore
-                return proxyFetch(client)
-                    .then((dpFetch) => dpFetch(requestUrl, {
-                        method: "POST",
-                        headers: {
-                            "Accept": "application/json",
-                            "Content-Type": "application/json",
-                        }
-                    }));
+                const clientId = state?.context?.settings?.client_id;
+                const clientSecret = state?.context?.settings?.client_secret;
+                return getAccessTokenService(client, clientId, clientSecret);
             })
-            .then((res) => {
-                /*{
-                  "access_token":"gho_16C7e42F292c6912E7710c838347Ae178B4a",
-                  "scope":"repo,gist",
-                  "token_type":"bearer"
-                }*/
-                console.log(">>> login:access:", res);
-            });
+            .then(({ access_token }) => client?.setUserState("oauth2/token", access_token))
+            .then((res) => res?.isSuccess ? Promise.resolve() : Promise.reject())
+            .then(() => getCurrentUserService(client))
+            .then(({ id }) => {
+                if (id) {
+                    dispatch({ type: "setAuth", isAuth:  true });
+                }
+            })
+            .catch((error) => setError(error?.code === 401 ? error.message : error))
+            .finally(() => setLoading(false));
     };
 
     return (
@@ -101,8 +91,8 @@ const LogInPage: FC = () => {
             <AnchorButton
                 text="Sign In"
                 target="_blank"
-                loading={!authUrl}
-                disabled={!authUrl}
+                loading={!authUrl || loading}
+                disabled={!authUrl || loading}
                 href={authUrl || ""}
                 onClick={onSignIn}
             />

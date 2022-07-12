@@ -37,7 +37,7 @@ export const Main = () => {
     });
 
     useEffect(() => {
-        dispatch({ type: "changePage", page: !state.isAuth ? "log_in" : "home" });
+        dispatch({ type: "changePage", page: !state.isAuth ? "log_in" : "add_issue" });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isAuth]);
 
