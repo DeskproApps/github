@@ -1,0 +1,1 @@
+export { getEntityCardListService } from "./getEntityIssueListService";

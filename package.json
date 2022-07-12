@@ -1,6 +1,6 @@
 {
-  "name": "horizon-vite-app-template",
-  "version": "0.0.0",
+  "name": "@deskpro-apps/github",
+  "version": "0.0.1",
   "license": "BSD-3-Clause",
   "scripts": {
     "start": "vite",
@@ -13,17 +13,26 @@
     "test:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=1024 jest --maxWorkers=75% --coverage"
   },
   "dependencies": {
-    "@deskpro/app-sdk": "^1.0.0",
+    "@deskpro/app-sdk": "^1.0.3",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "iframe-resizer": "^4.3.2",
+    "javascript-time-ago": "^2.5.6",
+    "lodash": "^4.17.21",
     "polished": "^4.1.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "styled-components": "^5.3.3",
+    "ts-pattern": "^3.3.5",
+    "use-debounce": "^8.0.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.4.0",
+    "@types/lodash": "^4.14.182",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
+    "@types/styled-components": "^5.1.25",
     "@types/testing-library__jest-dom": "^5.14.2",
     "@typescript-eslint/eslint-plugin": "5.6.0",
     "@typescript-eslint/parser": "5.6.0",

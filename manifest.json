@@ -1,27 +1,53 @@
 {
-  "name": "@deskpro-apps/my_app",
-  "title": "My App",
-  "description": "My Deskpro app",
-  "version": "1.0.0",
+  "name": "@deskpro-apps/github",
+  "title": "GitHub",
+  "description": "This application adds support for viewing and creating GitHub issues.",
+  "version": "1.0.1",
   "scope": "agent",
   "isSingleInstall": false,
+  "hasDevMode": true,
   "targets": [{
     "target": "ticket_sidebar",
-    "entrypoint": "index.html"
+    "entrypoint": "index.html",
+    "options": {
+      "actions": {
+        "linkTicket": {
+          "type": "ticket_addition",
+          "title": "GitHub Issue",
+          "description": "Link ticket to a GitHub issue"
+        }
+      }
+    }
   }],
   "settings": {
-    "example": {
-      "title": "Example Setting",
-      "description": "Example backend only setting",
+    "client_id": {
+      "title": "Client ID",
       "type": "string",
-      "isRequired": false,
-      "isBackendOnly": true
+      "isRequired": true,
+      "isBackendOnly": false
+    },
+    "client_secret": {
+      "title": "Client secret",
+      "type": "string",
+      "isRequired": true,
+      "isBackendOnly": false
+    }
+  },
+  "entityAssociations": {
+    "linkedGithubIssue": {
+      "title": "Linked Github Issue",
+      "entity": "ticket",
+      "type": "external_id"
     }
   },
   "proxy": {
     "whitelist": [{
-      "url": "https://example.com/.*",
-      "methods": ["GET", "POST", "PUT"],
+      "url": "https://api.github.com/.*",
+      "methods": ["GET", "POST"],
+      "timeout": 10
+    }, {
+      "url": "https://github.com/.*",
+      "methods": ["GET", "POST"],
       "timeout": 10
     }]
   }
