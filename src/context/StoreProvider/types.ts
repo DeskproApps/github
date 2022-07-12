@@ -6,7 +6,7 @@ export type ErrorType = Error | string | unknown;
 export type Page =
     | "home"
     | "log_in"
-    | "add_issue";
+    | "link_issue";
 
 export type PageParams = {
     //...
@@ -34,7 +34,7 @@ export type AppElementPayload =
     | { type: "logout" }
     | { type: "changePage", page: Page, params?: PageParams };
 
-export interface ReplyBoxNoteSelection {
+export type ReplyBoxNoteSelection = {
     id: string;
     selected: boolean;
 };

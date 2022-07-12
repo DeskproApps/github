@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {
     P5,
     H3,
+    OAuth2CallbackUrl,
     useDeskproAppClient,
     useDeskproOAuth2Auth,
 } from "@deskpro/app-sdk";
@@ -21,15 +22,16 @@ const LogInError = styled(P5)`
 
 const LogInPage: FC = () => {
     const { client } = useDeskproAppClient();
-    const { callback } = useDeskproOAuth2Auth("code", /code=(?<token>[0-9a-f]+)$/);
+    const { callback: initCallback } = useDeskproOAuth2Auth("code", /code=(?<token>[0-9a-f]+)$/);
 
     const [state, dispatch] = useStore();
-    const [error, setError] = useState<string | null>(null);
-
+    const [error, setError] = useState<string|null>(null);
     const [authUrl, setAuthUrl] = useState<string|null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [callback, setCallback] = useState<OAuth2CallbackUrl|undefined>(initCallback);
 
     const clientId =  state?.context?.settings?.client_id;
+    const callbackUrl = callback?.callbackUrl;
 
     useEffect(() => {
         if (!client) {
@@ -44,8 +46,15 @@ const LogInPage: FC = () => {
     }, [client]);
 
     useEffect(() => {
-        const callbackUrl = callback?.callbackUrl;
+        if (!callback) {
+            client?.oauth2()
+                .getCallbackUrl("code", /code=(?<token>[0-9a-f]+)$/)
+                .then((callback: OAuth2CallbackUrl) => setCallback(callback));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initCallback]);
 
+    useEffect(() => {
         if (callbackUrl && clientId) {
             setAuthUrl(`https://github.com/login/oauth/authorize?${getQueryParams({
                 client_id: clientId,
@@ -55,10 +64,10 @@ const LogInPage: FC = () => {
             setAuthUrl(null);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [callback?.callbackUrl, state?.context?.settings?.client_id]);
+    }, [callbackUrl, clientId]);
 
     if (error) {
-        console.error(`Github: ${error}`);
+        console.error(`Github LogIn: ${error}`);
     }
 
     const onSignIn = () => {
@@ -72,6 +81,7 @@ const LogInPage: FC = () => {
 
                 const clientId = state?.context?.settings?.client_id;
                 const clientSecret = state?.context?.settings?.client_secret;
+
                 return getAccessTokenService(client, clientId, clientSecret);
             })
             .then(({ access_token }) => client?.setUserState("oauth2/token", access_token))
