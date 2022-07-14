@@ -1,6 +1,6 @@
 import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
-import {Issue, DateTime, Repository} from "../../services/github/types";
+import { Issue, DateTime, Repository } from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
 
@@ -49,4 +49,8 @@ export type EntityMetadata = {
     assignees: Array<{ username: string, name: string }>,
     labels: Array<{ id: string, name: string }>,
     createdAt: DateTime
+};
+
+export type ClientStateIssue = {
+    issueUrl: Issue["url"],
 };

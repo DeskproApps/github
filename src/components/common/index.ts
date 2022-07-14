@@ -7,3 +7,4 @@ export { Card, CardMedia, CardBody } from "./Card";
 export { GithubLink } from "./GithubLink";
 export { TwoSider } from "./TwoSider";
 export { TextBlockWithLabel } from "./TextBlockWithLabel";
+export { IssueInfo } from "./IssueInfo";

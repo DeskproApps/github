@@ -1,12 +1,17 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import {
     H3,
+    Pill,
     Stack,
     useDeskproAppTheme,
+    useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { Issue } from "../../../services/github/types";
 import { getDate } from "../../../utils/date";
-import { GithubLink, TwoSider } from "../../common";
+import { getIssueStatueColorScheme } from "../../../utils";
+import { GithubLink } from "../GithubLink";
+import { TwoSider } from "../TwoSider";
+import { TextBlockWithLabel } from "../TextBlockWithLabel";
 
 const Title: FC<Issue & { onClick?: () => void }> = ({ title, html_url, onClick }) => {
     const { theme } = useDeskproAppTheme();
@@ -26,12 +31,35 @@ const Title: FC<Issue & { onClick?: () => void }> = ({ title, html_url, onClick 
 };
 
 const StatusAndDate: FC<Issue> = (props) => {
+    const { theme } = useDeskproAppTheme();
+
     return (
         <TwoSider
             leftLabel="Status"
-            leftText={props.state}
+            leftText={
+                <Pill
+                    label={props.state}
+                    textColor={theme.colors.white}
+                    backgroundColor={getIssueStatueColorScheme(theme, props.state)}
+                />
+            }
             rightLabel="Date Created"
             rightText={getDate(props.created_at)}
+        />
+    );
+};
+
+const TicketsInfo: FC<Issue> = ({ id }) => {
+    const [ticketCount, setTicketCount] = useState<number>(0);
+
+    useInitialisedDeskproAppClient((client) => {
+        client.entityAssociationCountEntities("linkedGithubIssue", `${id}`).then(setTicketCount);
+    });
+
+    return (
+        <TextBlockWithLabel
+            label="Deskpro Tickets"
+            text={ticketCount}
         />
     );
 };
@@ -41,6 +69,7 @@ const IssueInfo: FC<Issue> = (props) => {
         <>
             <Title {...props} />
             <StatusAndDate {...props} />
+            <TicketsInfo {...props} />
         </>
     );
 };

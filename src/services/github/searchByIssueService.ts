@@ -9,7 +9,10 @@ const searchByIssueService = (client: IDeskproClient, query: string) => {
         total_count: number,
     }>(client, {
         url: "/search/issues",
-        queryParams: { q: `${query}+type:issue` },
+        queryParams: {
+            state: "all",
+            q: `${query}+type:issue`,
+        },
         headers: {
             Accept: "application/vnd.github+json",
         }

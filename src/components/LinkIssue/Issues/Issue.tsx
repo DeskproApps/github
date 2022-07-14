@@ -1,12 +1,12 @@
 import { FC } from "react";
 import { Checkbox, HorizontalDivider } from "@deskpro/app-sdk";
 import { Issue as IssueType } from "../../../services/github/types";
-import { Card, CardMedia, CardBody } from "../../common";
-import { IssueInfo } from "./IssueInfo";
+import { Card, CardMedia, CardBody, IssueInfo } from "../../common";
 
 const Issue: FC<IssueType & {
     checked: boolean,
     onChange: () => void,
+    onClick: () => void,
 }> = ({ checked, onChange, ...props }) => {
     return (
         <>

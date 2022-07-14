@@ -25,6 +25,7 @@ const Issues: FC<Props> = ({ onChange, issues, selectedIssues }) => {
                     key={issue.id}
                     checked={selectedIssues.includes(issue.id)}
                     onChange={() => onChange(issue.id)}
+                    onClick={() => onChange(issue.id)}
                     {...issue}
                 />
             ))}

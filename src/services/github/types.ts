@@ -116,9 +116,9 @@ export type Issue = {
     performed_via_github_app: null,
     reactions: Reactions,
     repository_url: Repository["url"],
-    repository_name?: Repository["name"],
+    repository_name: Repository["name"],
     score: number,
-    state: string, /* ToDo: need enum */
+    state: "open" | "closed",
     state_reason: null,
     timeline_url: string,
     title: string,

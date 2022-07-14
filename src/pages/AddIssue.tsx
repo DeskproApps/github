@@ -6,6 +6,7 @@ import {
     useDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
+import { ClientStateIssue } from "../context/StoreProvider/types";
 import { setEntityIssueService } from "../services/entityAssociation";
 import { searchByIssueService, baseRequest } from "../services/github";
 import { Issue, Repository } from "../services/github/types";
@@ -78,7 +79,7 @@ const AddIssue: FC = () => {
                 }, {});
 
                 return linkedIssues.map((issue) => {
-                    if (repos[issue.repository_url]) {
+                    if (repos[issue.repository_url])    {
                         issue.repository_name =  repos[issue.repository_url].name;
                     }
 
@@ -86,9 +87,20 @@ const AddIssue: FC = () => {
                 });
             })
             .then((issuesForSave) => {
-                return Promise.all(issuesForSave.map(
-                    (issue) => setEntityIssueService(client, ticketId, issue.id, getEntityMetadata(issue)))
-                )
+                return Promise.all([
+                    ...issuesForSave.map((issue) => setEntityIssueService(
+                        client,
+                        ticketId,
+                        issue.id,
+                        getEntityMetadata(issue),
+                    )),
+                    ...issuesForSave.map((issue) => {
+                        return client.setState<ClientStateIssue>(
+                            `issues/${issue.id}`,
+                            { issueUrl: issue.url },
+                        );
+                    })
+                ])
             })
             .then(() => dispatch({ type: "changePage", page: "home" }))
             .catch((error) => dispatch({ type: "error", error }));
