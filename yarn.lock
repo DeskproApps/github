@@ -656,6 +656,34 @@
     shortcut-buttons-flatpickr "0.4.0"
     tslib "2.3.1"
 
+"@deskpro/deskpro-ui@2.3.5":
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/@deskpro/deskpro-ui/-/deskpro-ui-2.3.5.tgz#32442b79052324ada513d9ca90153a473ced38df"
+  integrity sha512-REjp5uDSUGlNkSuB/HWO2fE6k4rGum4Ymc0C3BA6UQw8RF5Ld1KEEcEDZSGMtN4O7Qvj/WZztN5Acwo1H0Nwfg==
+  dependencies:
+    "@fortawesome/fontawesome-svg-core" "^6.1.0"
+    "@fortawesome/free-solid-svg-icons" "^6.1.0"
+    "@fortawesome/react-fontawesome" "^0.1.18"
+    "@popperjs/core" "^2.11.0"
+    "@tippyjs/react" "^4.2.6"
+    "@types/styled-components" "^5.1.23"
+    csstype "^3.0.10"
+    formik "^2.2.9"
+    framer-motion "^6.2.8"
+    pretty-bytes "^6.0.0"
+    react-highlight-words "^0.17.0"
+    react-is "^17.0.2"
+    react-popper "^2.2.4"
+    simplebar "^5.3.6"
+    simplebar-react "^2.3.6"
+    styled-components "^5.3.3"
+    tippy.js "^6.3.1"
+    ts-pattern "^4.0.1"
+    tslib "~2.3.1"
+    type-fest "^2.12.0"
+    use-debounce "^7.0.1"
+    uuid "^8.3.2"
+
 "@deskpro/deskpro-ui@^2.5.1":
   version "2.5.2"
   resolved "https://registry.yarnpkg.com/@deskpro/deskpro-ui/-/deskpro-ui-2.5.2.tgz#fa73f94acb2f49c15fe7d1ae6f1ce8248cc81d13"
@@ -1342,7 +1370,7 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
-"@types/styled-components@^5.1.25":
+"@types/styled-components@^5.1.23", "@types/styled-components@^5.1.25":
   version "5.1.25"
   resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-5.1.25.tgz#0177c4ab5fa7c6ed0565d36f597393dae3f380ad"
   integrity sha512-fgwl+0Pa8pdkwXRoVPP9JbqF0Ivo9llnmsm+7TCI330kbPIFd9qv1Lrhr37shf4tnxCOSu+/IgqM7uJXLWZZNQ==
@@ -4299,12 +4327,12 @@ ts-pattern@^3.3.5:
   resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-3.3.5.tgz#9a4bde1d44f9afe7e82409820f68790232c2544c"
   integrity sha512-LD+wFR/RNckk1DrKV0LTH4KIT9wRqnnOjtEf77ovhKcVi8gf83Uf6U7OdywEua6KD9SbHadUdfolayfIUiPxzw==
 
-ts-pattern@^4.0.2:
+ts-pattern@^4.0.1, ts-pattern@^4.0.2:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-4.0.4.tgz#95bae7be40851628f93c6fd647cb0183c27c23a7"
   integrity sha512-gDKHf3T+4X2w5k5IpD4FQ6P5b0LRYW7sJdf/yG7uAdxKitgk2Z8UZLdSBjrXs5mI0Vq6E/hRQd6+Kh3FbdjBzw==
 
-tslib@2.3.1, tslib@^2.1.0:
+tslib@2.3.1, tslib@^2.1.0, tslib@~2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==

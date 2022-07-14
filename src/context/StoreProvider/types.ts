@@ -1,5 +1,6 @@
 import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
+import {Issue, DateTime, Repository} from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
 
@@ -37,4 +38,15 @@ export type AppElementPayload =
 export type ReplyBoxNoteSelection = {
     id: string;
     selected: boolean;
+};
+
+export type EntityMetadata = {
+    id: Issue["id"],
+    title: Issue["title"],
+    repository: Repository["name"],
+    milestone: string,
+    projects: Array<{ id: string, name: string }>,
+    assignees: Array<{ username: string, name: string }>,
+    labels: Array<{ id: string, name: string }>,
+    createdAt: DateTime
 };

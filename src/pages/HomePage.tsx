@@ -18,7 +18,11 @@ const HomePage: FC = () => {
             return;
         }
 
-        client?.registerElement("trelloMenu", {
+        client?.registerElement("githubPlusButton", {
+            type: "plus_button",
+            payload: { type: "changePage", page: "link_issue" },
+        });
+        client?.registerElement("githubMenu", {
             type: "menu",
             items: [{
                 title: "Log Out",

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { match } from "ts-pattern";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -12,8 +12,8 @@ import { useStore } from "../context/StoreProvider/hooks";
 import { checkIsAuthService } from "../services/github";
 import { placeholders } from "../services/github/constants";
 import { LogInPage } from "./LogIn";
-import { HomePage } from "./Home";
-import { AddIssuePage } from "./AddIssue";
+import { HomePage } from "./HomePage";
+import { LinkIssuePage } from "./LinkIssuePage";
 import { ErrorBlock, Loading } from "../components/common";
 
 export const Main = () => {
@@ -22,6 +22,7 @@ export const Main = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     if (state._error) {
+        // eslint-disable-next-line no-console
         console.error(`GitHub: ${state._error}`);
     }
 
@@ -79,7 +80,7 @@ export const Main = () => {
         : match(state.page)
             .with("home", () => <HomePage />)
             .with("log_in", () => <LogInPage />)
-            .with("link_issue", () => <AddIssuePage />)
+            .with("link_issue", () => <LinkIssuePage />)
             .otherwise(() => <LogInPage />);
 
     return loading

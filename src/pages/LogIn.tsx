@@ -38,7 +38,8 @@ const LogInPage: FC = () => {
             return;
         }
 
-        client.deregisterElement("trelloMenu");
+        client.deregisterElement("githubPlusButton");
+        client.deregisterElement("githubMenu");
 
         client?.registerElement("myRefreshButton", {
             type: "refresh_button"
@@ -67,6 +68,7 @@ const LogInPage: FC = () => {
     }, [callbackUrl, clientId]);
 
     if (error) {
+        // eslint-disable-next-line no-console
         console.error(`Github LogIn: ${error}`);
     }
 

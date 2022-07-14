@@ -6,18 +6,22 @@ import { getQueryParams } from "../../utils";
 
 const baseRequest: Request = async (client, {
     url,
+    rawUrl,
     data = {},
     method = "GET",
     queryParams = {},
+    headers: customHeaders
 }) => {
     const dpFetch = await proxyFetch(client);
 
     let body = undefined;
     const headers: Record<string, string> = {};
 
-    const requestUrl = `${BASE_URL}${url}${
-        isEmpty(queryParams) ? "" : `?${getQueryParams(queryParams, true)}`
-    }`;
+    const requestUrl = rawUrl
+        ? rawUrl
+        : `${BASE_URL}${url}${
+            isEmpty(queryParams) ? "" : `?${getQueryParams(queryParams, true)}`
+        }`;
 
     if (data instanceof FormData) {
         body = data;
@@ -36,7 +40,10 @@ const baseRequest: Request = async (client, {
     const res = await dpFetch(requestUrl, {
         method,
         body,
-        headers,
+        headers: {
+            ...headers,
+            ...customHeaders,
+        },
     });
 
     if (res.status === 400) {
