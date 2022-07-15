@@ -100,10 +100,10 @@ const LogInPage: FC = () => {
 
     return (
         <>
-            <H3 style={{ marginBottom: !error ? 14 : 2 }}>Login to your GitHub account</H3>
+            <H3 style={{ marginBottom: !error ? 14 : 2 }}>Log into your GitHub Account</H3>
             {error && (<LogInError>An error occurred, please try again.</LogInError>)}
             <AnchorButton
-                text="Sign In"
+                text="Log In"
                 target="_blank"
                 loading={!authUrl || loading}
                 disabled={!authUrl || loading}
