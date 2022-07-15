@@ -67,13 +67,13 @@ export const Main = () => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                client?.deleteUserState(placeholders.OAUTH_TOKEN_PATH)
+                client && client.deleteUserState(placeholders.OAUTH_TOKEN_PATH)
                     .then(() => dispatch({ type: "setAuth", isAuth: false }))
                     .catch((error) => dispatch({ type: "error", error }));
             }
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
-    });
+    }, [client]);
 
     const page = !state.isAuth
         ? <LogInPage />

@@ -100,7 +100,7 @@ const LogInPage: FC = () => {
 
     return (
         <>
-            <H3 style={{ marginBottom: !error ? 14 : 2 }}>Log into your Trello Account</H3>
+            <H3 style={{ marginBottom: !error ? 14 : 2 }}>Login to your GitHub account</H3>
             {error && (<LogInError>An error occurred, please try again.</LogInError>)}
             <AnchorButton
                 text="Sign In"
