@@ -5,11 +5,10 @@ import { getQueryParams } from "../../utils";
 const getAccessTokenService = (
     client: IDeskproClient,
     clientId: string,
-    clientSecret: string,
 ): Promise<{ access_token?: string }> => {
     const requestUrl = `https://github.com/login/oauth/access_token?${getQueryParams({
         client_id: clientId,
-        client_secret: clientSecret,
+        client_secret: "__client_secret__",
         code: placeholders.CODE,
     })}`;
 

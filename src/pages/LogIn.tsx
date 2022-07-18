@@ -60,6 +60,7 @@ const LogInPage: FC = () => {
             setAuthUrl(`https://github.com/login/oauth/authorize?${getQueryParams({
                 client_id: clientId,
                 redirect_uri: callbackUrl,
+                scope: "repo",
             })}`);
         } else {
             setAuthUrl(null);
@@ -76,15 +77,13 @@ const LogInPage: FC = () => {
         if (!callback || !client) {
             return;
         }
-
         callback?.poll()
             .then(() => {
                 setLoading(true);
 
                 const clientId = state?.context?.settings?.client_id;
-                const clientSecret = state?.context?.settings?.client_secret;
 
-                return getAccessTokenService(client, clientId, clientSecret);
+                return getAccessTokenService(client, clientId);
             })
             .then(({ access_token }) => {
                 return client?.setUserState("oauth2/token", access_token)
@@ -93,8 +92,8 @@ const LogInPage: FC = () => {
                 return res?.isSuccess ? Promise.resolve() : Promise.reject()
             })
             .then(() => getCurrentUserService(client))
-            .then(({ id }) => {
-                if (id) {
+            .then((user) => {
+                if (user.id) {
                     dispatch({ type: "setAuth", isAuth:  true });
                 }
             })

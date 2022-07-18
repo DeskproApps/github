@@ -30,7 +30,7 @@
       "title": "Client secret",
       "type": "string",
       "isRequired": true,
-      "isBackendOnly": false
+      "isBackendOnly": true
     }
   },
   "entityAssociations": {

@@ -7,7 +7,7 @@ const getUserReposService = (client: IDeskproClient) => {
         url: "/user/repos",
         queryParams: {
             per_page: 100,
-            affiliation: "owner,collaborator,organization_member",
+            affiliation: "collaborator,organization_member",
         }
     })
 };
