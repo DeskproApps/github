@@ -1,7 +1,7 @@
 {
   "name": "@deskpro-apps/github",
   "title": "GitHub",
-  "description": "This application adds support for viewing and creating GitHub issues.",
+  "description": "View your GitHub issues from Deskpro and link them to tickets you are working on",
   "version": "1.0.1",
   "scope": "agent",
   "isSingleInstall": false,
