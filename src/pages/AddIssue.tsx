@@ -154,18 +154,18 @@ const AddIssue: FC = () => {
 
     return (
         <div style={{ minHeight: "500px" }}>
-            <SingleSelect
-                label="Repository"
-                value={selectedRepo}
-                onChange={onChangeSelect}
-                options={Object.values(repoOptions)}
-            />
-
             <InputSearch
                 disabled={!selectedRepo?.value}
                 value={searchIssue}
                 onClear={onClearSearch}
                 onChange={onChangeSearch}
+            />
+
+            <SingleSelect
+                label="Repository"
+                value={selectedRepo}
+                onChange={onChangeSelect}
+                options={Object.values(repoOptions)}
             />
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
