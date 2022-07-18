@@ -61,6 +61,9 @@ const baseRequest: Request = async (client, {
         throw new Error(`${method} ${url}: Response Status [${res.status}]`);
     }
 
+    // ToDo: consider this case
+    // https://docs.github.com/en/developers/apps/managing-oauth-apps/troubleshooting-oauth-app-access-token-request-errors#bad-verification-code
+
     try {
         return await res.json();
     } catch (e) {
