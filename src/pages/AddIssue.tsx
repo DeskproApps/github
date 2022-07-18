@@ -1,18 +1,36 @@
-import { useState, FC, ChangeEvent } from "react";
+import { useState, FC, ChangeEvent, useEffect } from "react";
+import isEmpty from "lodash/isEmpty";
 import { useDebouncedCallback } from "use-debounce";
 import {
     Stack,
     HorizontalDivider,
     useDeskproAppClient,
+    useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
 import { setEntityIssueService } from "../services/entityAssociation";
-import { searchByIssueService, baseRequest } from "../services/github";
+import {
+    baseRequest,
+    getUserReposService,
+    searchByIssueService,
+} from "../services/github";
 import { Issue, Repository } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
 import { Issues } from "../components/LinkIssue";
-import { InputSearch, Loading, Button } from "../components/common";
+import {
+    Button,
+    Loading,
+    InputSearch,
+    SingleSelect,
+} from "../components/common";
+
+type OptionRepository = {
+    key: Repository["id"],
+    value: Repository["full_name"],
+    label: Repository["name"],
+    type: "value",
+};
 
 const AddIssue: FC = () => {
     const { client } = useDeskproAppClient();
@@ -20,11 +38,29 @@ const AddIssue: FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [searchIssue, setSearchIssue] = useState<string>("");
     const [issues, setIssues] = useState<Issue[]>([]);
+    const [repoOptions, setRepoOptions] = useState<Array<OptionRepository>>([]);
+    const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
     const [selectedIssues, setSelectedIssues] = useState<Array<Issue["id"]>>([]);
     const ticketId = state.context?.data.ticket.id
 
+    useInitialisedDeskproAppClient((client) => {
+        getUserReposService(client)
+            .then((repos) => setRepoOptions(repos.map((repo) => ({
+                key: repo.id,
+                value: repo.full_name,
+                label: repo.name,
+                type: "value",
+            }))))
+    });
+
+    useEffect(() => {
+        if (!isEmpty(repoOptions) && !isEmpty(repoOptions[0])) {
+            setSelectedRepo(repoOptions[0]);
+        }
+    }, [repoOptions]);
+
     const onClearSearch = () => {
-        setSearchIssue('');
+        setSearchIssue("");
         setIssues([]);
     };
 
@@ -39,7 +75,7 @@ const AddIssue: FC = () => {
     };
 
     const searchInGithub = useDebouncedCallback<(q: string) => void>((q) => {
-        if (!client) {
+        if (!client || !selectedRepo?.value) {
             return;
         }
 
@@ -50,7 +86,7 @@ const AddIssue: FC = () => {
 
         setLoading(true);
 
-        searchByIssueService(client, q)
+        searchByIssueService(client, q, selectedRepo.value)
             .then(({ items }) => setIssues(items))
             .catch((error) => {
                 if (error?.code === 401) {
@@ -63,6 +99,11 @@ const AddIssue: FC = () => {
     const onChangeSearch = ({ target: { value: q }}: ChangeEvent<HTMLInputElement>) => {
         setSearchIssue(q);
         searchInGithub(q);
+    };
+
+    const onChangeSelect = (option: OptionRepository) => {
+        setSelectedRepo(option);
+        searchInGithub(searchIssue);
     };
 
     const onLinkIssues = () => {
@@ -112,8 +153,16 @@ const AddIssue: FC = () => {
     };
 
     return (
-        <>
+        <div style={{ minHeight: "500px" }}>
+            <SingleSelect
+                label="Repository"
+                value={selectedRepo}
+                onChange={onChangeSelect}
+                options={Object.values(repoOptions)}
+            />
+
             <InputSearch
+                disabled={!selectedRepo?.value}
                 value={searchIssue}
                 onClear={onClearSearch}
                 onChange={onChangeSearch}
@@ -121,7 +170,7 @@ const AddIssue: FC = () => {
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button
-                    disabled={selectedIssues.length === 0}
+                    disabled={selectedIssues.length === 0 || !selectedRepo?.value}
                     text="Link Issue"
                     onClick={onLinkIssues}
                 />
@@ -146,7 +195,7 @@ const AddIssue: FC = () => {
                     </>
                 )
             }
-        </>
+        </div>
     );
 };
 

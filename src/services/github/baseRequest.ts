@@ -32,7 +32,7 @@ const baseRequest: Request = async (client, {
     if (body instanceof FormData) {
         //...
     } else if (data) {
-        headers["Accept"] = "application/json";
+        headers["Accept"] = "application/vnd.github+json";
         headers["Content-Type"] = "application/json";
         headers["Authorization"] = `token ${placeholders.TOKEN}`;
     }

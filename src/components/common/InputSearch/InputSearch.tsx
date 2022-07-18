@@ -7,7 +7,7 @@ import {
 } from "@deskpro/app-sdk";
 import { Props } from "./types";
 
-const InputSearch: FC<Props> = ({ value, label, onChange, onClear, required = false }) => {
+const InputSearch: FC<Props> = ({ value, label, onChange, onClear, disabled = false, required = false }) => {
     return (
         <Label
             required={required}
@@ -16,6 +16,7 @@ const InputSearch: FC<Props> = ({ value, label, onChange, onClear, required = fa
             style={{ marginBottom: 11 }}
         >
             <Input
+                disabled={disabled}
                 id="inputSearch"
                 value={value}
                 onChange={onChange}

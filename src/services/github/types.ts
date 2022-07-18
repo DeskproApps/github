@@ -91,8 +91,10 @@ export type Reactions = {
 
 // ToDo: need full typings
 export type Repository = {
+    id: string,
     name: string,
     url: string,
+    full_name: string,
 };
 
 export type Issue = {

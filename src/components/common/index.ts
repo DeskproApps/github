@@ -8,3 +8,5 @@ export { GithubLink } from "./GithubLink";
 export { TwoSider } from "./TwoSider";
 export { TextBlockWithLabel } from "./TextBlockWithLabel";
 export { IssueInfo } from "./IssueInfo";
+export { SingleSelect } from "./SingleSelect";
+export { Label } from "./Label";
