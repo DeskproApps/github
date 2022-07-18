@@ -1,12 +1,13 @@
 import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
+import { Issue, DateTime, Repository } from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
 
 export type Page =
     | "home"
     | "log_in"
-    | "add_issue";
+    | "link_issue";
 
 export type PageParams = {
     //...
@@ -34,7 +35,22 @@ export type AppElementPayload =
     | { type: "logout" }
     | { type: "changePage", page: Page, params?: PageParams };
 
-export interface ReplyBoxNoteSelection {
+export type ReplyBoxNoteSelection = {
     id: string;
     selected: boolean;
+};
+
+export type EntityMetadata = {
+    id: Issue["id"],
+    title: Issue["title"],
+    repository: Repository["name"],
+    milestone: string,
+    projects: Array<{ id: string, name: string }>,
+    assignees: Array<{ username: string, name: string }>,
+    labels: Array<{ id: string, name: string }>,
+    createdAt: DateTime
+};
+
+export type ClientStateIssue = {
+    issueUrl: Issue["url"],
 };

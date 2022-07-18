@@ -3,11 +3,13 @@ import { IDeskproClient } from "@deskpro/app-sdk";
 export type ApiRequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 export type RequestParams = {
-    url: string,
+    url?: string,
+    rawUrl?: string,
     method?: ApiRequestMethod,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: any,
-    queryParams?: Record<string, string|number|boolean>
+    headers?: Record<string, string>,
+    queryParams?: Record<string, string|number|boolean>,
 };
 
 export type Request = <T>(
@@ -53,4 +55,76 @@ export type User = {
     type: "User",
     updated_at: DateTime,
     url: string,
+};
+
+export type Milestone = {
+    closed_at: null | DateTime,
+    closed_issues: number,
+    created_at: DateTime,
+    creator: User,
+    description: string,
+    due_on: null | DateTime,
+    html_url: string,
+    id: number,
+    labels_url: string,
+    node_id: string,
+    number: number,
+    open_issues: number,
+    state: string, // ToDo: need enum
+    title: string,
+    updated_at: DateTime,
+    url: string,
+};
+
+export type Reactions = {
+    "+1": number,
+    "-1": number,
+    confused: number,
+    eyes: number,
+    heart: number,
+    hooray: number,
+    laugh: number,
+    rocket: number,
+    total_count: number,
+    url: string,
+};
+
+// ToDo: need full typings
+export type Repository = {
+    id: string,
+    name: string,
+    url: string,
+    full_name: string,
+};
+
+export type Issue = {
+    assignee: null,
+    assignees: [],
+    author_association: string, // ToDo: need enum
+    body: null,
+    closed_at: DateTime | null,
+    comments: number,
+    comments_url: string,
+    created_at: DateTime,
+    events_url: string,
+    html_url: string,
+    id: number,
+    labels: [],
+    labels_url: string,
+    locked: boolean,
+    milestone: null | Milestone,
+    node_id: string,
+    number: number,
+    performed_via_github_app: null,
+    reactions: Reactions,
+    repository_url: Repository["url"],
+    repository_name: Repository["name"],
+    score: number,
+    state: "open" | "closed",
+    state_reason: null,
+    timeline_url: string,
+    title: string,
+    updated_at: DateTime,
+    url: string,
+    user: User,
 };

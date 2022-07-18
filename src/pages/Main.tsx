@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { match } from "ts-pattern";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -9,26 +9,59 @@ import {
 } from "@deskpro/app-sdk";
 import { AppElementPayload, ReplyBoxNoteSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
+import { checkIsAuthService } from "../services/github";
 import { placeholders } from "../services/github/constants";
 import { LogInPage } from "./LogIn";
-import { HomePage } from "./Home";
-import { AddIssuePage } from "./AddIssue";
-import { ErrorBlock } from "../components/common";
+import { HomePage } from "./HomePage";
+import { LinkIssuePage } from "./LinkIssuePage";
+import { ErrorBlock, Loading } from "../components/common";
 
 export const Main = () => {
     const [state, dispatch] = useStore();
     const { client } = useDeskproAppClient();
+    const [loading, setLoading] = useState<boolean>(false);
 
     if (state._error) {
-        console.error(`Trello: ${state._error}`);
+        // eslint-disable-next-line no-console
+        console.error(`GitHub: ${state._error}`);
     }
+
+    useEffect(() => {
+        if (!client) {
+            return;
+        }
+
+        setLoading(true);
+
+        checkIsAuthService(client)
+            .then((isAuth) => dispatch({ type: "setAuth", isAuth }))
+            .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [client]);
+
+    useEffect(() => {
+        if (!client) {
+            return;
+        }
+
+        if (state.isAuth) {
+            dispatch({ type: "changePage", page: "home" });
+        } else {
+            Promise.all([
+                client.deleteUserState(placeholders.CODE_PATH),
+                client.deleteUserState(placeholders.OAUTH_TOKEN_PATH),
+            ])
+                .then(() => dispatch({ type: "changePage", page: "log_in" }))
+                .catch((error) => dispatch({ type: "error", error }));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.isAuth]);
 
     const debounceTargetAction = useDebouncedCallback<(a: TargetAction<ReplyBoxNoteSelection[]>) => void>(
         (action: TargetAction) => {
             match<string>(action.name)
-                .with("linkTicket", () => dispatch({ type: "changePage", page: "add_issue" }))
-                .run()
-            ;
+                .with("linkTicket", () => dispatch({ type: "changePage", page: "link_issue" }))
+                .run();
         },
         500,
     );
@@ -42,39 +75,32 @@ export const Main = () => {
         },
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        onElementEvent(id: string, type: string, payload?: AppElementPayload) {
+        onElementEvent: (id: string, type: string, payload?: AppElementPayload) => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                if (client) {
-                    client.deleteUserState(placeholders.OAUTH_TOKEN_PATH)
-                        .then(() => dispatch({ type: "setAuth", isAuth: false }))
-                        .catch((error) => dispatch({ type: "error", error }));
-                }
+                dispatch({ type: "setAuth", isAuth: false });
             }
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
-    });
-
-    useEffect(() => {
-        dispatch({ type: "changePage", page: !state.isAuth ? "log_in" : "home" });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.isAuth]);
+    }, [client]);
 
     const page = !state.isAuth
         ? <LogInPage />
         : match(state.page)
             .with("home", () => <HomePage />)
             .with("log_in", () => <LogInPage />)
-            .with("add_issue", () => <AddIssuePage />)
+            .with("link_issue", () => <LinkIssuePage />)
             .otherwise(() => <LogInPage />);
 
-    return (
-        <>
-            {state._error && (
-                <ErrorBlock text="An error occurred" />
-            )}
-            {page}
-        </>
-    );
+    return loading
+        ? (<Loading />)
+        : (
+            <>
+                {state._error && (
+                    <ErrorBlock text="An error occurred" />
+                )}
+                {page}
+            </>
+        );
 };
