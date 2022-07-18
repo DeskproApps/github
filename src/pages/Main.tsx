@@ -40,10 +40,22 @@ export const Main = () => {
     }, [client]);
 
     useEffect(() => {
-        dispatch({ type: "changePage", page: !state.isAuth ? "log_in" : "home" });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.isAuth]);
+        if (!client) {
+            return;
+        }
 
+        if (state.isAuth) {
+            dispatch({ type: "changePage", page: "home" });
+        } else {
+            Promise.all([
+                client.deleteUserState(placeholders.CODE_PATH),
+                client.deleteUserState(placeholders.OAUTH_TOKEN_PATH),
+            ])
+                .then(() => dispatch({ type: "changePage", page: "log_in" }))
+                .catch((error) => dispatch({ type: "error", error }));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.isAuth]);
 
     const debounceTargetAction = useDebouncedCallback<(a: TargetAction<ReplyBoxNoteSelection[]>) => void>(
         (action: TargetAction) => {
@@ -67,9 +79,7 @@ export const Main = () => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                client && client.deleteUserState(placeholders.OAUTH_TOKEN_PATH)
-                    .then(() => dispatch({ type: "setAuth", isAuth: false }))
-                    .catch((error) => dispatch({ type: "error", error }));
+                dispatch({ type: "setAuth", isAuth: false });
             }
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),

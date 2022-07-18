@@ -52,6 +52,11 @@ const AddIssue: FC = () => {
 
         searchByIssueService(client, q)
             .then(({ items }) => setIssues(items))
+            .catch((error) => {
+                if (error?.code === 401) {
+                    dispatch({ type: "setAuth", isAuth: false });
+                }
+            })
             .finally(() => setLoading(false));
     }, 500);
 

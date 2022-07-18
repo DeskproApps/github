@@ -86,8 +86,12 @@ const LogInPage: FC = () => {
 
                 return getAccessTokenService(client, clientId, clientSecret);
             })
-            .then(({ access_token }) => client?.setUserState("oauth2/token", access_token))
-            .then((res) => res?.isSuccess ? Promise.resolve() : Promise.reject())
+            .then(({ access_token }) => {
+                return client?.setUserState("oauth2/token", access_token)
+            })
+            .then((res) => {
+                return res?.isSuccess ? Promise.resolve() : Promise.reject()
+            })
             .then(() => getCurrentUserService(client))
             .then(({ id }) => {
                 if (id) {
