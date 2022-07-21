@@ -43,6 +43,24 @@ const ViewIssuePage: FC = () => {
 
     }, [client]);
 
+    useEffect(() => {
+        if (!client || !state.context?.data.ticket.id || !issue?.id) {
+            return;
+        }
+
+        client.registerElement("githubMenu", {
+            type: "menu",
+            items: [{
+                title: "Unlink Ticket",
+                payload: {
+                    type: "unlinkTicket",
+                    issueId: issue.id,
+                    ticketId: state.context.data.ticket.id
+                },
+            }],
+        });
+    }, [client, state.context?.data.ticket.id, issue?.id]);
+
     useInitialisedDeskproAppClient((client) => {
 
         if (issueUrl) {

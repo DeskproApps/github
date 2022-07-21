@@ -9,6 +9,7 @@ import {
 } from "@deskpro/app-sdk";
 import { AppElementPayload, ReplyBoxNoteSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
+import { deleteEntityIssueService } from "../services/entityAssociation";
 import { checkIsAuthService } from "../services/github";
 import { placeholders } from "../services/github/constants";
 import { LogInPage } from "./LogIn";
@@ -81,6 +82,11 @@ export const Main = () => {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
                 dispatch({ type: "setAuth", isAuth: false });
+            } else if (payload?.type === "unlinkTicket") {
+                if (client) {
+                    deleteEntityIssueService(client, payload.ticketId, payload.issueId)
+                        .then(() => dispatch({ type: "changePage", page: "home" }))
+                }
             }
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
