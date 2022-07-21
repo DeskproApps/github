@@ -13,7 +13,11 @@ import { GithubLink } from "../GithubLink";
 import { TwoSider } from "../TwoSider";
 import { TextBlockWithLabel } from "../TextBlockWithLabel";
 
-const Title: FC<Issue & { onClick?: () => void }> = ({ title, html_url, onClick }) => {
+type Props = Issue & {
+    onClick?: () => void,
+};
+
+const Title: FC<Props> = ({ title, html_url, onClick }) => {
     const { theme } = useDeskproAppTheme();
 
     return (
@@ -30,7 +34,7 @@ const Title: FC<Issue & { onClick?: () => void }> = ({ title, html_url, onClick 
     );
 };
 
-const StatusAndDate: FC<Issue> = (props) => {
+const StatusAndDate: FC<Props> = (props) => {
     const { theme } = useDeskproAppTheme();
 
     return (
@@ -49,7 +53,7 @@ const StatusAndDate: FC<Issue> = (props) => {
     );
 };
 
-const TicketsInfo: FC<Issue> = ({ id }) => {
+const TicketsInfo: FC<Props> = ({ id }) => {
     const [ticketCount, setTicketCount] = useState<number>(0);
 
     useInitialisedDeskproAppClient((client) => {
@@ -64,7 +68,7 @@ const TicketsInfo: FC<Issue> = ({ id }) => {
     );
 };
 
-const IssueInfo: FC<Issue> = (props) => {
+const IssueInfo: FC<Props> = (props) => {
     return (
         <>
             <Title {...props} />

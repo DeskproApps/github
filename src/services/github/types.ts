@@ -97,9 +97,19 @@ export type Repository = {
     full_name: string,
 };
 
+export type Label = {
+    id: number,
+    node_id: string,
+    url: string,
+    name: string,
+    color: string,
+    default: boolean,
+    description?: string,
+};
+
 export type Issue = {
     assignee: null,
-    assignees: [],
+    assignees?: User[],
     author_association: string, // ToDo: need enum
     body: null,
     closed_at: DateTime | null,
@@ -109,7 +119,7 @@ export type Issue = {
     events_url: string,
     html_url: string,
     id: number,
-    labels: [],
+    labels: Label[],
     labels_url: string,
     locked: boolean,
     milestone: null | Milestone,
@@ -128,3 +138,20 @@ export type Issue = {
     url: string,
     user: User,
 };
+
+export type Comment = {
+    author_association: "COLLABORATOR"|"CONTRIBUTOR"|"FIRST_TIMER"|"FIRST_TIME_CONTRIBUTOR"|"MANNEQUIN"|"MEMBER"|"NONE"|"OWNER",
+    body: string,
+    created_at: DateTime,
+    html_url: string,
+    id: number,
+    issue_url: string,
+    node_id: string,
+    performed_via_github_app: null|object,
+    reactions: Reactions
+    updated_at: DateTime,
+    url: string,
+    user: User,
+}
+
+export type Comments = Comment[];

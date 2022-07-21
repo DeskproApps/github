@@ -14,6 +14,7 @@ import { placeholders } from "../services/github/constants";
 import { LogInPage } from "./LogIn";
 import { HomePage } from "./HomePage";
 import { LinkIssuePage } from "./LinkIssuePage";
+import { ViewIssuePage } from "./ViewIssuePage";
 import { ErrorBlock, Loading } from "../components/common";
 
 export const Main = () => {
@@ -91,6 +92,7 @@ export const Main = () => {
             .with("home", () => <HomePage />)
             .with("log_in", () => <LogInPage />)
             .with("link_issue", () => <LinkIssuePage />)
+            .with("view_issue", () => <ViewIssuePage />)
             .otherwise(() => <LogInPage />);
 
     return loading

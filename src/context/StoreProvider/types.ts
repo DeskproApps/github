@@ -1,16 +1,17 @@
 import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
-import { Issue, DateTime, Repository } from "../../services/github/types";
+import { Issue, DateTime, Repository, Label } from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
 
 export type Page =
     | "home"
     | "log_in"
-    | "link_issue";
+    | "link_issue"
+    | "view_issue";
 
 export type PageParams = {
-    //...
+    issueUrl?: Issue["url"],
 };
 
 export interface State {
@@ -47,7 +48,7 @@ export type EntityMetadata = {
     milestone: string,
     projects: Array<{ id: string, name: string }>,
     assignees: Array<{ username: string, name: string }>,
-    labels: Array<{ id: string, name: string }>,
+    labels: Array<{ id: Label["id"], name: Label["name"] }>,
     createdAt: DateTime
 };
 
