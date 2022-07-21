@@ -21,6 +21,7 @@ const LinkIssuePage: FC = () => {
         }
 
         client?.deregisterElement("githubPlusButton");
+        client?.deregisterElement("githubHomeButton");
 
         client?.registerElement("githubMenu", {
             type: "menu",

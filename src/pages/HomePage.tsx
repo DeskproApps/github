@@ -25,6 +25,8 @@ const HomePage: FC = () => {
             return;
         }
 
+        client.deregisterElement("githubHomeButton");
+
         client?.registerElement("githubPlusButton", {
             type: "plus_button",
             payload: { type: "changePage", page: "link_issue" },
@@ -68,13 +70,26 @@ const HomePage: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [client, ticketId]);
 
+    const onClickTitle = (url: Issue["url"]) => () => {
+        dispatch({
+            type: "changePage",
+            page: "view_issue",
+            params: {
+                issueUrl: url,
+            },
+        });
+    };
+
     return loading
         ? (<Loading/>)
         : (
             <>
                 {issues.map((issue) => (
                     <Fragment key={issue.id} >
-                        <IssueInfo {...issue} />
+                        <IssueInfo
+                            {...issue}
+                            onClick={onClickTitle(issue.url)}
+                        />
                         <HorizontalDivider style={{ marginBottom: 9 }}/>
                     </Fragment>
                 ))}
