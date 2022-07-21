@@ -25,6 +25,8 @@ const HomePage: FC = () => {
             return;
         }
 
+        client.deregisterElement("githubHomeButton");
+
         client?.registerElement("githubPlusButton", {
             type: "plus_button",
             payload: { type: "changePage", page: "link_issue" },

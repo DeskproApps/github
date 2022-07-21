@@ -1,5 +1,8 @@
-import { FC, useState} from "react";
-import { useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
+import { FC, useEffect, useState } from "react";
+import {
+    useDeskproAppClient,
+    useInitialisedDeskproAppClient,
+} from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { baseRequest } from "../services/github";
 import { Issue, Repository, Comments, User } from "../services/github/types";
@@ -8,6 +11,7 @@ import { ViewIssue } from "../components/ViewIssue";
 import { Loading } from "../components/common";
 
 const ViewIssuePage: FC = () => {
+    const { client } = useDeskproAppClient();
     const [state] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
     const [issue, setIssue] = useState<Issue|null>(null);
@@ -15,6 +19,29 @@ const ViewIssuePage: FC = () => {
     const [users, setUsers] = useState<Record<User["id"], User>>({});
     const [comments, setComments] = useState<Comments>([]);
     const issueUrl = state.pageParams?.issueUrl;
+
+    useEffect(() => {
+        if (!client || !issue?.number) {
+            return;
+        }
+
+        client.setTitle(`${issue.number}`);
+    }, [client, issue?.number]);
+
+    useEffect(() => {
+        if (!client) {
+            return;
+        }
+
+        client.deregisterElement("githubPlusButton");
+        client.deregisterElement("githubMenu");
+
+        client.registerElement("githubHomeButton", {
+            type: "home_button",
+            payload: { type: "changePage", page: "home" }
+        });
+
+    }, [client]);
 
     useInitialisedDeskproAppClient((client) => {
 

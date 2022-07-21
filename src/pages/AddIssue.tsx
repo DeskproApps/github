@@ -45,12 +45,23 @@ const AddIssue: FC = () => {
 
     useInitialisedDeskproAppClient((client) => {
         getUserReposService(client)
-            .then((repos) => setRepoOptions(repos.map((repo) => ({
-                key: repo.id,
-                value: repo.full_name,
-                label: repo.name,
-                type: "value",
-            }))))
+            .then((repos) => {
+                // ToDo: Do it in service and retry as long as there are items
+                if (repos.length === 100) {
+                    return getUserReposService(client, 2)
+                        .then((secondPageRepos) => [...repos, ...secondPageRepos]);
+                } else {
+                    return repos;
+                }
+            })
+            .then((allRepos) => {
+                setRepoOptions(allRepos.map((repo) => ({
+                    key: repo.id,
+                    value: repo.full_name,
+                    label: repo.name,
+                    type: "value",
+                })))
+            })
     });
 
     useEffect(() => {
@@ -165,7 +176,7 @@ const AddIssue: FC = () => {
                 label="Repository"
                 value={selectedRepo}
                 onChange={onChangeSelect}
-                options={Object.values(repoOptions)}
+                options={repoOptions}
             />
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
