@@ -94,6 +94,7 @@ export type Repository = {
     id: string,
     name: string,
     url: string,
+    html_url: string,
     full_name: string,
 };
 

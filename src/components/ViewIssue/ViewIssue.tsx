@@ -1,6 +1,10 @@
 import { FC } from "react";
-import { faUser, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { Tag, Avatar } from "@deskpro/deskpro-ui";
+import {
+    faUser,
+    faTimes,
+    faArrowUpRightFromSquare,
+} from "@fortawesome/free-solid-svg-icons";
+import { Tag, Avatar, Icon } from "@deskpro/deskpro-ui";
 import {
     H3,
     P5,
@@ -19,6 +23,11 @@ import {
 import { Comments } from "./Comments";
 import { mdToHtml } from "../../utils";
 import { Props } from "./types";
+import styled from "styled-components";
+
+const Link = styled.a`
+    color: ${({ theme }) => theme.colors.grey40};
+`;
 
 const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
     const { theme } = useDeskproAppTheme();
@@ -52,7 +61,30 @@ const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
                 leftLabel="Issue ID"
                 leftText={issue.number}
                 rightLabel="Repository"
-                rightText={repository.name}
+                rightText={(
+                    <P5>
+                        {repository.name}
+                        &nbsp;
+                        <Link href={repository.html_url} target="_blank">
+                            <Icon icon={faArrowUpRightFromSquare} />
+                        </Link>
+                    </P5>
+                )}
+            />
+
+            <TextBlockWithLabel
+                label="Milestone"
+                text={!issue.milestone
+                    ? "-"
+                    : (
+                        <P5>
+                            {issue.milestone?.title}&nbsp;
+                            <Link href={issue.milestone?.html_url} target="_blank">
+                                <Icon icon={faArrowUpRightFromSquare} />
+                            </Link>
+                        </P5>
+                    )
+                }
             />
 
             <TextBlockWithLabel

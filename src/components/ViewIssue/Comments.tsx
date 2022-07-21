@@ -18,8 +18,8 @@ const Comments: FC<Pick<Props, "comments">> = ({ comments }) => {
         <>
             <Title>Comments ({count})</Title>
 
-            {!!comments?.length && comments.map(({ body, updated_at, user }) => (
-                <Stack wrap="nowrap" gap={6} style={{ marginBottom: 10 }}>
+            {!!comments?.length && comments.map(({ id, body, updated_at, user }) => (
+                <Stack key={id} wrap="nowrap" gap={6} style={{ marginBottom: 10 }}>
                     <Stack vertical style={{ minWidth: 32 }}>
                         <Avatar
                             size={18}
