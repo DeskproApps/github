@@ -40,7 +40,7 @@ const SingleSelect: FC<any> = ({
             externalLinkIcon={faExternalLinkAlt}
             placement="bottom-start"
             hideIcons
-            inputValue={input}
+            inputValue={!dirtyInput ? "" : input}
             onSelectOption={(selectedOption) => {
                 !dirtyInput && setDirtyInput(true);
                 onChange(selectedOption);
