@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import {
     faCheck,
     faCaretDown,
@@ -18,10 +18,14 @@ const SingleSelect: FC<any> = ({
     ...props
 }) => {
     const [input, setInput] = useState<string>("");
+    const [dirtyInput, setDirtyInput] = useState<boolean>(false);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const selectedValue = options.filter((o) => o.value === value?.value)[0]?.label ?? "";
+    const selectedValue = useMemo(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return options.filter((o) => o.value === value?.value)[0]?.label ?? "";
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value?.value]);
 
     useEffect(() => {
         setInput(value?.label || "Select Value");
@@ -35,12 +39,20 @@ const SingleSelect: FC<any> = ({
             selectedIcon={faCheck}
             externalLinkIcon={faExternalLinkAlt}
             placement="bottom-start"
-            onSelectOption={onChange}
             hideIcons
             inputValue={input}
-            onInputChange={setInput}
+            onSelectOption={(selectedOption) => {
+                !dirtyInput && setDirtyInput(true);
+                onChange(selectedOption);
+            }}
+            onInputChange={(value) => {
+                !dirtyInput && setDirtyInput(true);
+                setInput(value);
+            }}
             options={options.filter((option: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-                return option.label.toLowerCase().includes(input.toLowerCase());
+                return !dirtyInput
+                    ? true
+                    : option.label.toLowerCase().includes(input.toLowerCase());
             })}
             {...props}
         >
