@@ -44,7 +44,7 @@ const ViewIssuePage: FC = () => {
     }, [client]);
 
     useEffect(() => {
-        if (!client || !state.context?.data.ticket.id || !issue?.id) {
+        if (!client || !state.context?.data.ticket.id || !issue?.id || !issue.comments_url) {
             return;
         }
 
@@ -55,11 +55,12 @@ const ViewIssuePage: FC = () => {
                 payload: {
                     type: "unlinkTicket",
                     issueId: issue.id,
-                    ticketId: state.context.data.ticket.id
+                    commentsUrl: issue.comments_url,
+                    ticketId: state.context.data.ticket.id,
                 },
             }],
         });
-    }, [client, state.context?.data.ticket.id, issue?.id]);
+    }, [client, state.context?.data.ticket.id, issue?.id, issue?.comments_url]);
 
     useInitialisedDeskproAppClient((client) => {
 

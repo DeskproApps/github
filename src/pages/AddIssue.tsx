@@ -156,6 +156,18 @@ const AddIssue: FC = () => {
                             `issues/${issue.id}`,
                             { issueUrl: issue.url },
                         );
+                    }),
+                    ...issuesForSave.map((issue) => {
+                        return baseRequest(client, {
+                            rawUrl: issue.comments_url,
+                            method: "POST",
+                            data: {
+                                body: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
+                                    ? `, ${state.context.data.ticket.permalinkUrl}`
+                                    : ""
+                                }`,
+                            },
+                        });
                     })
                 ])
             })
