@@ -14,6 +14,7 @@ import {
     baseRequest,
     getUserReposService,
     searchByIssueService,
+    searchByIssueGraphQLService,
 } from "../services/github";
 import { Issue, Repository } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
@@ -96,6 +97,14 @@ const AddIssue: FC = () => {
         }
 
         setLoading(true);
+
+        searchByIssueGraphQLService(client)
+            .then((data) => {
+                console.log(">>> graphql:then:", data);
+            })
+            .catch((error) => {
+                console.log(">>> graphql:catch:", error);
+            })
 
         searchByIssueService(client, q, selectedRepo.value)
             .then(({ items }) => setIssues(items))
