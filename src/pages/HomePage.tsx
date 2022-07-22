@@ -8,7 +8,7 @@ import { ClientStateIssue } from "../context/StoreProvider/types";
 import { getEntityCardListService } from "../services/entityAssociation";
 import { Issue } from "../services/github/types";
 import { baseRequest } from "../services/github";
-import { useSetAppTitle } from "../hooks";
+import { useSetAppTitle, useSetBadgeCount } from "../hooks";
 import { Loading, IssueInfo } from "../components/common";
 
 const HomePage: FC = () => {
@@ -19,6 +19,7 @@ const HomePage: FC = () => {
     const ticketId = state.context?.data.ticket.id;
 
     useSetAppTitle("GitHub Issues");
+    useSetBadgeCount(issues);
 
     useEffect(() => {
         if (!client) {
