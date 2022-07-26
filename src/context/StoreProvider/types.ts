@@ -35,7 +35,12 @@ export type StoreReducer = Reducer<State, Action>;
 export type AppElementPayload =
     | { type: "logout" }
     | { type: "changePage", page: Page, params?: PageParams }
-    | { type: "unlinkTicket", ticketId: string, issueId: Issue["id"] };
+    | {
+        type: "unlinkTicket",
+        ticketId: string,
+        issueId: Issue["id"],
+        commentsUrl: Issue["comments_url"],
+    };
 
 export type ReplyBoxNoteSelection = {
     id: string;
