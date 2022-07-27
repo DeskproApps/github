@@ -14,19 +14,26 @@ export type PageParams = {
     issueUrl?: Issue["url"],
 };
 
+export type DataDependencies = {
+    repositories: Repository[],
+};
+
 export interface State {
     page?: Page;
     pageParams?: PageParams,
     context?: Context,
-    _error?: ErrorType,
     isAuth: boolean,
+    dataDeps?: DataDependencies,
+    //...
+    _error?: ErrorType,
 }
 
 export type Action =
     | { type: "changePage", page: Page, params?: PageParams }
     | { type: "loadContext", context: Context }
     | { type: "error", error: ErrorType }
-    | { type: "setAuth", isAuth: boolean };
+    | { type: "setAuth", isAuth: boolean }
+    | { type: "setDeps", deps: DataDependencies };
 
 export type Dispatch = (action: Action) => void;
 

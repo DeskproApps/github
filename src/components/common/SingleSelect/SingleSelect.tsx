@@ -8,6 +8,7 @@ import { Dropdown, DivAsInputWithDisplay, DropdownTargetProps } from "@deskpro/d
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SingleSelect: FC<any> = ({
+    id,
     label,
     error,
     value,
@@ -56,19 +57,22 @@ const SingleSelect: FC<any> = ({
             })}
             {...props}
         >
-            {({ targetRef, targetProps }: DropdownTargetProps<HTMLDivElement>) => (
-                <DivAsInputWithDisplay
-                    id={`${Math.random()}`}
-                    placeholder={placeholder || "Select Value"}
-                    value={selectedValue}
-                    variant="inline"
-                    rightIcon={faCaretDown}
-                    ref={targetRef}
-                    {...targetProps}
-                    isVisibleRightIcon
-                    style={{ marginBottom: 10 }}
-                />
-            )}
+            {({ targetRef, targetProps }: DropdownTargetProps<HTMLDivElement>) => {
+                return (
+                    <DivAsInputWithDisplay
+                        id={id}
+                        placeholder={placeholder || "Select Value"}
+                        value={selectedValue}
+                        variant="inline"
+                        rightIcon={faCaretDown}
+                        error={error}
+                        ref={targetRef}
+                        {...targetProps}
+                        isVisibleRightIcon
+                        style={{ marginBottom: 10 }}
+                    />
+                )
+            }}
         </Dropdown>
     );
 };

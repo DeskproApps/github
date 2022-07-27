@@ -108,6 +108,8 @@ export type Label = {
     description?: string,
 };
 
+export type Labels = Label[];
+
 export type Issue = {
     assignee: null,
     assignees?: User[],
@@ -156,3 +158,21 @@ export type Comment = {
 }
 
 export type Comments = Comment[];
+
+export type Project = {
+    body: string,
+    columns_url: string,
+    created_at: DateTime,
+    creator: User,
+    html_url: string,
+    id: number,
+    name: string,
+    node_id: string,
+    number: number
+    owner_url: string,
+    state: "open" | "closed" | "all",
+    updated_at: DateTime,
+    url: string,
+};
+
+export type Projects = Project[];

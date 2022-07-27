@@ -1,18 +1,20 @@
-import { FC, useEffect/*, useState*/ } from "react";
-// import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FC, useEffect, useState } from "react";
+import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import {
-    // TwoButtonGroup,
-    // TwoButtonGroupProps,
+    TwoButtonGroup,
+    TwoButtonGroupProps,
     useDeskproAppClient,
 } from "@deskpro/app-sdk";
-import { useSetAppTitle } from "../hooks";
+import { useSetAppTitle, useLoadDataDependencies } from "../hooks";
 import { AddIssue } from "./AddIssue";
-// import { CreateIssue } from "./CreateIssue";
+import { CreateIssue } from "./CreateIssue";
+import { Loading } from "../components/common";
 
 const LinkIssuePage: FC = () => {
-    // const [selected, setSelected] = useState<TwoButtonGroupProps["selected"]>("one");
-    const { client } = useDeskproAppClient();
+    const [selected, setSelected] = useState<TwoButtonGroupProps["selected"]>("one");
+    const { loading } = useLoadDataDependencies();
 
+    const { client } = useDeskproAppClient();
     useSetAppTitle("Add Issue");
 
     useEffect(() => {
@@ -34,10 +36,12 @@ const LinkIssuePage: FC = () => {
         });
     }, [client]);
 
-    // const onChangeSelected = (active: TwoButtonGroupProps["selected"]) => () => setSelected(active);
+    const onChangeSelected = (active: TwoButtonGroupProps["selected"]) => () => setSelected(active);
 
-    return (<AddIssue/>);
-    /*
+    if (loading) {
+        return <Loading/>
+    }
+
     return (
         <>
             <TwoButtonGroup
@@ -53,7 +57,6 @@ const LinkIssuePage: FC = () => {
             {selected === "two" && <CreateIssue />}
         </>
     );
-    */
 };
 
 export { LinkIssuePage };

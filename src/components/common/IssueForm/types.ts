@@ -1,0 +1,31 @@
+import { Repository } from "../../../services/github/types";
+
+export type Option<Value> = {
+    value: Value,
+    key: Value,
+    label: string,
+    type: "value",
+};
+
+export type Values = {
+    title: string,
+    description: string,
+    repository: Option<string>,
+    milestone: Option<string>,
+    projects: string[],
+    assignees: string[],
+    labels: string[],
+};
+
+export type Props = {
+    repositories: Repository[],
+    onSubmit: (values: Values) => void,
+    onCancel: () => void,
+};
+
+export type OptionRepository = {
+    key: Repository["id"],
+    value: Repository["full_name"],
+    label: Repository["name"],
+    type: "value",
+};

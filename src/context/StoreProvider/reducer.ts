@@ -25,5 +25,9 @@ export const reducer: StoreReducer = (state: State, action: Action): State => {
             ...prevState,
             isAuth: action.isAuth,
         }))
+        .with([__, { type: "setDeps" }], ([prevState, action]) => ({
+            ...prevState,
+            dataDeps: action.deps,
+        }))
         .otherwise(() => state);
 };
