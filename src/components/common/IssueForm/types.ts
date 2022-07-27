@@ -12,7 +12,7 @@ export type Values = {
     description: string,
     repository: Option<string>,
     milestone: Option<string>,
-    projects: string[],
+    projects: Option<string>,
     assignees: string[],
     labels: string[],
 };

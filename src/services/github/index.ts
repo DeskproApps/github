@@ -9,3 +9,5 @@ export { getMilestonesService } from "./getMilestonesService";
 export { getRepositoriesService } from "./getRepositoriesService";
 export { getProjectsService } from "./getProjectsService";
 export { getLabelsService } from "./getLabelsService";
+export { getProjectService } from "./getProjectService";
+export { createProjectIssueCardService } from "./createProjectIssueCardService";

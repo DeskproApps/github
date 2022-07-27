@@ -9,7 +9,6 @@ export type Params = {
         body: Issue["body"],
         milestone: Milestone["id"] | null,
         assignees: User["login"],
-        // projects: Project["id"],
         // labels: Array<Label["id"]>,
     },
 };

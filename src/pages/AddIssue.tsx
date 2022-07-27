@@ -173,6 +173,7 @@ const AddIssue: FC = () => {
             />
 
             <SingleSelect
+                showInternalSearch
                 label="Repository"
                 value={selectedRepo}
                 onChange={onChangeSelect}

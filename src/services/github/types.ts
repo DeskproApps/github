@@ -176,3 +176,14 @@ export type Project = {
 };
 
 export type Projects = Project[];
+
+export type ProjectColumn = {
+    cards_url: string,
+    created_at: DateTime,
+    id: number,
+    name: string,
+    node_id: string,
+    project_url: string,
+    updated_at: DateTime,
+    url: string,
+};

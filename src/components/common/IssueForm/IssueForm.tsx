@@ -29,7 +29,7 @@ import {
 } from "@deskpro/app-sdk";
 import {
     // getLabelsService,
-    // getProjectsService,
+    getProjectsService,
     getMilestonesService,
     getRepositoriesService,
 } from "../../../services/github";
@@ -40,7 +40,7 @@ import { TextArea } from "../TextArea";
 import { SingleSelect } from "../SingleSelect";
 // import { EmptyInlineBlock } from "../EmptyInlineBlock";
 import { TextBlockWithLabel } from "../TextBlockWithLabel";
-import { Milestone, User/*, Projects, Labels*/ } from "../../../services/github/types";
+import { Milestone, User, Projects/*, Labels*/ } from "../../../services/github/types";
 import { Props, Values, Option, OptionRepository } from "./types";
 
 const validationSchema = yup.object().shape({
@@ -59,7 +59,12 @@ const validationSchema = yup.object().shape({
         type: yup.string().oneOf(["value"]),
     }),
     assignees: yup.array(yup.string()),
-    projects: yup.array(yup.string()),
+    projects: yup.object({
+        key: yup.string(),
+        label: yup.string(),
+        value: yup.string(),
+        type: yup.string().oneOf(["value"]),
+    }),
     labels: yup.array(yup.string()),
 });
 
@@ -78,7 +83,7 @@ const getInitValues = (): Values => ({
     description: "",
     repository: getResetOption("", ""),
     milestone: getResetOption("", ""),
-    projects: [],
+    projects: getResetOption("", ""),
     assignees: [],
     labels: [],
 });
@@ -90,7 +95,7 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
     const [repoOptions, setRepoOptions] = useState<Array<OptionRepository>>([]);
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [members, setMembers] = useState<User[]>([]);
-    // const [projects, setProjects] = useState<Projects>([]);
+    const [projects, setProjects] = useState<Projects>([]);
     // const [labels, setLabels] = useState<Labels>([]);
 
     const {
@@ -135,7 +140,7 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
 
         setMilestones([]);
         setMembers([]);
-        // setProjects([]);
+        setProjects([]);
         // setLabels([]);
         setFieldValue("milestone", getResetOption("", ""));
         setFieldValue("assignees", []);
@@ -145,12 +150,12 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
         Promise.all([
             getMilestonesService(client, { repoFullName: values.repository.value }),
             getRepositoriesService(client, { repoFullName: values.repository.value }),
-            // getProjectsService(client, { repoFullName: values.repository.value }),
+            getProjectsService(client, { repoFullName: values.repository.value }),
             // getLabelsService(client, { repoFullName: values.repository.value })
-        ]).then(([milestones, repositories/*, projects, labels*/]) => {
+        ]).then(([milestones, repositories, projects/*, labels*/]) => {
             setMilestones(milestones);
             setMembers(repositories);
-            // setProjects(projects);
+            setProjects(projects);
             // setLabels(labels);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -277,60 +282,20 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                 )}
             </Dropdown>
 
-            {/*<Dropdown
-                fetchMoreText="Fetch more"
-                autoscrollText="Autoscroll"
-                selectedIcon={faCheck}
-                externalLinkIcon={faExternalLinkAlt}
-                placement="bottom-start"
-                searchPlaceholder="Select value"
-                options={projects?.map(({ id, name }) => ({
-                    key: `${id}`,
-                    value: `${id}`,
-                    label: name,
-                    type: "value",
-                    selected: values.projects.includes(`${id}`),
-                }))}
-                onSelectOption={(option) => {
-                    if (option.value) {
-                        const newValue = values.projects.includes(option.value)
-                            ? values.projects.filter((projectId) => projectId !== option.value)
-                            : [...values.projects, option.value]
-
-                        setFieldValue("projects", newValue);
-                    }
-                }}
-                closeOnSelect={false}
-            >
-                {({targetProps, targetRef}: DropdownTargetProps<HTMLDivElement>) => (
-                    <TextBlockWithLabel
-                        label="Projects"
-                        text={(
-                            <DivAsInputWithDisplay
-                                ref={targetRef}
-                                {...targetProps}
-                                value={!values.projects.length
-                                    ? (
-                                        <TSpan overflow="ellipsis" type="p1" style={{color: theme.colors.grey40}}>
-                                            Select value
-                                        </TSpan>
-                                    )
-                                    : (
-                                        <Stack gap={6} wrap="wrap">
-                                            {projects
-                                                .filter(({ id }) => values.projects.includes(`${id}`))
-                                                .map(({ name }) => name)
-                                                .join(", ")
-                                            }
-                                        </Stack>
-                                    )}
-                                placeholder="Select value"
-                                variant="inline"
-                            />
-                        )}
-                    />
-                )}
-            </Dropdown>*/}
+            <Label htmlFor="projects" label="Projects">
+                <SingleSelect
+                    id="projects"
+                    value={values.projects}
+                    options={projects?.map(({ id, name }) => ({
+                        key: id,
+                        value: id,
+                        label: name,
+                        type: "value",
+                    })) || []}
+                    error={!!(touched.projects && errors.projects)}
+                    onChange={(value: OptionRepository) => setFieldValue("projects", value)}
+                />
+            </Label>
 
             {/*<Dropdown
                 fetchMoreText="Fetch more"
