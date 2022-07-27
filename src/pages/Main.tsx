@@ -10,7 +10,7 @@ import {
 import { AppElementPayload, ReplyBoxNoteSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
 import { deleteEntityIssueService } from "../services/entityAssociation";
-import { checkIsAuthService } from "../services/github";
+import { baseRequest, checkIsAuthService } from "../services/github";
 import { placeholders } from "../services/github/constants";
 import { LogInPage } from "./LogIn";
 import { HomePage } from "./HomePage";
@@ -85,6 +85,16 @@ export const Main = () => {
             } else if (payload?.type === "unlinkTicket") {
                 if (client) {
                     deleteEntityIssueService(client, payload.ticketId, payload.issueId)
+                        .then(() => baseRequest(client, {
+                            rawUrl: payload.commentsUrl,
+                            method: "POST",
+                            data: {
+                                body: `Unlinked from Deskpro ticket ${payload.ticketId}${state.context?.data?.ticket?.permalinkUrl
+                                    ? `, ${state.context.data.ticket.permalinkUrl}`
+                                    : ""
+                                }`
+                            }
+                        }))
                         .then(() => dispatch({ type: "changePage", page: "home" }))
                 }
             }

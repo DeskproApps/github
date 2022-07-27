@@ -12,6 +12,20 @@ const TimeAgo = styled(ReactTimeAgo)`
     color: ${({ theme }) => theme.colors.grey80};
 `;
 
+const Author = styled(Stack)`
+    width: 35px;
+`;
+
+const Comment = styled(P1)`
+    width: calc(100% - 35px);
+  
+    p {
+        white-space: pre-wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+`;
+
 const Comments: FC<Pick<Props, "comments">> = ({ comments }) => {
     const count = (Array.isArray(comments) && comments.length > 0) ? comments.length : 0;
     return (
@@ -20,7 +34,7 @@ const Comments: FC<Pick<Props, "comments">> = ({ comments }) => {
 
             {!!comments?.length && comments.map(({ id, body, updated_at, user }) => (
                 <Stack key={id} wrap="nowrap" gap={6} style={{ marginBottom: 10 }}>
-                    <Stack vertical style={{ minWidth: 32 }}>
+                    <Author vertical>
                         <Avatar
                             size={18}
                             name={user.login}
@@ -30,8 +44,8 @@ const Comments: FC<Pick<Props, "comments">> = ({ comments }) => {
                         <P11>
                             <TimeAgo date={new Date(updated_at)} timeStyle="mini" />
                         </P11>
-                    </Stack>
-                    <P1 dangerouslySetInnerHTML={{ __html: mdToHtml(body) }} />
+                    </Author>
+                    <Comment dangerouslySetInnerHTML={{ __html: mdToHtml(body) }} />
                 </Stack>
             ))}
         </>

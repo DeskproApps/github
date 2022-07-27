@@ -15,7 +15,7 @@ const Issues: FC<Props> = ({ onChange, issues, selectedIssues }) => {
     }
 
     if (issues.length === 0) {
-        return (<NoFound text="No github issues found" />);
+        return (<NoFound text="No GitHub issues found" />);
     }
 
     return (
