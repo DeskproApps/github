@@ -14,6 +14,12 @@ export type Params = {
     },
 };
 
+/**
+ * @see https://docs.github.com/en/rest/issues/issues#create-an-issue
+ * Notes:
+ * - Milestone: only users with push access can set the milestone for new issues.
+ *              The milestone is silently dropped otherwise.
+ */
 const createIssueService = (client: IDeskproClient, {
     repoFullName,
     data,

@@ -3,6 +3,7 @@ import isEmpty from "lodash/isEmpty";
 import {
     // faPlus,
     // faTimes,
+    faUser,
     faCheck,
     faExternalLinkAlt,
 } from "@fortawesome/free-solid-svg-icons";
@@ -11,9 +12,11 @@ import * as yup from 'yup';
 import {
     // Tag,
     TSpan,
+    Avatar,
     InputWithDisplay,
 } from "@deskpro/deskpro-ui";
 import {
+    P5,
     // Pill,
     Stack,
     Dropdown,
@@ -176,6 +179,7 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
 
             <Label htmlFor="repository" label="Repository">
                 <SingleSelect
+                    showInternalSearch
                     id="repository"
                     value={values.repository}
                     options={repoOptions}
@@ -188,9 +192,9 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                 <SingleSelect
                     id="milestone"
                     value={values.milestone}
-                    options={milestones?.map(({id, title}) => ({
-                        key: id,
-                        value: id,
+                    options={milestones?.map(({ title, number }) => ({
+                        key: number,
+                        value: number,
                         label: title,
                         type: "value",
                     })) || []}
@@ -206,10 +210,20 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                 externalLinkIcon={faExternalLinkAlt}
                 placement="bottom-start"
                 searchPlaceholder="Select value"
-                options={members?.map(({ login }) => ({
+                options={members?.map(({ login, avatar_url }) => ({
                     key: login,
                     value: login,
-                    label: login,
+                    label: (
+                        <Stack gap={6} key={login}>
+                            <Avatar
+                                size={18}
+                                name={login}
+                                backupIcon={faUser}
+                                {...(avatar_url ? { imageUrl: avatar_url } : {})}
+                            />
+                            <P5>{login}</P5>
+                        </Stack>
+                    ),
                     type: "value",
                     selected: values.assignees.includes(login),
                 }))}
@@ -241,7 +255,17 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                                         <Stack gap={6} wrap="wrap">
                                             {members
                                                 .filter(({ login }) => values.assignees.includes(login))
-                                                .map(({ login }) => login)
+                                                .map(({ login, avatar_url }) => (
+                                                    <Stack gap={6} key={login}>
+                                                        <Avatar
+                                                            size={18}
+                                                            name={login}
+                                                            backupIcon={faUser}
+                                                            {...(avatar_url ? { imageUrl: avatar_url } : {})}
+                                                        />
+                                                        <P5>{login}</P5>
+                                                    </Stack>
+                                                ))
                                             }
                                         </Stack>
                                     )}

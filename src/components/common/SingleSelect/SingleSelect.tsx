@@ -16,6 +16,7 @@ const SingleSelect: FC<any> = ({
     onChange,
     required,
     placeholder,
+    showInternalSearch,
     ...props
 }) => {
     const [input, setInput] = useState<string>("");
@@ -34,7 +35,7 @@ const SingleSelect: FC<any> = ({
 
     return (
         <Dropdown
-            showInternalSearch
+            showInternalSearch={showInternalSearch}
             fetchMoreText={"Fetch more"}
             autoscrollText={"Autoscroll"}
             selectedIcon={faCheck}
@@ -43,12 +44,16 @@ const SingleSelect: FC<any> = ({
             hideIcons
             inputValue={!dirtyInput ? "" : input}
             onSelectOption={(selectedOption) => {
-                !dirtyInput && setDirtyInput(true);
+                if (!dirtyInput && showInternalSearch) {
+                    setDirtyInput(true);
+                }
                 onChange(selectedOption);
             }}
             onInputChange={(value) => {
-                !dirtyInput && setDirtyInput(true);
-                setInput(value);
+                if (showInternalSearch) {
+                    !dirtyInput && setDirtyInput(true);
+                    setInput(value);
+                }
             }}
             options={options.filter((option: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                 return !dirtyInput

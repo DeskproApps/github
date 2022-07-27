@@ -1,7 +1,10 @@
 import { FC } from "react";
 import { useDeskproAppClient } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
-import { createIssueService } from "../services/github";
+import {
+    baseRequest,
+    createIssueService,
+} from "../services/github";
 import { setEntityIssueService } from "../services/entityAssociation";
 import { getEntityMetadata } from "../utils";
 import { IssueForm } from "../components/common";
@@ -28,9 +31,7 @@ const CreateIssue: FC = () => {
                         data: {
                             title: values.title,
                             body: values.description || "",
-                            milestone: (Array.isArray(values.milestone) && values.milestone.length)
-                                ? values.milestone.map(({ value }) => value)
-                                : null,
+                            milestone: !values.milestone.value ? null : values.milestone.value,
                             ...((Array.isArray(values.assignees) && values.assignees.length > 0)
                                 ? { assignees: values.assignees }
                                 : {}
@@ -57,6 +58,16 @@ const CreateIssue: FC = () => {
                                     })
                                 ),
                                 client.setState(`issues/${issue.id}`, { issueUrl: issue.url }),
+                                baseRequest(client, {
+                                    rawUrl: issue.comments_url,
+                                    method: "POST",
+                                    data: {
+                                        body: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
+                                            ? `, ${state.context.data.ticket.permalinkUrl}`
+                                            : ""
+                                        }`,
+                                    },
+                                }),
                             ]);
                         })
                         .then(() => dispatch({ type: "changePage", page: "home" }));
