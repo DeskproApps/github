@@ -215,7 +215,7 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                 externalLinkIcon={faExternalLinkAlt}
                 placement="bottom-start"
                 searchPlaceholder="Select value"
-                options={members?.map(({ login, avatar_url }) => ({
+                options={!Array.isArray(members) ? [] : members?.map(({ login, avatar_url }) => ({
                     key: login,
                     value: login,
                     label: (
