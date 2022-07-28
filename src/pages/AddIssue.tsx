@@ -17,6 +17,7 @@ import { Issue, Repository } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
 import { Issues } from "../components/LinkIssue";
 import {
+    Label,
     Button,
     Loading,
     InputSearch,
@@ -172,13 +173,16 @@ const AddIssue: FC = () => {
                 onChange={onChangeSearch}
             />
 
-            <SingleSelect
-                showInternalSearch
-                label="Repository"
-                value={selectedRepo}
-                onChange={onChangeSelect}
-                options={repoOptions}
-            />
+            <Label htmlFor="repository" label="Repository">
+                <SingleSelect
+                    showInternalSearch
+                    id="repository"
+                    label="Repository"
+                    value={selectedRepo}
+                    onChange={onChangeSelect}
+                    options={repoOptions}
+                />
+            </Label>
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button
