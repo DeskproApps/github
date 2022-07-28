@@ -144,7 +144,7 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
         // setLabels([]);
         setFieldValue("milestone", getResetOption("", ""));
         setFieldValue("assignees", []);
-        setFieldValue("projects", []);
+        setFieldValue("projects", getResetOption("", ""));
         setFieldValue("labels", []);
 
         Promise.all([
