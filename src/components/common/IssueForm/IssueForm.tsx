@@ -168,7 +168,10 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
             setProjects(projects);
             setMembers([
                 currentUser,
-                ...members.filter(({ login }) => login !== currentUser.login),
+                ...((Array.isArray(members) && members.length > 0)
+                    ? members.filter(({ login }) => login !== currentUser.login)
+                    : []
+                ),
             ]);
             // setLabels(labels);
         });
