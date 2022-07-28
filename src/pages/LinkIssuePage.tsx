@@ -47,10 +47,10 @@ const LinkIssuePage: FC = () => {
             <TwoButtonGroup
                 selected={selected}
                 oneIcon={faSearch}
-                oneLabel="Find Card"
+                oneLabel="Find Issue"
                 oneOnClick={onChangeSelected("one")}
                 twoIcon={faPlus}
-                twoLabel="Create Card"
+                twoLabel="Create Issue"
                 twoOnClick={onChangeSelected("two")}
             />
             {selected === "one" && <AddIssue />}
