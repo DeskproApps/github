@@ -20,6 +20,7 @@ import {
     // Pill,
     Stack,
     Dropdown,
+    DropdownItemType,
     // Label as LabelUI,
     // Button as ButtonUI,
     useDeskproAppTheme,
@@ -77,6 +78,16 @@ const getResetOption = <Value, >(
     key: value,
     type: "value",
 });
+
+const getDisabledOption = (value = "Not Found"): DropdownItemType => {
+    return {
+        type: "header",
+        label: value,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        disabled: true,
+    }
+};
 
 const getInitValues = (): Values => ({
     title: "",
@@ -197,12 +208,15 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                 <SingleSelect
                     id="milestone"
                     value={values.milestone}
-                    options={milestones?.map(({ title, number }) => ({
-                        key: number,
-                        value: number,
-                        label: title,
-                        type: "value",
-                    })) || []}
+                    options={(Array.isArray(milestones) && milestones.length > 0)
+                        ? milestones?.map(({ title, number }) => ({
+                            key: number,
+                            value: number,
+                            label: title,
+                            type: "value",
+                        }))
+                        : [getDisabledOption()]
+                    }
                     error={!!(touched.milestone && errors.milestone)}
                     onChange={(value: OptionRepository) => setFieldValue("milestone", value)}
                 />
@@ -215,26 +229,29 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                 externalLinkIcon={faExternalLinkAlt}
                 placement="bottom-start"
                 searchPlaceholder="Select value"
-                options={!Array.isArray(members) ? [] : members?.map(({ login, avatar_url }) => ({
-                    key: login,
-                    value: login,
-                    label: (
-                        <Stack gap={6} key={login}>
-                            <Avatar
-                                size={18}
-                                name={login}
-                                backupIcon={faUser}
-                                {...(avatar_url ? { imageUrl: avatar_url } : {})}
-                            />
-                            <P5>{login}</P5>
-                        </Stack>
-                    ),
-                    type: "value",
-                    selected: values.assignees.includes(login),
-                }))}
+                options={(Array.isArray(members) && members.length > 0)
+                    ? members?.map(({ login, avatar_url }) => ({
+                        key: login,
+                        value: login,
+                        label: (
+                            <Stack gap={6} key={login}>
+                                <Avatar
+                                    size={18}
+                                    name={login}
+                                    backupIcon={faUser}
+                                    {...(avatar_url ? { imageUrl: avatar_url } : {})}
+                                />
+                                <P5>{login}</P5>
+                            </Stack>
+                        ),
+                        type: "value",
+                        selected: values.assignees.includes(login),
+                    }))
+                    : [getDisabledOption()]
+                }
                 onSelectOption={(option) => {
                     if (option.value) {
-                        const newValue = values.assignees.includes(option.value)
+                        const newValue = values.assignees.includes(option.value as string)
                             ? values.assignees.filter((login) => login !== option.value)
                             : [...values.assignees, option.value]
 
@@ -286,12 +303,15 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
                 <SingleSelect
                     id="projects"
                     value={values.projects}
-                    options={projects?.map(({ id, name }) => ({
-                        key: id,
-                        value: id,
-                        label: name,
-                        type: "value",
-                    })) || []}
+                    options={(Array.isArray(projects) && projects.length > 0)
+                        ? projects?.map(({ id, name }) => ({
+                            key: id,
+                            value: id,
+                            label: name,
+                            type: "value",
+                        }))
+                        : [getDisabledOption()]
+                    }
                     error={!!(touched.projects && errors.projects)}
                     onChange={(value: OptionRepository) => setFieldValue("projects", value)}
                 />

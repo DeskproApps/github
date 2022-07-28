@@ -1,10 +1,13 @@
+import { ReactElement } from "react";
 import { Repository } from "../../../services/github/types";
 
 export type Option<Value> = {
     value: Value,
     key: Value,
-    label: string,
-    type: "value",
+    label: string | ReactElement,
+    type: "value" | "header",
+    disabled?: boolean,
+    selected?: boolean,
 };
 
 export type Values = {
