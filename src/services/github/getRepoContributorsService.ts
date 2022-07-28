@@ -6,7 +6,7 @@ export type Params = {
     repoFullName: string,
 };
 
-const getRepositoriesService = (client: IDeskproClient, {
+const getRepoContributorsService = (client: IDeskproClient, {
     repoFullName,
 }: Params) => {
     return baseRequest<User[]>(client, {
@@ -14,4 +14,4 @@ const getRepositoriesService = (client: IDeskproClient, {
     });
 };
 
-export { getRepositoriesService };
+export { getRepoContributorsService };

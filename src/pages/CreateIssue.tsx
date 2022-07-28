@@ -15,6 +15,7 @@ import { getEntityMetadata } from "../utils";
 import { IssueForm } from "../components/common";
 import { Values as IssueFormValues } from "../components/common/IssueForm/types";
 import {
+    User,
     Issue,
     Project,
     Repository,
@@ -25,6 +26,7 @@ const CreateIssue: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const repositories = state.dataDeps?.repositories as Repository[];
+    const currentUser = state.dataDeps?.currentUser as User;
     const ticketId = state.context?.data.ticket.id;
 
     const createProjectIssueCard = (
@@ -112,6 +114,7 @@ const CreateIssue: FC = () => {
         <>
             <IssueForm
                 repositories={repositories}
+                currentUser={currentUser}
                 onSubmit={onSubmit}
                 onCancel={() => dispatch({ type: "changePage", page: "home" })}
             />

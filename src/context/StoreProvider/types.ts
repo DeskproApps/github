@@ -1,6 +1,12 @@
 import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
-import { Issue, DateTime, Repository, Label } from "../../services/github/types";
+import {
+    User,
+    Label,
+    Issue,
+    DateTime,
+    Repository,
+} from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
 
@@ -16,6 +22,7 @@ export type PageParams = {
 
 export type DataDependencies = {
     repositories: Repository[],
+    currentUser: User,
 };
 
 export interface State {

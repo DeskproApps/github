@@ -32,7 +32,7 @@ import {
     // getLabelsService,
     getProjectsService,
     getMilestonesService,
-    getRepositoriesService,
+    getRepoContributorsService,
 } from "../../../services/github";
 // import { getIssueStatueColorScheme } from "../../../utils";
 import { Label } from "../Label";
@@ -69,7 +69,7 @@ const validationSchema = yup.object().shape({
     labels: yup.array(yup.string()),
 });
 
-const getResetOption = <Value, >(
+const getOption = <Value, >(
     value: Value,
     label: string,
 ): Option<Value> => ({
@@ -92,14 +92,14 @@ const getDisabledOption = (value = "Not Found"): DropdownItemType => {
 const getInitValues = (): Values => ({
     title: "",
     description: "",
-    repository: getResetOption("", ""),
-    milestone: getResetOption("", ""),
-    projects: getResetOption("", ""),
+    repository: getOption("", ""),
+    milestone: getOption("", ""),
+    projects: getOption("", ""),
     assignees: [],
     labels: [],
 });
 
-const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
+const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser }) => {
     const { client } = useDeskproAppClient();
     const { theme } = useDeskproAppTheme();
 
@@ -153,20 +153,23 @@ const IssueForm: FC<Props> = ({onSubmit, onCancel, repositories}) => {
         setMembers([]);
         setProjects([]);
         // setLabels([]);
-        setFieldValue("milestone", getResetOption("", ""));
+        setFieldValue("milestone", getOption("", ""));
         setFieldValue("assignees", []);
-        setFieldValue("projects", getResetOption("", ""));
+        setFieldValue("projects", getOption("", ""));
         setFieldValue("labels", []);
 
         Promise.all([
             getMilestonesService(client, { repoFullName: values.repository.value }),
-            getRepositoriesService(client, { repoFullName: values.repository.value }),
+            getRepoContributorsService(client, { repoFullName: values.repository.value }),
             getProjectsService(client, { repoFullName: values.repository.value }),
             // getLabelsService(client, { repoFullName: values.repository.value })
-        ]).then(([milestones, repositories, projects/*, labels*/]) => {
+        ]).then(([milestones, members, projects/*, labels*/]) => {
             setMilestones(milestones);
-            setMembers(repositories);
             setProjects(projects);
+            setMembers([
+                currentUser,
+                ...members.filter(({ login }) => login !== currentUser.login),
+            ]);
             // setLabels(labels);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
