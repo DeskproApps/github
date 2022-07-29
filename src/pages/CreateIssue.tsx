@@ -70,8 +70,6 @@ const CreateIssue: FC = () => {
 
         return createIssueService(client, {
             repoFullName: values.repository.value,
-            // eslint-disable-next-line
-            // @ts-ignore
             data: newIssue,
         })
             .then((issue) => {

@@ -93,7 +93,7 @@ const getInitValues = (): Values => ({
     title: "",
     description: "",
     repository: getOption("", ""),
-    milestone: getOption("", ""),
+    milestone: getOption(0, ""),
     projects: getOption("", ""),
     assignees: [],
     labels: [],

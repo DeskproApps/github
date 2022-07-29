@@ -8,7 +8,7 @@ export type Params = {
         title: Issue["title"],
         body: Issue["body"],
         milestone: Milestone["id"] | null,
-        assignees: User["login"],
+        assignees?: Array<User["login"]>,
         // labels: Array<Label["id"]>,
     },
 };

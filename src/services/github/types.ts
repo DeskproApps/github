@@ -114,7 +114,7 @@ export type Issue = {
     assignee: null,
     assignees?: User[],
     author_association: string, // ToDo: need enum
-    body: null,
+    body: string | null,
     closed_at: DateTime | null,
     comments: number,
     comments_url: string,

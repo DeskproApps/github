@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { User, Repository } from "../../../services/github/types";
+import { User, Repository, Issue } from "../../../services/github/types";
 
 export type Option<Value> = {
     value: Value,
@@ -12,11 +12,11 @@ export type Option<Value> = {
 
 export type Values = {
     title: string,
-    description: string,
+    description: Issue["body"],
     repository: Option<string>,
-    milestone: Option<string>,
+    milestone: Option<number>,
     projects: Option<string>,
-    assignees: string[],
+    assignees: Array<User["login"]>,
     labels: string[],
 };
 
