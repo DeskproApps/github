@@ -1,6 +1,12 @@
 import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
-import { Issue, DateTime, Repository, Label } from "../../services/github/types";
+import {
+    User,
+    Label,
+    Issue,
+    DateTime,
+    Repository,
+} from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
 
@@ -14,19 +20,27 @@ export type PageParams = {
     issueUrl?: Issue["url"],
 };
 
+export type DataDependencies = {
+    repositories: Repository[],
+    currentUser: User,
+};
+
 export interface State {
     page?: Page;
     pageParams?: PageParams,
     context?: Context,
-    _error?: ErrorType,
     isAuth: boolean,
+    dataDeps?: DataDependencies,
+    //...
+    _error?: ErrorType,
 }
 
 export type Action =
     | { type: "changePage", page: Page, params?: PageParams }
     | { type: "loadContext", context: Context }
     | { type: "error", error: ErrorType }
-    | { type: "setAuth", isAuth: boolean };
+    | { type: "setAuth", isAuth: boolean }
+    | { type: "setDeps", deps: DataDependencies };
 
 export type Dispatch = (action: Action) => void;
 

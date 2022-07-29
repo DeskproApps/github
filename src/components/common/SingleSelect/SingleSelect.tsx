@@ -8,6 +8,7 @@ import { Dropdown, DivAsInputWithDisplay, DropdownTargetProps } from "@deskpro/d
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SingleSelect: FC<any> = ({
+    id,
     label,
     error,
     value,
@@ -15,6 +16,7 @@ const SingleSelect: FC<any> = ({
     onChange,
     required,
     placeholder,
+    showInternalSearch,
     ...props
 }) => {
     const [input, setInput] = useState<string>("");
@@ -33,7 +35,7 @@ const SingleSelect: FC<any> = ({
 
     return (
         <Dropdown
-            showInternalSearch
+            showInternalSearch={showInternalSearch}
             fetchMoreText={"Fetch more"}
             autoscrollText={"Autoscroll"}
             selectedIcon={faCheck}
@@ -42,12 +44,16 @@ const SingleSelect: FC<any> = ({
             hideIcons
             inputValue={!dirtyInput ? "" : input}
             onSelectOption={(selectedOption) => {
-                !dirtyInput && setDirtyInput(true);
+                if (!dirtyInput && showInternalSearch) {
+                    setDirtyInput(true);
+                }
                 onChange(selectedOption);
             }}
             onInputChange={(value) => {
-                !dirtyInput && setDirtyInput(true);
-                setInput(value);
+                if (showInternalSearch) {
+                    !dirtyInput && setDirtyInput(true);
+                    setInput(value);
+                }
             }}
             options={options.filter((option: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                 return !dirtyInput
@@ -56,19 +62,22 @@ const SingleSelect: FC<any> = ({
             })}
             {...props}
         >
-            {({ targetRef, targetProps }: DropdownTargetProps<HTMLDivElement>) => (
-                <DivAsInputWithDisplay
-                    id={`${Math.random()}`}
-                    placeholder={placeholder || "Select Value"}
-                    value={selectedValue}
-                    variant="inline"
-                    rightIcon={faCaretDown}
-                    ref={targetRef}
-                    {...targetProps}
-                    isVisibleRightIcon
-                    style={{ marginBottom: 10 }}
-                />
-            )}
+            {({ targetRef, targetProps }: DropdownTargetProps<HTMLDivElement>) => {
+                return (
+                    <DivAsInputWithDisplay
+                        id={id}
+                        placeholder={placeholder || "Select Value"}
+                        value={selectedValue}
+                        variant="inline"
+                        rightIcon={faCaretDown}
+                        error={error}
+                        ref={targetRef}
+                        {...targetProps}
+                        isVisibleRightIcon
+                        style={{ marginBottom: 10 }}
+                    />
+                )
+            }}
         </Dropdown>
     );
 };

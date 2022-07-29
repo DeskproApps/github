@@ -5,20 +5,19 @@ import {
     Stack,
     HorizontalDivider,
     useDeskproAppClient,
-    useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
 import { setEntityIssueService } from "../services/entityAssociation";
 import {
     baseRequest,
-    getUserReposService,
     searchByIssueService,
 } from "../services/github";
 import { Issue, Repository } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
 import { Issues } from "../components/LinkIssue";
 import {
+    Label,
     Button,
     Loading,
     InputSearch,
@@ -41,28 +40,18 @@ const AddIssue: FC = () => {
     const [repoOptions, setRepoOptions] = useState<Array<OptionRepository>>([]);
     const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
     const [selectedIssues, setSelectedIssues] = useState<Array<Issue["id"]>>([]);
-    const ticketId = state.context?.data.ticket.id
+    const ticketId = state.context?.data.ticket.id;
 
-    useInitialisedDeskproAppClient((client) => {
-        getUserReposService(client)
-            .then((repos) => {
-                // ToDo: Do it in service and retry as long as there are items
-                if (repos.length === 100) {
-                    return getUserReposService(client, 2)
-                        .then((secondPageRepos) => [...repos, ...secondPageRepos]);
-                } else {
-                    return repos;
-                }
-            })
-            .then((allRepos) => {
-                setRepoOptions(allRepos.map((repo) => ({
-                    key: repo.id,
-                    value: repo.full_name,
-                    label: repo.name,
-                    type: "value",
-                })))
-            })
-    });
+    useEffect(() => {
+        if (!isEmpty(state.dataDeps?.repositories)) {
+            setRepoOptions((state.dataDeps?.repositories as Repository[]).map((repo) => ({
+                key: repo.id,
+                value: repo.full_name,
+                label: repo.name,
+                type: "value",
+            })));
+        }
+    }, [state.dataDeps?.repositories]);
 
     useEffect(() => {
         if (!isEmpty(repoOptions) && !isEmpty(repoOptions[0])) {
@@ -137,7 +126,7 @@ const AddIssue: FC = () => {
 
                 return linkedIssues.map((issue) => {
                     if (repos[issue.repository_url])    {
-                        issue.repository_name =  repos[issue.repository_url].name;
+                        issue.repository_name =  repos[issue.repository_url].full_name;
                     }
 
                     return issue;
@@ -184,12 +173,16 @@ const AddIssue: FC = () => {
                 onChange={onChangeSearch}
             />
 
-            <SingleSelect
-                label="Repository"
-                value={selectedRepo}
-                onChange={onChangeSelect}
-                options={repoOptions}
-            />
+            <Label htmlFor="repository" label="Repository">
+                <SingleSelect
+                    showInternalSearch
+                    id="repository"
+                    label="Repository"
+                    value={selectedRepo}
+                    onChange={onChangeSelect}
+                    options={repoOptions}
+                />
+            </Label>
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button
