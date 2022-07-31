@@ -14,7 +14,8 @@ export type Page =
     | "home"
     | "log_in"
     | "link_issue"
-    | "view_issue";
+    | "view_issue"
+    | "edit_issue";
 
 export type PageParams = {
     issueUrl?: Issue["url"],
@@ -30,6 +31,7 @@ export interface State {
     pageParams?: PageParams,
     context?: Context,
     isAuth: boolean,
+    issue?: Issue,
     dataDeps?: DataDependencies,
     //...
     _error?: ErrorType,
@@ -40,6 +42,7 @@ export type Action =
     | { type: "loadContext", context: Context }
     | { type: "error", error: ErrorType }
     | { type: "setAuth", isAuth: boolean }
+    | { type: "setIssue", issue: Issue }
     | { type: "setDeps", deps: DataDependencies };
 
 export type Dispatch = (action: Action) => void;

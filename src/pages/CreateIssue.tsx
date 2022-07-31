@@ -12,8 +12,8 @@ import {
 } from "../services/github";
 import { setEntityIssueService } from "../services/entityAssociation";
 import { getEntityMetadata } from "../utils";
-import { IssueForm } from "../components/common";
-import { Values as IssueFormValues } from "../components/common/IssueForm/types";
+import { IssueForm } from "../components/IssueForm";
+import { Values as IssueFormValues } from "../components/IssueForm/types";
 import {
     User,
     Issue,
@@ -31,7 +31,7 @@ const CreateIssue: FC = () => {
 
     const createProjectIssueCard = (
         client: IDeskproClient,
-        issue: Issue,
+        issueId: Issue["id"],
         projectId: Project["id"],
     ) => {
         return getProjectService(client, projectId)
@@ -40,12 +40,9 @@ const CreateIssue: FC = () => {
             })
             .then((columns) => {
                 return createProjectIssueCardService(client, {
-                    issueId: issue.id,
+                    issueId,
                     columnId: columns[0].id,
                 })
-            })
-            .then(() => {
-                return issue;
             });
     };
 
@@ -68,17 +65,20 @@ const CreateIssue: FC = () => {
             // ),
         };
 
+        dispatch({ type: "error", error: null })
+
         return createIssueService(client, {
             repoFullName: values.repository.value,
             data: newIssue,
         })
             .then((issue) => {
-                if (!values.projects.value) {
-                    return Promise.resolve(issue);
+                if (Array.isArray(values.projects) && values.projects.length > 0) {
+                    return Promise.all(values.projects.map((projectId) => {
+                        return createProjectIssueCard(client, issue.id, projectId)
+                    }))
+                        .then(() => issue);
                 } else {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    return createProjectIssueCard(client, issue, values.projects.value);
+                    return issue;
                 }
             })
             .then((issue) => {
@@ -105,18 +105,17 @@ const CreateIssue: FC = () => {
                     }),
                 ]);
             })
-            .then(() => dispatch({ type: "changePage", page: "home" }));
+            .then(() => dispatch({ type: "changePage", page: "home" }))
+            .catch((error) => dispatch({ type: "error", error }));
     };
 
     return (
-        <>
-            <IssueForm
-                repositories={repositories}
-                currentUser={currentUser}
-                onSubmit={onSubmit}
-                onCancel={() => dispatch({ type: "changePage", page: "home" })}
-            />
-        </>
+        <IssueForm
+            repositories={repositories}
+            currentUser={currentUser}
+            onSubmit={onSubmit}
+            onCancel={() => dispatch({ type: "changePage", page: "home" })}
+        />
     );
 };
 

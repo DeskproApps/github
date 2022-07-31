@@ -103,7 +103,7 @@ const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
             />
 
             <TextBlockWithLabel
-                label="Asignees"
+                label="Assignees"
                 text={
                     (!Array.isArray(issue.assignees) || !issue.assignees.length)
                         ? <>-</>

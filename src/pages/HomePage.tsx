@@ -1,4 +1,5 @@
 import { Fragment, FC, useState, useEffect } from "react";
+import isEmpty from "lodash/isEmpty";
 import {
     HorizontalDivider,
     useDeskproAppClient,
@@ -52,10 +53,17 @@ const HomePage: FC = () => {
             client.getState<ClientStateIssue>(`issues/*`)
                 .then((issues) => {
                     return Promise.all(issues.map((issueState) => {
-                        return baseRequest<Issue>(client, { rawUrl: issueState.data?.issueUrl });
+                        return baseRequest<Issue>(client, { rawUrl: issueState.data?.issueUrl })
+                            .catch((error) => {
+                                if (error.code !== 410) {
+                                    dispatch({ type: "error", error });
+                                }
+                            });
                     }));
                 })
-                .then((issues) => setIssues(issues));
+                .then((issues) => {
+                    setIssues(issues.filter((issue) => !isEmpty(issue)) as Issue[]);
+                });
         };
 
         getEntityCardListService(client, ticketId)

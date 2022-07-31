@@ -16,6 +16,7 @@ import { LogInPage } from "./LogIn";
 import { HomePage } from "./HomePage";
 import { LinkIssuePage } from "./LinkIssuePage";
 import { ViewIssuePage } from "./ViewIssuePage";
+import { EditIssuePage } from "./EditIssuePage";
 import { ErrorBlock, Loading } from "../components/common";
 
 export const Main = () => {
@@ -109,6 +110,7 @@ export const Main = () => {
             .with("log_in", () => <LogInPage />)
             .with("link_issue", () => <LinkIssuePage />)
             .with("view_issue", () => <ViewIssuePage />)
+            .with("edit_issue", () => <EditIssuePage />)
             .otherwise(() => <LogInPage />);
 
     return loading

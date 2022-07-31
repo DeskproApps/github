@@ -4,7 +4,12 @@ import {
     faCaretDown,
     faExternalLinkAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Dropdown, DivAsInputWithDisplay, DropdownTargetProps } from "@deskpro/deskpro-ui";
+import {
+    Dropdown,
+    DropdownValueType,
+    DropdownTargetProps,
+    DivAsInputWithDisplay,
+} from "@deskpro/deskpro-ui";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SingleSelect: FC<any> = ({
@@ -23,11 +28,9 @@ const SingleSelect: FC<any> = ({
     const [dirtyInput, setDirtyInput] = useState<boolean>(false);
 
     const selectedValue = useMemo(() => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return options.filter((o) => o.value === value?.value)[0]?.label ?? "";
+        return options.filter((o: DropdownValueType<string|number>) => o.value === value?.value)[0]?.label ?? "";
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value?.value]);
+    }, [value]);
 
     useEffect(() => {
         setInput(value?.label || "Select Value");

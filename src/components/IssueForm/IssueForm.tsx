@@ -1,9 +1,10 @@
 import { FC, useState, useEffect } from "react";
 import isEmpty from "lodash/isEmpty";
+import isArray from "lodash/isArray";
+import get from "lodash/get";
 import {
     // faPlus,
     // faTimes,
-    faUser,
     faCheck,
     faExternalLinkAlt,
 } from "@fortawesome/free-solid-svg-icons";
@@ -12,15 +13,14 @@ import * as yup from 'yup';
 import {
     // Tag,
     TSpan,
-    Avatar,
     InputWithDisplay,
 } from "@deskpro/deskpro-ui";
 import {
-    P5,
     // Pill,
     Stack,
     Dropdown,
-    DropdownItemType,
+    DropdownValueType,
+    DropdownHeaderType,
     // Label as LabelUI,
     // Button as ButtonUI,
     useDeskproAppTheme,
@@ -33,15 +33,18 @@ import {
     getProjectsService,
     getMilestonesService,
     getRepoContributorsService,
-} from "../../../services/github";
+} from "../../services/github";
 // import { getIssueStatueColorScheme } from "../../../utils";
-import { Label } from "../Label";
-import { Button } from "../Button";
-import { TextArea } from "../TextArea";
-import { SingleSelect } from "../SingleSelect";
-// import { EmptyInlineBlock } from "../EmptyInlineBlock";
-import { TextBlockWithLabel } from "../TextBlockWithLabel";
-import { Milestone, User, Projects/*, Labels*/ } from "../../../services/github/types";
+import {
+    Label,
+    Member,
+    Button,
+    TextArea,
+    SingleSelect,
+    // EmptyInlineBlock,
+    TextBlockWithLabel,
+} from "../common";
+import { Milestone, User, Project, Projects, Issue/*, Labels*/ } from "../../services/github/types";
 import { Props, Values, Option, OptionRepository } from "./types";
 
 const validationSchema = yup.object().shape({
@@ -60,12 +63,7 @@ const validationSchema = yup.object().shape({
         type: yup.string().oneOf(["value"]),
     }),
     assignees: yup.array(yup.string()),
-    projects: yup.object({
-        key: yup.string(),
-        label: yup.string(),
-        value: yup.string(),
-        type: yup.string().oneOf(["value"]),
-    }),
+    projects: yup.array(yup.number()),
     labels: yup.array(yup.string()),
 });
 
@@ -79,30 +77,30 @@ const getOption = <Value, >(
     type: "value",
 });
 
-const getDisabledOption = (value = "Not Found"): DropdownItemType => {
-    return {
-        type: "header",
-        label: value,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        disabled: true,
-    }
-};
+const getDisabledOption = (value = "Not Found"): DropdownHeaderType => ({
+    type: "header",
+    label: value,
+});
 
-const getInitValues = (): Values => ({
-    title: "",
-    description: "",
+const getInitValues = (issue?: Issue): Values => ({
+    title: get(issue, ["title"], "") || "",
+    description: get(issue, ["body"], "") || "",
     repository: getOption("", ""),
     milestone: getOption(0, ""),
-    projects: getOption("", ""),
+    projects: [],
     assignees: [],
     labels: [],
 });
 
-const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser }) => {
+const isEqualRepo = (repoUrl: string, checkRepoName: string): boolean => {
+    return repoUrl === `https://api.github.com/repos/${checkRepoName}`;
+};
+
+const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser, issue }) => {
     const { client } = useDeskproAppClient();
     const { theme } = useDeskproAppTheme();
 
+    const [isEditMode, setIsEditMode] = useState<boolean>(!isEmpty(issue));
     const [repoOptions, setRepoOptions] = useState<Array<OptionRepository>>([]);
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [members, setMembers] = useState<User[]>([]);
@@ -118,12 +116,14 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
         setFieldValue,
         getFieldProps,
     } = useFormik<Values>({
-        initialValues: getInitValues(),
+        initialValues: getInitValues(issue),
         validationSchema,
         onSubmit: async (values: Values) => {
             await onSubmit(values);
         },
     });
+
+    useEffect(() => setIsEditMode(!isEmpty(issue)), [issue]);
 
     useEffect(() => {
         if (!isEmpty(repositories)) {
@@ -137,15 +137,26 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
     }, [repositories]);
 
     useEffect(() => {
-        if (!isEmpty(repoOptions) && !isEmpty(repoOptions[0])) {
+        if (isArray(repoOptions) && !isEmpty(repoOptions)) {
             setFieldValue("repository", repoOptions[0]);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [repoOptions]);
+
+        if (isArray(repoOptions) && issue?.repository_url) {
+            const selectRepoOption = repoOptions.find(({ value }) => isEqualRepo(issue.repository_url, value));
+
+            if (!isEmpty(selectRepoOption)) {
+                setFieldValue("repository", selectRepoOption);
+            } else {
+                setFieldValue("repository", repoOptions[0]);
+            }
+        }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [repoOptions, issue?.repository_url]);
 
     // load Milestones
     useEffect(() => {
-        if (!client || !values.repository.value) {
+        if (!client || !values.repository?.value) {
             return;
         }
 
@@ -155,7 +166,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
         // setLabels([]);
         setFieldValue("milestone", getOption("", ""));
         setFieldValue("assignees", []);
-        setFieldValue("projects", getOption("", ""));
+        setFieldValue("projects", []);
         setFieldValue("labels", []);
 
         Promise.all([
@@ -176,7 +187,26 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
             // setLabels(labels);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [client, values.repository.value]);
+    }, [client, values.repository?.value]);
+
+    useEffect(() => {
+        if (isArray(milestones) && !isEmpty(milestones) && !!issue?.milestone?.number) {
+            const selectMilestone = milestones.find(({ number }) => number === issue.milestone?.number);
+
+            if (selectMilestone?.number && selectMilestone?.title) {
+                setFieldValue("milestone", getOption(selectMilestone.number, selectMilestone.title));
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [milestones, issue?.milestone?.number]);
+
+    useEffect(() => {
+        if (isArray(members) && !isEmpty(members) && isArray(issue?.assignees) && !isEmpty(issue?.assignees)) {
+            const selectAssignees = issue?.assignees.map(({ login }) => login);
+            setFieldValue("assignees", selectAssignees);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [members, issue?.assignees]);
 
     return (
         <form onSubmit={handleSubmit}>
@@ -199,16 +229,18 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
                 />
             </Label>
 
-            <Label htmlFor="repository" label="Repository">
-                <SingleSelect
-                    showInternalSearch
-                    id="repository"
-                    value={values.repository}
-                    options={repoOptions}
-                    error={!!(touched.repository && errors.repository)}
-                    onChange={(value: OptionRepository) => setFieldValue("repository", value)}
-                />
-            </Label>
+            {!isEditMode && (
+                <Label htmlFor="repository" label="Repository">
+                    <SingleSelect
+                        showInternalSearch
+                        id="repository"
+                        value={values.repository}
+                        options={repoOptions}
+                        error={!!(touched.repository && errors.repository)}
+                        onChange={(value: OptionRepository) => setFieldValue("repository", value)}
+                    />
+                </Label>
+            )}
 
             <Label htmlFor="milestone" label="Milestone">
                 <SingleSelect
@@ -239,17 +271,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
                     ? members?.map(({ login, avatar_url }) => ({
                         key: login,
                         value: login,
-                        label: (
-                            <Stack gap={6} key={login}>
-                                <Avatar
-                                    size={18}
-                                    name={login}
-                                    backupIcon={faUser}
-                                    {...(avatar_url ? { imageUrl: avatar_url } : {})}
-                                />
-                                <P5>{login}</P5>
-                            </Stack>
-                        ),
+                        label: (<Member key={login} name={login} avatarUrl={avatar_url} />),
                         type: "value",
                         selected: values.assignees.includes(login),
                     }))
@@ -284,15 +306,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
                                             {members
                                                 .filter(({ login }) => values.assignees.includes(login))
                                                 .map(({ login, avatar_url }) => (
-                                                    <Stack gap={6} key={login}>
-                                                        <Avatar
-                                                            size={18}
-                                                            name={login}
-                                                            backupIcon={faUser}
-                                                            {...(avatar_url ? { imageUrl: avatar_url } : {})}
-                                                        />
-                                                        <P5>{login}</P5>
-                                                    </Stack>
+                                                    <Member key={login} name={login} avatarUrl={avatar_url} />
                                                 ))
                                             }
                                         </Stack>
@@ -305,23 +319,65 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
                 )}
             </Dropdown>
 
-            <Label htmlFor="projects" label="Projects">
-                <SingleSelect
-                    id="projects"
-                    value={values.projects}
+            {!isEditMode && (
+                <Dropdown
+                    fetchMoreText="Fetch more"
+                    autoscrollText="Autoscroll"
+                    selectedIcon={faCheck}
+                    externalLinkIcon={faExternalLinkAlt}
+                    placement="bottom-start"
+                    searchPlaceholder="Select value"
                     options={(Array.isArray(projects) && projects.length > 0)
                         ? projects?.map(({ id, name }) => ({
-                            key: id,
+                            key: `${id}`,
                             value: id,
                             label: name,
                             type: "value",
+                            selected: values.projects.includes(id),
                         }))
                         : [getDisabledOption()]
                     }
-                    error={!!(touched.projects && errors.projects)}
-                    onChange={(value: OptionRepository) => setFieldValue("projects", value)}
-                />
-            </Label>
+                    onSelectOption={(option: DropdownValueType<Project["id"]>) => {
+                        if (option.value) {
+                            const newValue = values.projects.includes(option.value)
+                                ? values.projects.filter((projectId) => projectId !== option.value)
+                                : [...values.projects, option.value]
+
+                            setFieldValue("projects", newValue);
+                        }
+                    }}
+                    closeOnSelect={false}
+                >
+                    {({targetProps, targetRef}: DropdownTargetProps<HTMLDivElement>) => (
+                        <TextBlockWithLabel
+                            label="Projects"
+                            text={(
+                                <DivAsInputWithDisplay
+                                    ref={targetRef}
+                                    {...targetProps}
+                                    value={!values.projects.length
+                                        ? (
+                                            <TSpan overflow="ellipsis" type="p1" style={{color: theme.colors.grey40}}>
+                                                Select value
+                                            </TSpan>
+                                        )
+                                        : (
+                                            <Stack gap={6} wrap="wrap">
+                                                {projects
+                                                    .filter(({ id }) => values.projects.includes(id))
+                                                    .map(({ name }) => name)
+                                                    .join(", ")
+                                                }
+                                            </Stack>
+                                        )}
+                                    placeholder="Select value"
+                                    variant="inline"
+                                />
+                            )}
+                        />
+                    )}
+                </Dropdown>
+            )}
 
             {/*<Dropdown
                 fetchMoreText="Fetch more"
@@ -404,7 +460,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser })
             <Stack justify="space-between">
                 <Button
                     type="submit"
-                    text="Create"
+                    text={isEditMode ? "Save" : "Create"}
                     disabled={isSubmitting}
                     loading={isSubmitting}
                 />

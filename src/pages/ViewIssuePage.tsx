@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import {
     useDeskproAppClient,
     useInitialisedDeskproAppClient,
@@ -12,21 +13,20 @@ import { Loading } from "../components/common";
 
 const ViewIssuePage: FC = () => {
     const { client } = useDeskproAppClient();
-    const [state] = useStore();
+    const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
-    const [issue, setIssue] = useState<Issue|null>(null);
     const [repository, setRepository] = useState<Repository|null>(null);
     const [users, setUsers] = useState<Record<User["id"], User>>({});
     const [comments, setComments] = useState<Comments>([]);
     const issueUrl = state.pageParams?.issueUrl;
 
     useEffect(() => {
-        if (!client || !issue?.number) {
+        if (!client || !state.issue?.number) {
             return;
         }
 
-        client.setTitle(`${issue.number}`);
-    }, [client, issue?.number]);
+        client.setTitle(`${state.issue.number}`);
+    }, [client, state.issue?.number]);
 
     useEffect(() => {
         if (!client) {
@@ -44,7 +44,22 @@ const ViewIssuePage: FC = () => {
     }, [client]);
 
     useEffect(() => {
-        if (!client || !state.context?.data.ticket.id || !issue?.id || !issue.comments_url) {
+        if (!client || !state.pageParams?.issueUrl) {
+            return;
+        }
+
+        client?.registerElement("githubEditButton", {
+            type: "edit_button",
+            payload: {
+                type: "changePage",
+                page: "edit_issue",
+                params: { issueUrl: state.pageParams.issueUrl }
+            },
+        });
+    }, [client, state.pageParams?.issueUrl]);
+
+    useEffect(() => {
+        if (!client || !state.context?.data.ticket.id || !state.issue?.id || !state.issue.comments_url) {
             return;
         }
 
@@ -54,22 +69,25 @@ const ViewIssuePage: FC = () => {
                 title: "Unlink Ticket",
                 payload: {
                     type: "unlinkTicket",
-                    issueId: issue.id,
-                    commentsUrl: issue.comments_url,
+                    issueId: state.issue.id,
+                    commentsUrl: state.issue.comments_url,
                     ticketId: state.context.data.ticket.id,
                 },
             }],
         });
-    }, [client, state.context?.data.ticket.id, issue?.id, issue?.comments_url]);
+    }, [client, state.context?.data.ticket.id, state.issue?.id, state.issue?.comments_url]);
 
     useInitialisedDeskproAppClient((client) => {
-
         if (issueUrl) {
             setLoading(true);
 
-            baseRequest<Issue>(client, { rawUrl: issueUrl })
+
+            (isEmpty(state.issue)
+                ? baseRequest<Issue>(client, { rawUrl: issueUrl })
+                : Promise.resolve(state.issue) as Promise<Issue>
+            )
                 .then((issue) => {
-                    setIssue(issue);
+                    dispatch({ type: "setIssue", issue });
 
                     return Promise.all([
                         Promise.resolve<Issue>(issue),
@@ -104,14 +122,16 @@ const ViewIssuePage: FC = () => {
 
     return loading
         ? (<Loading/>)
-        : issue && repository && (
+        : (state.issue && repository)
+        ? (
             <ViewIssue
-                issue={issue}
+                issue={state.issue}
                 users={users}
                 comments={comments}
                 repository={repository}
             />
-        );
+        )
+        : null;
 };
 
 export { ViewIssuePage };

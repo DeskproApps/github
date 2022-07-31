@@ -13,4 +13,4 @@ export { Label } from "./Label";
 export { Title } from "./Title";
 export { TextArea } from "./TextArea";
 export { EmptyInlineBlock } from "./EmptyInlineBlock";
-export { IssueForm } from "./IssueForm";
+export { Member } from "./Member";
