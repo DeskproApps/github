@@ -21,7 +21,7 @@ export type Values = {
 };
 
 export type Props = {
-    issue?: Issue,
+    issue?: Issue | null,
     repositories: Repository[],
     currentUser: User,
     onSubmit: (values: Values) => void,

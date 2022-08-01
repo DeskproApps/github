@@ -31,7 +31,7 @@ export interface State {
     pageParams?: PageParams,
     context?: Context,
     isAuth: boolean,
-    issue?: Issue,
+    issue?: Issue | null,
     dataDeps?: DataDependencies,
     //...
     _error?: ErrorType,
@@ -42,7 +42,7 @@ export type Action =
     | { type: "loadContext", context: Context }
     | { type: "error", error: ErrorType }
     | { type: "setAuth", isAuth: boolean }
-    | { type: "setIssue", issue: Issue }
+    | { type: "setIssue", issue: Issue | null }
     | { type: "setDeps", deps: DataDependencies };
 
 export type Dispatch = (action: Action) => void;

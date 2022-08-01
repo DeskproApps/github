@@ -82,7 +82,7 @@ export const Main = () => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                dispatch({ type: "setAuth", isAuth: false });
+                dispatch({type: "setAuth", isAuth: false});
             } else if (payload?.type === "unlinkTicket") {
                 if (client) {
                     deleteEntityIssueService(client, payload.ticketId, payload.issueId)
@@ -99,6 +99,10 @@ export const Main = () => {
                         .then(() => dispatch({ type: "changePage", page: "home" }))
                 }
             }
+
+            match(type)
+                .with("home_button", () => dispatch({ type: "setIssue", issue: null }))
+                .otherwise(() => {});
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
     }, [client]);

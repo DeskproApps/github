@@ -82,7 +82,7 @@ const getDisabledOption = (value = "Not Found"): DropdownHeaderType => ({
     label: value,
 });
 
-const getInitValues = (issue?: Issue): Values => ({
+const getInitValues = (issue?: Issue | null): Values => ({
     title: get(issue, ["title"], "") || "",
     description: get(issue, ["body"], "") || "",
     repository: getOption("", ""),
