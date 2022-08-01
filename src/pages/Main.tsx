@@ -16,6 +16,7 @@ import { LogInPage } from "./LogIn";
 import { HomePage } from "./HomePage";
 import { LinkIssuePage } from "./LinkIssuePage";
 import { ViewIssuePage } from "./ViewIssuePage";
+import { EditIssuePage } from "./EditIssuePage";
 import { ErrorBlock, Loading } from "../components/common";
 
 export const Main = () => {
@@ -81,7 +82,7 @@ export const Main = () => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                dispatch({ type: "setAuth", isAuth: false });
+                dispatch({type: "setAuth", isAuth: false});
             } else if (payload?.type === "unlinkTicket") {
                 if (client) {
                     deleteEntityIssueService(client, payload.ticketId, payload.issueId)
@@ -98,6 +99,10 @@ export const Main = () => {
                         .then(() => dispatch({ type: "changePage", page: "home" }))
                 }
             }
+
+            match(type)
+                .with("home_button", () => dispatch({ type: "setIssue", issue: null }))
+                .otherwise(() => {});
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
     }, [client]);
@@ -109,6 +114,7 @@ export const Main = () => {
             .with("log_in", () => <LogInPage />)
             .with("link_issue", () => <LinkIssuePage />)
             .with("view_issue", () => <ViewIssuePage />)
+            .with("edit_issue", () => <EditIssuePage />)
             .otherwise(() => <LogInPage />);
 
     return loading

@@ -2,7 +2,7 @@
   "name": "@deskpro-apps/github",
   "title": "GitHub",
   "description": "View your GitHub issues from Deskpro and link them to tickets you are working on",
-  "version": "1.0.7",
+  "version": "1.0.11",
   "scope": "agent",
   "isSingleInstall": false,
   "hasDevMode": true,
@@ -43,7 +43,7 @@
   "proxy": {
     "whitelist": [{
       "url": "https://api.github.com/.*",
-      "methods": ["GET", "POST"],
+      "methods": ["GET", "POST", "PATCH"],
       "timeout": 10
     }, {
       "url": "https://github.com/.*",
