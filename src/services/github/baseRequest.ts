@@ -57,6 +57,10 @@ const baseRequest: Request = async (client, {
         });
     }
 
+    if (res.status === 403) {
+        return Promise.reject({ code: 403 });
+    }
+
     if (res.status === 410) {
         return Promise.reject({
             code: 410,
