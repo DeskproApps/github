@@ -28,6 +28,7 @@ const HomePage: FC = () => {
         }
 
         client.deregisterElement("githubHomeButton");
+        client.deregisterElement("githubEditButton");
 
         client?.registerElement("githubPlusButton", {
             type: "plus_button",

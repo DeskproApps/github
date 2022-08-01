@@ -1,6 +1,9 @@
 import { FC, useEffect, useState, useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
-import { useDeskproAppClient } from "@deskpro/app-sdk";
+import {
+    useDeskproAppClient,
+    useInitialisedDeskproAppClient,
+} from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import {
     useSetAppTitle,
@@ -21,6 +24,10 @@ const EditIssuePage: FC = () => {
     const issueUrl = state.pageParams?.issueUrl;
 
     useSetAppTitle("Edit");
+
+    useInitialisedDeskproAppClient((client) => {
+        client.deregisterElement("githubEditButton");
+    });
 
     useEffect(() => {
         if (!client || !issueUrl) {

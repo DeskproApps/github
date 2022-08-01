@@ -35,6 +35,7 @@ const ViewIssuePage: FC = () => {
 
         client.deregisterElement("githubPlusButton");
         client.deregisterElement("githubMenu");
+        client.deregisterElement("githubEditButton");
 
         client.registerElement("githubHomeButton", {
             type: "home_button",
