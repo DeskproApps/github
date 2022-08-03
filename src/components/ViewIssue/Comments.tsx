@@ -1,12 +1,12 @@
 import { FC } from "react";
 import styled from "styled-components";
 import ReactTimeAgo from "react-time-ago";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Avatar } from "@deskpro/deskpro-ui";
-import { P1, P11, Stack } from "@deskpro/app-sdk";
+import { P1, P11, Stack, Button } from "@deskpro/app-sdk";
 import { Title } from "../common";
 import { mdToHtml } from "../../utils";
-import { Props } from "./types";
+import { CommentProps } from "./types";
 
 const TimeAgo = styled(ReactTimeAgo)`
     color: ${({ theme }) => theme.colors.grey80};
@@ -24,13 +24,30 @@ const Comment = styled(P1)`
         overflow: hidden;
         text-overflow: ellipsis;
     }
+  
+    img {
+        width: 100%;
+        height: auto;
+    }
 `;
 
-const Comments: FC<Pick<Props, "comments">> = ({ comments }) => {
+const Comments: FC<CommentProps> = ({
+    comments,
+    onClickTitleAction,
+}) => {
     const count = (Array.isArray(comments) && comments.length > 0) ? comments.length : 0;
     return (
         <>
-            <Title>Comments ({count})</Title>
+            <Title>
+                Comments ({count})
+                &nbsp;
+                <Button
+                    icon={faPlus}
+                    minimal
+                    noMinimalUnderline
+                    onClick={onClickTitleAction}
+                />
+            </Title>
 
             {!!comments?.length && comments.map(({ id, body, updated_at, user }) => (
                 <Stack key={id} wrap="nowrap" gap={6} style={{ marginBottom: 10 }}>

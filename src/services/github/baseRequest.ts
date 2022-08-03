@@ -17,11 +17,9 @@ const baseRequest: Request = async (client, {
     let body = undefined;
     const headers: Record<string, string> = {};
 
-    const requestUrl = rawUrl
-        ? rawUrl
-        : `${BASE_URL}${url}${
-            isEmpty(queryParams) ? "" : `?${getQueryParams(queryParams, true)}`
-        }`;
+    const baseUrl = `${rawUrl ? rawUrl : `${BASE_URL}${url}`}`;
+    const params = `${isEmpty(queryParams) ? "" : `?${getQueryParams(queryParams, true)}`}`;
+    const requestUrl = `${baseUrl}${params}`;
 
     if (data instanceof FormData) {
         body = data;
@@ -50,22 +48,10 @@ const baseRequest: Request = async (client, {
         return res.json();
     }
 
-    if (res.status === 401) {
-        return Promise.reject({
-            code: 401,
-            message: "Bad credentials",
-        });
-    }
-
-    if (res.status === 403) {
-        return Promise.reject({ code: 403 });
-    }
-
-    if (res.status === 410) {
-        return Promise.reject({
-            code: 410,
-            message: "Issue doesn't exist",
-        })
+    if (res.status > 400 && res.status <=499) {
+        const status = res.status;
+        return res.json()
+            .then((err) => Promise.reject({ ...err, status }));
     }
 
     if (res.status < 200 || res.status >= 400) {

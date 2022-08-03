@@ -93,7 +93,13 @@ const ViewIssuePage: FC = () => {
                     return Promise.all([
                         Promise.resolve<Issue>(issue),
                         baseRequest<Repository>(client, { rawUrl: issue.repository_url }),
-                        baseRequest<Comments>(client, { rawUrl: issue.comments_url }),
+                        // ToDo: recursively get comments while exists
+                        baseRequest<Comments>(client, {
+                            rawUrl: issue.comments_url,
+                            queryParams: {
+                                per_page: 100,
+                            },
+                        }),
                     ])
                 })
                 .then(([issue, repository, comments]) => {
@@ -121,6 +127,18 @@ const ViewIssuePage: FC = () => {
         }
     }, [issueUrl]);
 
+    const onAddNewComment = () => {
+        dispatch({
+            type: "changePage",
+            page: "add_comment",
+            params: {
+                issueUrl,
+                repoFullName: repository?.full_name,
+                commentUrl: state.issue?.comments_url,
+            },
+        });
+    };
+
     return loading
         ? (<Loading/>)
         : (state.issue && repository)
@@ -130,6 +148,7 @@ const ViewIssuePage: FC = () => {
                 users={users}
                 comments={comments}
                 repository={repository}
+                onAddNewComment={onAddNewComment}
             />
         )
         : null;

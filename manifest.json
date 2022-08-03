@@ -43,7 +43,7 @@
   "proxy": {
     "whitelist": [{
       "url": "https://api.github.com/.*",
-      "methods": ["GET", "POST", "PATCH"],
+      "methods": ["GET", "POST", "PATCH", "PUT"],
       "timeout": 10
     }, {
       "url": "https://github.com/.*",

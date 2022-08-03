@@ -29,7 +29,7 @@ const Link = styled.a`
     color: ${({ theme }) => theme.colors.grey40};
 `;
 
-const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
+const ViewIssue: FC<Props> = ({ issue, repository, users, comments, onAddNewComment }) => {
     const { theme } = useDeskproAppTheme();
 
     return (
@@ -151,7 +151,7 @@ const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
 
             <HorizontalDivider style={{ marginBottom: 10 }} />
 
-            <Comments comments={comments} />
+            <Comments comments={comments} onClickTitleAction={onAddNewComment} />
         </>
     );
 };

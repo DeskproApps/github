@@ -14,3 +14,4 @@ export { Title } from "./Title";
 export { TextArea } from "./TextArea";
 export { EmptyInlineBlock } from "./EmptyInlineBlock";
 export { Member } from "./Member";
+export { Attach } from "./Attach";
