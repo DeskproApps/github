@@ -1,26 +1,18 @@
-import { FC, useState, useCallback, useMemo } from "react";
+import { FC, useState, useCallback } from "react";
 import get from "lodash/get";
-import isArray from "lodash/isArray";
-import isEmpty from "lodash/isEmpty";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import {
-    IDeskproClient,
     Stack,
     useDeskproAppClient,
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
-import {
-    baseRequest,
-    uploadFileService,
-} from "../services/github";
+import { baseRequest } from "../services/github";
 import { useSetAppTitle } from "../hooks";
-import { fileToBase64, isImage } from "../utils";
 import {
     Label,
     Button,
-    Attach,
     TextArea,
     ErrorBlock,
 } from "../components/common";
@@ -31,7 +23,6 @@ const validationSchema = yup.object().shape({
 
 const initValues = {
     comment: "",
-    files: [],
 };
 
 const AddCommentPage: FC = () => {
@@ -41,70 +32,28 @@ const AddCommentPage: FC = () => {
 
     const issueUrl = state.pageParams?.issueUrl;
     const commentUrl = state.pageParams?.commentUrl;
-    const repoFullName = state.pageParams?.repoFullName;
-
-    const uploadFiles = (client: IDeskproClient, {
-        repoFullName,
-        file,
-        fileName,
-    }: { repoFullName: string, file: File, fileName: string }) => {
-        return fileToBase64(file)
-            .then((base64File) => uploadFileService(client, {
-                fileName,
-                repoFullName,
-                file: base64File,
-            }))
-    };
 
     const {
-        values,
         handleSubmit,
         isSubmitting,
         getFieldProps,
-        setFieldValue,
     } = useFormik({
         validationSchema,
         initialValues: initValues,
         onSubmit: async (values) => {
-            if (!client || !commentUrl || !repoFullName) {
+            if (!client || !commentUrl || !values.comment) {
                 return;
             }
 
             setError(null);
 
-            return ((isArray(values.files) && !isEmpty(values.files))
-                ? Promise.all(values.files.map(({ file, name }) => uploadFiles(client, {
-                        file,
-                        repoFullName,
-                        fileName: name,
-                    })))
-                : Promise.resolve([])
-            )
-                .then((uploadedFiles) => {
-                    const files: string[] = [];
-
-                    if (isArray(uploadedFiles) && !isEmpty(uploadedFiles)) {
-                        uploadedFiles.forEach(({ content, commit }) => {
-                            if (isImage(content.name)) {
-                                files.push(`![${commit.message}](${content.html_url}?raw=true)`)
-                            } else {
-                                files.push(`[${commit.message}](${content.html_url}?raw=true)`)
-                            }
-                        })
-                    }
-
-                    const body = [
-                        ...(values.comment ? [values.comment] : []),
-                        ...files,
-                    ];
-                    return baseRequest(client, {
-                        rawUrl: commentUrl,
-                        method: "POST",
-                        data: {
-                            body: body.join("\n"),
-                        },
-                    })
-                })
+            return baseRequest(client, {
+                rawUrl: commentUrl,
+                method: "POST",
+                data: {
+                    body: values.comment,
+                },
+            })
                 .then(() => {
                     dispatch({
                         type: "changePage",
@@ -117,13 +66,6 @@ const AddCommentPage: FC = () => {
                 });
         },
     });
-
-    const isDisabled: boolean = useMemo(() => {
-        const isEmptyComment = isEmpty(values.comment);
-        const isEmptyFiles = (!isArray(values.files) || isEmpty(values.files));
-
-        return isSubmitting || (isEmptyComment && isEmptyFiles);
-    }, [isSubmitting, values.comment, values.files]);
 
     useSetAppTitle("Add Comment");
 
@@ -163,17 +105,11 @@ const AddCommentPage: FC = () => {
                     />
                 </Label>
 
-                <Label label="Attachments">
-                    <Attach
-                        onFiles={(files) => { setFieldValue("files", files); }}
-                    />
-                </Label>
-
                 <Stack justify="space-between">
                     <Button
                         type="submit"
                         text="Add"
-                        disabled={isDisabled}
+                        disabled={isSubmitting}
                         loading={isSubmitting}
                     />
                     <Button

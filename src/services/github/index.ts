@@ -11,4 +11,3 @@ export { getProjectsService } from "./getProjectsService";
 export { getLabelsService } from "./getLabelsService";
 export { getProjectService } from "./getProjectService";
 export { createProjectIssueCardService } from "./createProjectIssueCardService";
-export { uploadFileService } from "./uploadFileService";
