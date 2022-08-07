@@ -1,4 +1,5 @@
 import { Fragment, FC, useState, useEffect } from "react";
+import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 import {
     HorizontalDivider,
@@ -10,17 +11,16 @@ import { getEntityCardListService } from "../services/entityAssociation";
 import { Issue } from "../services/github/types";
 import { baseRequest } from "../services/github";
 import { useSetAppTitle, useSetBadgeCount } from "../hooks";
-import { Loading, IssueInfo } from "../components/common";
+import { Loading, IssueInfo, NoFound } from "../components/common";
 
 const HomePage: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
-    const [issues, setIssues] = useState<Issue[]>([]);
     const ticketId = state.context?.data.ticket.id;
 
     useSetAppTitle("GitHub Issues");
-    useSetBadgeCount(issues);
+    useSetBadgeCount(state.issues ?? []);
 
     useEffect(() => {
         if (!client) {
@@ -63,7 +63,10 @@ const HomePage: FC = () => {
                     }));
                 })
                 .then((issues) => {
-                    setIssues(issues.filter((issue) => !isEmpty(issue)) as Issue[]);
+                    dispatch({
+                        type: "setIssues",
+                        issues: issues.filter((issue) => !isEmpty(issue)) as Issue[],
+                    });
                 });
         };
 
@@ -94,15 +97,18 @@ const HomePage: FC = () => {
         ? (<Loading/>)
         : (
             <>
-                {issues.map((issue) => (
-                    <Fragment key={issue.id} >
-                        <IssueInfo
-                            {...issue}
-                            onClick={onClickTitle(issue.url)}
-                        />
-                        <HorizontalDivider style={{ marginBottom: 9 }}/>
-                    </Fragment>
-                ))}
+                {(isArray(state.issues) && !isEmpty(state.issues))
+                    ? state.issues.map((issue) => (
+                        <Fragment key={issue.id} >
+                            <IssueInfo
+                                {...issue}
+                                onClick={onClickTitle(issue.url)}
+                            />
+                            <HorizontalDivider style={{ marginBottom: 9 }}/>
+                        </Fragment>
+                    ))
+                    : <NoFound />
+                }
             </>
         );
 };

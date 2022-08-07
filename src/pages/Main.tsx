@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { match } from "ts-pattern";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -6,18 +6,26 @@ import {
     TargetAction,
     useDeskproAppClient,
     useDeskproAppEvents,
+    useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
-import { AppElementPayload, ReplyBoxNoteSelection } from "../context/StoreProvider/types";
+import { AppElementPayload, ReplyBoxSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
 import { deleteEntityIssueService } from "../services/entityAssociation";
 import { baseRequest, checkIsAuthService } from "../services/github";
 import { placeholders } from "../services/github/constants";
+import {
+    ticketReplyNotesSelectionStateKey,
+    ticketReplyEmailsSelectionStateKey,
+    registerReplyBoxNotesAdditionsTargetAction,
+    registerReplyBoxEmailsAdditionsTargetAction,
+} from "../utils/replyBox";
 import { LogInPage } from "./LogIn";
 import { HomePage } from "./HomePage";
 import { LinkIssuePage } from "./LinkIssuePage";
 import { ViewIssuePage } from "./ViewIssuePage";
 import { EditIssuePage } from "./EditIssuePage";
 import { ErrorBlock, Loading } from "../components/common";
+import { Issue } from "../services/github/types";
 
 export const Main = () => {
     const [state, dispatch] = useStore();
@@ -29,24 +37,15 @@ export const Main = () => {
         console.error(`GitHub: ${state._error}`);
     }
 
-    useEffect(() => {
-        if (!client) {
-            return;
-        }
-
+    useInitialisedDeskproAppClient((client) => {
         setLoading(true);
 
         checkIsAuthService(client)
             .then((isAuth) => dispatch({ type: "setAuth", isAuth }))
             .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [client]);
+    });
 
-    useEffect(() => {
-        if (!client) {
-            return;
-        }
-
+    useInitialisedDeskproAppClient((client) => {
         if (state.isAuth) {
             dispatch({ type: "changePage", page: "home" });
         } else {
@@ -57,13 +56,115 @@ export const Main = () => {
                 .then(() => dispatch({ type: "changePage", page: "log_in" }))
                 .catch((error) => dispatch({ type: "error", error }));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isAuth]);
 
-    const debounceTargetAction = useDebouncedCallback<(a: TargetAction<ReplyBoxNoteSelection[]>) => void>(
+    useInitialisedDeskproAppClient((client) => {
+        registerReplyBoxNotesAdditionsTargetAction(client, state);
+        registerReplyBoxEmailsAdditionsTargetAction(client, state);
+        client.registerTargetAction("githubOnReplyBoxNote", "on_reply_box_note");
+        client.registerTargetAction("githubOnReplyBoxEmail", "on_reply_box_email");
+    }, [state.issues, state.context?.data]);
+
+    const debounceTargetAction = useDebouncedCallback<(a: TargetAction<ReplyBoxSelection[]>) => void>(
         (action: TargetAction) => {
             match<string>(action.name)
                 .with("linkTicket", () => dispatch({ type: "changePage", page: "link_issue" }))
+                .with("githubOnReplyBoxNote", () => {
+                    const ticketId = action.subject;
+                    const note = action.payload.note;
+
+                    if (!ticketId || !note || !client) {
+                        return;
+                    }
+
+                    if (ticketId !== state.context?.data.ticket.id) {
+                        return;
+                    }
+
+                    client.setBlocking(true);
+                    client.getState<ReplyBoxSelection>(`tickets/${ticketId}/github/notes/*`)
+                        .then((r) => {
+                            const commentUrls = r
+                                .filter(({ data }) => data?.selected)
+                                .map(({ data }) => data?.id)
+                                .map((issueId) => (state.issues ?? []).find(({ id }) => issueId === id) as Issue)
+                                .filter((issue) => !!issue)
+                                .map(({ comments_url }) => comments_url);
+
+                            return Promise.all(commentUrls.map((commentUrl) => baseRequest(client, {
+                                rawUrl: commentUrl,
+                                method: "POST",
+                                data: {
+                                    body: note,
+                                },
+                            })));
+                        })
+                        .finally(() => client.setBlocking(false))
+                })
+                .with("githubOnReplyBoxEmail", () => {
+                    const ticketId = action.subject;
+                    const email = action.payload.email;
+
+                    if (!ticketId || !email || !client) {
+                        return;
+                    }
+
+                    if (ticketId !== state.context?.data.ticket.id) {
+                        return;
+                    }
+
+                    client.setBlocking(true);
+                    client.getState<ReplyBoxSelection>(`tickets/${ticketId}/github/emails/*`)
+                        .then((r) => {
+                            const commentUrls = r
+                                .filter(({ data }) => data?.selected)
+                                .map(({ data }) => data?.id)
+                                .map((issueId) => (state.issues ?? []).find(({ id }) => issueId === id) as Issue)
+                                .filter((issue) => !!issue)
+                                .map(({ comments_url }) => comments_url );
+
+                            return Promise.all(commentUrls.map((commentUrl) => baseRequest(client, {
+                                rawUrl: commentUrl,
+                                method: "POST",
+                                data: {
+                                    body: email
+                                }
+                            })));
+                        })
+                        .finally(() => client.setBlocking(false))
+                })
+                .with("githubReplyBoxNoteAdditions", () => {
+                    (action.payload ?? []).forEach((selection: { id: string; selected: boolean; }) => {
+                        const ticketId = action.subject;
+
+                        if (state.context?.data.ticket.id) {
+                            client?.setState(
+                                ticketReplyNotesSelectionStateKey(ticketId, selection.id),
+                                { id: selection.id, selected: selection.selected }
+                            ).then((result) => {
+                                if (result.isSuccess) {
+                                    registerReplyBoxNotesAdditionsTargetAction(client, state);
+                                }
+                            });
+                        }
+                    })
+                })
+                .with("githubReplyBoxEmailAdditions", () => {
+                    (action.payload ?? []).forEach((selection: { id: string; selected: boolean; }) => {
+                        const ticketId = action.subject;
+
+                        if (state.context?.data.ticket.id) {
+                            client?.setState(
+                                ticketReplyEmailsSelectionStateKey(ticketId, selection.id),
+                                { id: selection.id, selected: selection.selected }
+                            ).then((result) => {
+                                if (result.isSuccess) {
+                                    registerReplyBoxEmailsAdditionsTargetAction(client, state);
+                                }
+                            });
+                        }
+                    })
+                })
                 .run();
         },
         500,
@@ -96,6 +197,13 @@ export const Main = () => {
                                 }`
                             }
                         }))
+                        .then(() => {
+                            return Promise.all([
+                                client.deleteState(ticketReplyEmailsSelectionStateKey(payload.ticketId, payload.issueId)),
+                                client.deleteState(ticketReplyNotesSelectionStateKey(payload.ticketId, payload.issueId)),
+                            ])
+                        })
+                        .then(() => dispatch({ type: "unlinkIssue", issueId: payload.issueId }))
                         .then(() => dispatch({ type: "changePage", page: "home" }))
                 }
             }
