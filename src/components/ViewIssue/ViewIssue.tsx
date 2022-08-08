@@ -103,7 +103,7 @@ const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
             />
 
             <TextBlockWithLabel
-                label="Asignees"
+                label="Assignees"
                 text={
                     (!Array.isArray(issue.assignees) || !issue.assignees.length)
                         ? <>-</>
@@ -125,9 +125,8 @@ const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
 
             <TextBlockWithLabel
                 label="Labels"
-                text={!issue.labels
-                    ? "-"
-                    : (
+                text={(Array.isArray(issue.labels) && issue.labels.length > 0)
+                    ? (
                         <Stack wrap="wrap" gap={6}>
                             {issue.labels.map((label) => {
                                 return (
@@ -146,6 +145,7 @@ const ViewIssue: FC<Props> = ({ issue, repository, users, comments }) => {
                             })}
                         </Stack>
                     )
+                    : "-"
                 }
             />
 

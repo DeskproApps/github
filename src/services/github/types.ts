@@ -108,11 +108,13 @@ export type Label = {
     description?: string,
 };
 
+export type Labels = Label[];
+
 export type Issue = {
     assignee: null,
     assignees?: User[],
     author_association: string, // ToDo: need enum
-    body: null,
+    body: string | null,
     closed_at: DateTime | null,
     comments: number,
     comments_url: string,
@@ -156,3 +158,32 @@ export type Comment = {
 }
 
 export type Comments = Comment[];
+
+export type Project = {
+    body: string,
+    columns_url: string,
+    created_at: DateTime,
+    creator: User,
+    html_url: string,
+    id: number,
+    name: string,
+    node_id: string,
+    number: number
+    owner_url: string,
+    state: "open" | "closed" | "all",
+    updated_at: DateTime,
+    url: string,
+};
+
+export type Projects = Project[];
+
+export type ProjectColumn = {
+    cards_url: string,
+    created_at: DateTime,
+    id: number,
+    name: string,
+    node_id: string,
+    project_url: string,
+    updated_at: DateTime,
+    url: string,
+};

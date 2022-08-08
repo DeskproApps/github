@@ -9,12 +9,14 @@ import {
 } from "@deskpro/app-sdk";
 import { AppElementPayload, ReplyBoxNoteSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
-import { checkIsAuthService } from "../services/github";
+import { deleteEntityIssueService } from "../services/entityAssociation";
+import { baseRequest, checkIsAuthService } from "../services/github";
 import { placeholders } from "../services/github/constants";
 import { LogInPage } from "./LogIn";
 import { HomePage } from "./HomePage";
 import { LinkIssuePage } from "./LinkIssuePage";
 import { ViewIssuePage } from "./ViewIssuePage";
+import { EditIssuePage } from "./EditIssuePage";
 import { ErrorBlock, Loading } from "../components/common";
 
 export const Main = () => {
@@ -80,8 +82,27 @@ export const Main = () => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                dispatch({ type: "setAuth", isAuth: false });
+                dispatch({type: "setAuth", isAuth: false});
+            } else if (payload?.type === "unlinkTicket") {
+                if (client) {
+                    deleteEntityIssueService(client, payload.ticketId, payload.issueId)
+                        .then(() => baseRequest(client, {
+                            rawUrl: payload.commentsUrl,
+                            method: "POST",
+                            data: {
+                                body: `Unlinked from Deskpro ticket ${payload.ticketId}${state.context?.data?.ticket?.permalinkUrl
+                                    ? `, ${state.context.data.ticket.permalinkUrl}`
+                                    : ""
+                                }`
+                            }
+                        }))
+                        .then(() => dispatch({ type: "changePage", page: "home" }))
+                }
             }
+
+            match(type)
+                .with("home_button", () => dispatch({ type: "setIssue", issue: null }))
+                .otherwise(() => {});
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
     }, [client]);
@@ -93,6 +114,7 @@ export const Main = () => {
             .with("log_in", () => <LogInPage />)
             .with("link_issue", () => <LinkIssuePage />)
             .with("view_issue", () => <ViewIssuePage />)
+            .with("edit_issue", () => <EditIssuePage />)
             .otherwise(() => <LogInPage />);
 
     return loading

@@ -57,6 +57,17 @@ const baseRequest: Request = async (client, {
         });
     }
 
+    if (res.status === 403) {
+        return Promise.reject({ code: 403 });
+    }
+
+    if (res.status === 410) {
+        return Promise.reject({
+            code: 410,
+            message: "Issue doesn't exist",
+        })
+    }
+
     if (res.status < 200 || res.status >= 400) {
         throw new Error(`${method} ${url}: Response Status [${res.status}]`);
     }
