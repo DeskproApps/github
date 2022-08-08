@@ -5,4 +5,10 @@ export type Props = {
     users: Record<User["id"], User>,
     repository: Repository,
     comments: Comments,
+    onAddNewComment: () => void,
+};
+
+export type CommentProps = {
+    comments: Comments,
+    onClickTitleAction: () => void,
 };
