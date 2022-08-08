@@ -24,6 +24,7 @@ import { HomePage } from "./HomePage";
 import { LinkIssuePage } from "./LinkIssuePage";
 import { ViewIssuePage } from "./ViewIssuePage";
 import { EditIssuePage } from "./EditIssuePage";
+import { AddCommentPage } from "./AddCommentPage";
 import { ErrorBlock, Loading } from "../components/common";
 import { Issue } from "../services/github/types";
 
@@ -223,6 +224,7 @@ export const Main = () => {
             .with("link_issue", () => <LinkIssuePage />)
             .with("view_issue", () => <ViewIssuePage />)
             .with("edit_issue", () => <EditIssuePage />)
+            .with("add_comment", () => <AddCommentPage />)
             .otherwise(() => <LogInPage />);
 
     return loading

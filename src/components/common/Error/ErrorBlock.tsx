@@ -15,7 +15,7 @@ const StyledErrorBlock = styled(Stack)`
   width: 100%;
 `;
 
-export const ErrorBlock: FC<Props> = ({ text }) => (
+export const ErrorBlock: FC<Props> = ({ text = "An error occurred" }) => (
     <StyledErrorBlock className="error-block">
         <FontAwesomeIcon icon={faExclamation} style={{marginRight: "6px"}}/>
         <div className="error-block-messages">

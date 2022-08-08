@@ -15,10 +15,13 @@ export type Page =
     | "log_in"
     | "link_issue"
     | "view_issue"
-    | "edit_issue";
+    | "edit_issue"
+    | "add_comment";
 
 export type PageParams = {
     issueUrl?: Issue["url"],
+    commentUrl?: Issue["comments_url"],
+    repoFullName?: Repository["full_name"],
 };
 
 export type DataDependencies = {
