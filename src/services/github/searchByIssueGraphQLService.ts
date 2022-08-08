@@ -1,12 +1,14 @@
 import { IDeskproClient } from "@deskpro/app-sdk"
 import { baseGraphQLRequest } from "./baseGraphQLRequest";
+import { User } from "./types";
 
 const searchByIssueGraphQLService = (
     client: IDeskproClient,
-    // query: string,
+    q: string,
+    login: User["login"],
 ) => {
     const variables = {
-        q:  "test involves:zpawn is:issue in:title"
+        q: `${q} involves:${login} is:issue in:title`
     };
     const query = `
         query SearchByIssues($q: String!) {
@@ -19,6 +21,7 @@ const searchByIssueGraphQLService = (
             edges {
               node {
                 ... on Issue {
+                  id,
                   createdAt
                   title
                   url,
@@ -62,7 +65,17 @@ const searchByIssueGraphQLService = (
         }
     `;
 
-    return baseGraphQLRequest(client, { query, variables });
+    return baseGraphQLRequest(client, { query, variables })
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        .then(({ search }) => search.edges.map(({ node }) => ({
+            id: node.id,
+            title: node.title,
+            html_url: node.url,
+            state: node.state,
+            created_at: node.createdAt,
+            repository: node.repository,
+        })));
 };
 
 export { searchByIssueGraphQLService };

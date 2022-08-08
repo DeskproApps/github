@@ -11,7 +11,6 @@ import { getDate } from "../../../utils/date";
 import { getIssueStatueColorScheme } from "../../../utils";
 import { GithubLink } from "../GithubLink";
 import { TwoSider } from "../TwoSider";
-import { TextBlockWithLabel } from "../TextBlockWithLabel";
 
 type Props = Issue & {
     onClick?: () => void,
@@ -53,7 +52,9 @@ const StatusAndDate: FC<Props> = (props) => {
     );
 };
 
-const TicketsInfo: FC<Props> = ({ id }) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const TicketsInfo: FC<Props> = ({ id, repository }) => {
     const [ticketCount, setTicketCount] = useState<number>(0);
 
     useInitialisedDeskproAppClient((client) => {
@@ -61,9 +62,11 @@ const TicketsInfo: FC<Props> = ({ id }) => {
     });
 
     return (
-        <TextBlockWithLabel
-            label="Deskpro Tickets"
-            text={ticketCount}
+        <TwoSider
+            leftLabel="Deskpro Tickets"
+            leftText={ticketCount}
+            rightLabel="Repository"
+            rightText={repository.name}
         />
     );
 };

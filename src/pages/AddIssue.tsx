@@ -5,24 +5,26 @@ import {
     Stack,
     HorizontalDivider,
     useDeskproAppClient,
+    useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
 import { setEntityIssueService } from "../services/entityAssociation";
 import {
     baseRequest,
-    searchByIssueService,
+    // searchByIssueService,
+    getCurrentUserService,
     searchByIssueGraphQLService,
 } from "../services/github";
-import { Issue, Repository } from "../services/github/types";
+import { User, Issue, Repository } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
 import { Issues } from "../components/LinkIssue";
 import {
-    Label,
+    // Label,
     Button,
     Loading,
     InputSearch,
-    SingleSelect,
+    // SingleSelect,
 } from "../components/common";
 
 type OptionRepository = {
@@ -41,6 +43,7 @@ const AddIssue: FC = () => {
     const [repoOptions, setRepoOptions] = useState<Array<OptionRepository>>([]);
     const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
     const [selectedIssues, setSelectedIssues] = useState<Array<Issue["id"]>>([]);
+    const [currentMember, setCurrentMember] = useState<User | null>(null);
     const ticketId = state.context?.data.ticket.id;
 
     useEffect(() => {
@@ -60,6 +63,10 @@ const AddIssue: FC = () => {
         }
     }, [repoOptions]);
 
+    useInitialisedDeskproAppClient((client) => {
+        getCurrentUserService(client).then(setCurrentMember);
+    });
+
     const onClearSearch = () => {
         setSearchIssue("");
         setIssues([]);
@@ -76,7 +83,7 @@ const AddIssue: FC = () => {
     };
 
     const searchInGithub = useDebouncedCallback<(q: string) => void>((q) => {
-        if (!client || !selectedRepo?.value) {
+        if (!client || !selectedRepo?.value || !currentMember?.login) {
             return;
         }
 
@@ -87,22 +94,28 @@ const AddIssue: FC = () => {
 
         setLoading(true);
 
-        searchByIssueGraphQLService(client)
-            .then((data) => {
-                console.log(">>> graphql:then:", data);
+        searchByIssueGraphQLService(client, q, currentMember.login)
+            .then((issues) => {
+                return setIssues(issues)
             })
-            .catch((error) => {
-                console.log(">>> graphql:catch:", error);
-            })
-
-        searchByIssueService(client, q, selectedRepo.value)
-            .then(({ items }) => setIssues(items))
             .catch((error) => {
                 if (error?.code === 401) {
                     dispatch({ type: "setAuth", isAuth: false });
                 }
             })
             .finally(() => setLoading(false));
+
+        // searchByIssueService(client, q, selectedRepo.value)
+        //     .then(({ items }) => {
+        //         console.log(">>> issue:rest:", items);
+        //         return setIssues(items)
+        //     })
+        //     .catch((error) => {
+        //         if (error?.code === 401) {
+        //             dispatch({ type: "setAuth", isAuth: false });
+        //         }
+        //     })
+        //     .finally(() => setLoading(false));
     }, 500);
 
     const onChangeSearch = ({ target: { value: q }}: ChangeEvent<HTMLInputElement>) => {
@@ -110,10 +123,10 @@ const AddIssue: FC = () => {
         searchInGithub(q);
     };
 
-    const onChangeSelect = (option: OptionRepository) => {
-        setSelectedRepo(option);
-        searchInGithub(searchIssue);
-    };
+    // const onChangeSelect = (option: OptionRepository) => {
+    //     setSelectedRepo(option);
+    //     searchInGithub(searchIssue);
+    // };
 
     const onLinkIssues = () => {
         if (!client || !ticketId) {
@@ -182,7 +195,7 @@ const AddIssue: FC = () => {
                 onChange={onChangeSearch}
             />
 
-            <Label htmlFor="repository" label="Repository">
+            {/*<Label htmlFor="repository" label="Repository">
                 <SingleSelect
                     showInternalSearch
                     id="repository"
@@ -191,7 +204,7 @@ const AddIssue: FC = () => {
                     onChange={onChangeSelect}
                     options={repoOptions}
                 />
-            </Label>
+            </Label>*/}
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button
