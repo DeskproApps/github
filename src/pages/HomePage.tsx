@@ -50,17 +50,14 @@ const HomePage: FC = () => {
 
         setLoading(true);
 
-        const loadIssues = () => {
-            client.getState<ClientStateIssue>(`issues/*`)
-                .then((issues) => {
-                    return Promise.all(issues.map((issueState) => {
-                        return baseRequest<Issue>(client, { rawUrl: issueState.data?.issueUrl })
-                            .catch((error) => {
-                                if (error.code !== 410) {
-                                    dispatch({ type: "error", error });
-                                }
-                            });
-                    }));
+        const loadIssues = (issueIds: Array<Issue["id"] | string>) => {
+            Promise.all(issueIds.map((issueId) =>
+                client.getState<ClientStateIssue>(`issues/${issueId}`)
+            ))
+                .then((linkedIssueIds) => {
+                    return Promise.all(linkedIssueIds.map((linkedIssue) => {
+                        return baseRequest<Issue>(client, { rawUrl: linkedIssue[0].data?.issueUrl })
+                    }))
                 })
                 .then((issues) => {
                     dispatch({
@@ -73,7 +70,7 @@ const HomePage: FC = () => {
         getEntityCardListService(client, ticketId)
             .then((issueIds) => {
                 if (Array.isArray(issueIds) && issueIds.length > 0) {
-                    return loadIssues();
+                    return loadIssues(issueIds);
                 } else {
                     dispatch({ type: "changePage", page: "link_issue" })
                 }
