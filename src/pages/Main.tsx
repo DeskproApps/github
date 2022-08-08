@@ -100,6 +100,7 @@ export const Main = () => {
                                 },
                             })));
                         })
+                        .then(() => dispatch({ type: "setIssue", issue: null }))
                         .finally(() => client.setBlocking(false))
                 })
                 .with("githubOnReplyBoxEmail", () => {
@@ -132,6 +133,7 @@ export const Main = () => {
                                 }
                             })));
                         })
+                        .then(() => dispatch({ type: "setIssue", issue: null }))
                         .finally(() => client.setBlocking(false))
                 })
                 .with("githubReplyBoxNoteAdditions", () => {
