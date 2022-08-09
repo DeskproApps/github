@@ -1,4 +1,5 @@
 import { Fragment, FC, useState, useEffect } from "react";
+import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 import {
     HorizontalDivider,
@@ -10,17 +11,16 @@ import { getEntityCardListService } from "../services/entityAssociation";
 import { Issue } from "../services/github/types";
 import { baseRequest } from "../services/github";
 import { useSetAppTitle, useSetBadgeCount } from "../hooks";
-import { Loading, IssueInfo } from "../components/common";
+import { Loading, IssueInfo, NoFound } from "../components/common";
 
 const HomePage: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
-    const [issues, setIssues] = useState<Issue[]>([]);
     const ticketId = state.context?.data.ticket.id;
 
     useSetAppTitle("GitHub Issues");
-    useSetBadgeCount(issues);
+    useSetBadgeCount(state.issues ?? []);
 
     useEffect(() => {
         if (!client) {
@@ -50,27 +50,27 @@ const HomePage: FC = () => {
 
         setLoading(true);
 
-        const loadIssues = () => {
-            client.getState<ClientStateIssue>(`issues/*`)
-                .then((issues) => {
-                    return Promise.all(issues.map((issueState) => {
-                        return baseRequest<Issue>(client, { rawUrl: issueState.data?.issueUrl })
-                            .catch((error) => {
-                                if (error.code !== 410) {
-                                    dispatch({ type: "error", error });
-                                }
-                            });
-                    }));
+        const loadIssues = (issueIds: Array<Issue["id"] | string>) => {
+            Promise.all(issueIds.map((issueId) =>
+                client.getState<ClientStateIssue>(`issues/${issueId}`)
+            ))
+                .then((linkedIssueIds) => {
+                    return Promise.all(linkedIssueIds.map((linkedIssue) => {
+                        return baseRequest<Issue>(client, { rawUrl: linkedIssue[0].data?.issueUrl })
+                    }))
                 })
                 .then((issues) => {
-                    setIssues(issues.filter((issue) => !isEmpty(issue)) as Issue[]);
+                    dispatch({
+                        type: "setIssues",
+                        issues: issues.filter((issue) => !isEmpty(issue)) as Issue[],
+                    });
                 });
         };
 
         getEntityCardListService(client, ticketId)
             .then((issueIds) => {
                 if (Array.isArray(issueIds) && issueIds.length > 0) {
-                    return loadIssues();
+                    return loadIssues(issueIds);
                 } else {
                     dispatch({ type: "changePage", page: "link_issue" })
                 }
@@ -94,15 +94,18 @@ const HomePage: FC = () => {
         ? (<Loading/>)
         : (
             <>
-                {issues.map((issue) => (
-                    <Fragment key={issue.id} >
-                        <IssueInfo
-                            {...issue}
-                            onClick={onClickTitle(issue.url)}
-                        />
-                        <HorizontalDivider style={{ marginBottom: 9 }}/>
-                    </Fragment>
-                ))}
+                {(isArray(state.issues) && !isEmpty(state.issues))
+                    ? state.issues.map((issue) => (
+                        <Fragment key={issue.id} >
+                            <IssueInfo
+                                {...issue}
+                                onClick={onClickTitle(issue.url)}
+                            />
+                            <HorizontalDivider style={{ marginBottom: 9 }}/>
+                        </Fragment>
+                    ))
+                    : <NoFound />
+                }
             </>
         );
 };
