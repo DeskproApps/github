@@ -11,3 +11,7 @@ export { getProjectsService } from "./getProjectsService";
 export { getLabelsService } from "./getLabelsService";
 export { getProjectService } from "./getProjectService";
 export { createProjectIssueCardService } from "./createProjectIssueCardService";
+export { createIssueCommentService } from "./createIssueCommentService";
+export { getIssueService } from "./getIssueService";
+export { searchByIssueGraphQLService } from "./searchByIssueGraphQLService";
+export { getIssuesByIdsGraphQLService } from "./getIssuesByIdsGraphQLService";

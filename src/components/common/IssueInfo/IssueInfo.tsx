@@ -1,17 +1,27 @@
 import { FC, useState } from "react";
+import isEmpty from "lodash/isEmpty";
+import {faArrowUpRightFromSquare, faTimes, faUser} from "@fortawesome/free-solid-svg-icons";
+import {Avatar, Tag} from "@deskpro/deskpro-ui";
 import {
     H3,
+    P5,
     Pill,
+    Icon,
     Stack,
     useDeskproAppTheme,
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
+import {
+    getEntityAssociationCountService,
+} from "../../../services/entityAssociation/getEntityAssociationCountService";
 import { Issue } from "../../../services/github/types";
 import { getDate } from "../../../utils/date";
 import { getIssueStatueColorScheme } from "../../../utils";
+import { nbsp } from "../../../constants";
 import { GithubLink } from "../GithubLink";
 import { TwoSider } from "../TwoSider";
 import { TextBlockWithLabel } from "../TextBlockWithLabel";
+import { Link } from "../Link";
 
 type Props = Issue & {
     onClick?: () => void,
@@ -53,18 +63,91 @@ const StatusAndDate: FC<Props> = (props) => {
     );
 };
 
-const TicketsInfo: FC<Props> = ({ id }) => {
+const Assignees: FC<{ assignees: Issue["assignees"] }> = ({ assignees }) => {
+    return (!Array.isArray(assignees) || !assignees.length)
+        ? <>-</>
+        : <Stack wrap="wrap" gap={6}>
+            {assignees.map(({ login, name, avatarUrl }) => (
+                <Stack gap={6} key={login}>
+                    <Avatar
+                        size={18}
+                        name={name}
+                        backupIcon={faUser}
+                        {...(avatarUrl ? { imageUrl: avatarUrl } : {})}
+                    />
+                    <P5>{name}</P5>
+                </Stack>
+            ))}
+        </Stack>
+};
+
+const Labels: FC<{ labels: Issue["labels"] }> = ({ labels }) => {
+    const { theme } = useDeskproAppTheme();
+    return (Array.isArray(labels) && labels.length > 0)
+        ? (
+            <Stack wrap="wrap" gap={6}>
+                {labels.map((label) => {
+                    return (
+                        <Tag
+                            closeIcon={faTimes}
+                            key={label.id}
+                            color={{
+                                borderColor: `#${label.color}`,
+                                backgroundColor: `#${label.color}33`,
+                                textColor: theme.colors.grey100,
+                            }}
+                            label={label.name}
+                            withClose={false}
+                        />
+                    );
+                })}
+            </Stack>
+        )
+        : <>-</>;
+};
+
+const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels }) => {
     const [ticketCount, setTicketCount] = useState<number>(0);
 
     useInitialisedDeskproAppClient((client) => {
-        client.entityAssociationCountEntities("linkedGithubIssue", `${id}`).then(setTicketCount);
+        getEntityAssociationCountService(client, `${id}`).then(setTicketCount);
     });
 
     return (
-        <TextBlockWithLabel
-            label="Deskpro Tickets"
-            text={ticketCount}
-        />
+        <>
+            <TwoSider
+                leftLabel="Issue ID"
+                leftText={number}
+                rightLabel={(
+                    <>
+                        Repository
+                        {nbsp}
+                        <Link href={repository?.url ?? ""} target="_blank">
+                            <Icon icon={faArrowUpRightFromSquare} />
+                        </Link>
+                    </>
+                )}
+                rightText={repository.name}
+            />
+            <TwoSider
+                leftLabel="Projects"
+                leftText="Projects"
+                rightLabel="Milestone"
+                rightText="Milestone"
+            />
+            <TextBlockWithLabel
+                label="Asignees"
+                text={<Assignees assignees={assignees}/>}
+            />
+            <TextBlockWithLabel
+                label="Labels"
+                text={<Labels labels={labels}/>}
+            />
+            <TextBlockWithLabel
+                label="Deskpro Tickets"
+                text={ticketCount}
+            />
+        </>
     );
 };
 

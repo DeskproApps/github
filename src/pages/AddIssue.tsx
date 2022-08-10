@@ -1,4 +1,6 @@
 import { useState, FC, ChangeEvent, useEffect } from "react";
+import flow from "lodash/flow";
+import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -12,6 +14,7 @@ import { setEntityIssueService } from "../services/entityAssociation";
 import {
     baseRequest,
     searchByIssueService,
+    searchByIssueGraphQLService,
 } from "../services/github";
 import { Issue, Repository } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
@@ -31,6 +34,26 @@ type OptionRepository = {
     type: "value",
 };
 
+const getRepoOptions = (issues) => {
+    return issues
+        .map(({ repository }) => ({
+            key: repository.id,
+            value: repository.nameWithOwner,
+            label: repository.name,
+            type: "value",
+        }));
+};
+
+const getUniqRepo = (options) => {
+    return options.reduce((acc, option) => {
+        if (!acc.some(({ value }) => value === option.value)) {
+            acc.push(option);
+        }
+
+        return acc;
+    }, []);
+};
+
 const AddIssue: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
@@ -41,17 +64,21 @@ const AddIssue: FC = () => {
     const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
     const [selectedIssues, setSelectedIssues] = useState<Array<Issue["id"]>>([]);
     const ticketId = state.context?.data.ticket.id;
+    const currentUserLogin = state.dataDeps?.currentUser.login;
 
     useEffect(() => {
-        if (!isEmpty(state.dataDeps?.repositories)) {
-            setRepoOptions((state.dataDeps?.repositories as Repository[]).map((repo) => ({
-                key: repo.id,
-                value: repo.full_name,
-                label: repo.name,
-                type: "value",
-            })));
+        if (isArray(issues) && !isEmpty(issues)) {
+            const options = flow([
+                getRepoOptions,
+                getUniqRepo,
+            ])(issues);
+
+            setRepoOptions([
+                { key: "any", label: "Any", type: "value", value: "any" },
+                ...options,
+            ]);
         }
-    }, [state.dataDeps?.repositories]);
+    }, [issues]);
 
     useEffect(() => {
         if (!isEmpty(repoOptions) && !isEmpty(repoOptions[0])) {
@@ -75,7 +102,7 @@ const AddIssue: FC = () => {
     };
 
     const searchInGithub = useDebouncedCallback<(q: string) => void>((q) => {
-        if (!client || !selectedRepo?.value) {
+        if (!client || !currentUserLogin) {
             return;
         }
 
@@ -86,8 +113,8 @@ const AddIssue: FC = () => {
 
         setLoading(true);
 
-        searchByIssueService(client, q, selectedRepo.value)
-            .then(({ items }) => setIssues(items))
+        searchByIssueGraphQLService(client, q, currentUserLogin)
+            .then(setIssues)
             .catch((error) => {
                 if (error?.code === 401) {
                     dispatch({ type: "setAuth", isAuth: false });
@@ -103,7 +130,6 @@ const AddIssue: FC = () => {
 
     const onChangeSelect = (option: OptionRepository) => {
         setSelectedRepo(option);
-        searchInGithub(searchIssue);
     };
 
     const onLinkIssues = () => {
@@ -113,53 +139,69 @@ const AddIssue: FC = () => {
 
         const linkedIssues = issues.filter(({ id }) => selectedIssues.includes(id));
 
-        Promise.all(
-            linkedIssues.map(({ repository_url }) => baseRequest<Repository[]>(client, { rawUrl: repository_url }))
-        )
-            .then((repositories) => {
-                const repos: Record<Repository["url"], Repository> = repositories.reduce((acc, repo) => {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    acc[repo.url] = repo;
-                    return acc;
-                }, {});
+        linkedIssues.map((issue) => {
+            const metadata = getEntityMetadata(issue);
+            console.log(">>> metadata:", metadata);
+        })
 
-                return linkedIssues.map((issue) => {
-                    if (repos[issue.repository_url])    {
-                        issue.repository_name =  repos[issue.repository_url].full_name;
-                    }
+        // Promise.all(
+        //     linkedIssues.map(({ repository_url }) => baseRequest<Repository[]>(client, { rawUrl: repository_url }))
+        // )
+        //     .then((repositories) => {
+        //         const repos: Record<Repository["url"], Repository> = repositories.reduce((acc, repo) => {
+        //             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //             // @ts-ignore
+        //             acc[repo.url] = repo;
+        //             return acc;
+        //         }, {});
+        //
+        //         return linkedIssues.map((issue) => {
+        //             if (repos[issue.repository_url])    {
+        //                 issue.repository_name =  repos[issue.repository_url].full_name;
+        //             }
+        //
+        //             return issue;
+        //         });
+        //     })
+        //     .then((issuesForSave) => {
+            Promise.all([
+                ...linkedIssues.map((issue) => setEntityIssueService(
+                    client,
+                    ticketId,
+                    issue.databaseId, // ToDo: issue.databaseId || issue.id
+                    getEntityMetadata(issue),
+                )),
+                ...linkedIssues.map((issue) => {
+                    return client.setState<ClientStateIssue>(
+                        `issues/${issue.databaseId}`,
+                        { issueUrl: issue.resourcePath, nodeId: issue.id },
+                    );
+                }),
 
-                    return issue;
-                });
-            })
-            .then((issuesForSave) => {
-                return Promise.all([
-                    ...issuesForSave.map((issue) => setEntityIssueService(
-                        client,
-                        ticketId,
-                        issue.id,
-                        getEntityMetadata(issue),
-                    )),
-                    ...issuesForSave.map((issue) => {
-                        return client.setState<ClientStateIssue>(
-                            `issues/${issue.id}`,
-                            { issueUrl: issue.url },
-                        );
-                    }),
-                    ...issuesForSave.map((issue) => {
-                        return baseRequest(client, {
-                            rawUrl: issue.comments_url,
-                            method: "POST",
-                            data: {
-                                body: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
-                                    ? `, ${state.context.data.ticket.permalinkUrl}`
-                                    : ""
-                                }`,
-                            },
-                        });
-                    })
-                ])
-            })
+                // setEntityIssueService(
+                //     client,
+                //     ticketId,
+                //     1329931768,
+                //     {"id":1329931768,"title":"One more test issue","repository":"zpawn/learn.js","milestone":"","projects":[],"assignees":[],"labels":[],"createdAt":"2022-08-05T13:19:20Z"},
+                // ),
+                // client.setState<ClientStateIssue>(
+                //     `issues/1329931768`,
+                //     { issueUrl: "https://api.github.com/repos/zpawn/learn.js/issues/148" },
+                // )
+
+                // ...linkedIssues.map((issue) => {
+                //     return baseRequest(client, {
+                //         rawUrl: issue.comments_url,
+                //         method: "POST",
+                //         data: {
+                //             body: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
+                //                 ? `, ${state.context.data.ticket.permalinkUrl}`
+                //                 : ""
+                //             }`,
+                //         },
+                //     });
+                // })
+            ])
             .then(() => dispatch({ type: "changePage", page: "home" }))
             .catch((error) => dispatch({ type: "error", error }));
     };
@@ -167,7 +209,6 @@ const AddIssue: FC = () => {
     return (
         <div style={{ minHeight: "500px" }}>
             <InputSearch
-                disabled={!selectedRepo?.value}
                 value={searchIssue}
                 onClear={onClearSearch}
                 onChange={onChangeSearch}
@@ -204,7 +245,9 @@ const AddIssue: FC = () => {
                 : (
                     <>
                         <Issues
-                            issues={issues}
+                            issues={issues.filter(
+                                ({ repository }) => ["any", repository.nameWithOwner].includes(selectedRepo?.value))
+                            }
                             selectedIssues={selectedIssues}
                             onChange={onChangeSelectedCard}
                         />

@@ -6,10 +6,15 @@ import {
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
-import { getEntityCardListService } from "../services/entityAssociation";
+import { deleteEntityIssueService, getEntityCardListService } from "../services/entityAssociation";
 import { Issue } from "../services/github/types";
-import { baseRequest } from "../services/github";
+import {
+    baseRequest,
+    getIssueService,
+    getIssuesByIdsGraphQLService,
+} from "../services/github";
 import { useSetAppTitle, useSetBadgeCount } from "../hooks";
+import { isBaseUrl } from "../utils";
 import { Loading, IssueInfo } from "../components/common";
 
 const HomePage: FC = () => {
@@ -53,18 +58,41 @@ const HomePage: FC = () => {
         const loadIssues = () => {
             client.getState<ClientStateIssue>(`issues/*`)
                 .then((issues) => {
-                    return Promise.all(issues.map((issueState) => {
-                        return baseRequest<Issue>(client, { rawUrl: issueState.data?.issueUrl })
-                            .catch((error) => {
-                                if (error.code !== 410) {
-                                    dispatch({ type: "error", error });
-                                }
+                    const nodeIds: string[] = [];
+                    const issueUrls: string[] = [];
+
+                    issues.forEach((issue) => {
+                        if (issue.data?.nodeId) {
+                            nodeIds.push(issue.data.nodeId);
+                        }
+
+                        if (!issue.data?.nodeId && isBaseUrl(issue.data?.issueUrl)) {
+                            issueUrls.push(issue.data?.issueUrl as string);
+                        }
+                    });
+
+                    return Promise.
+                        all(issueUrls.map((issueUrl) => {
+                            return baseRequest<Issue>(client, { rawUrl: issueUrl })
+                        }))
+                        .then((issues) => {
+                            issues.forEach(({ node_id }) => {
+                                nodeIds.push(node_id)
                             });
-                    }));
+                            return nodeIds
+                        });
+
+                    // return Promise.all(issues.map((issueState) => {
+                    //     return getIssueService(client, { url: issueState.data?.issueUrl })
+                    //         .catch((error) => {
+                    //             if (error.code !== 410) {
+                    //                 dispatch({ type: "error", error });
+                    //             }
+                    //         });
+                    // }));
                 })
-                .then((issues) => {
-                    setIssues(issues.filter((issue) => !isEmpty(issue)) as Issue[]);
-                });
+                .then((nodeIds) => getIssuesByIdsGraphQLService(client, nodeIds))
+                .then(setIssues);
         };
 
         getEntityCardListService(client, ticketId)

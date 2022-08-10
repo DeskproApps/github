@@ -80,4 +80,5 @@ export type EntityMetadata = {
 
 export type ClientStateIssue = {
     issueUrl: Issue["url"],
+    nodeId: string,
 };
