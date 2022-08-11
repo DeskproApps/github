@@ -2,7 +2,7 @@
   "name": "@deskpro-apps/github",
   "title": "GitHub",
   "description": "View your GitHub issues from Deskpro and link them to tickets you are working on",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "scope": "agent",
   "isSingleInstall": false,
   "hasDevMode": true,
