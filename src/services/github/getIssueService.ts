@@ -7,7 +7,7 @@ export const getIssueUrl = (url: string): string => {
     if (isBaseUrl(url)) {
         return url;
     } else {
-        return `${BASE_URL}/repos/${url}`;
+        return `${BASE_URL}/repos${url}`;
     }
 };
 

@@ -35,7 +35,7 @@ export const reducer: StoreReducer = (state: State, action: Action): State => {
         }))
         .with([__, { type: "unlinkIssue" }], ([prevState, action]) => ({
             ...prevState,
-            issues: (prevState.issues ?? []).filter(({ id }) => id !== action.issueId),
+            issues: (prevState.issues ?? []).filter(({ databaseId }) => databaseId !== action.issueId),
         }))
         .with([__, { type: "setDeps" }], ([prevState, action]) => ({
             ...prevState,

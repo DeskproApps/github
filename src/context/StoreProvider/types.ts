@@ -4,7 +4,7 @@ import {
     User,
     Issue,
     DateTime,
-    Repository, LabelGQL,
+    Repository, LabelGQL, IssueGQL,
 } from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
@@ -34,7 +34,7 @@ export interface State {
     context?: Context,
     isAuth: boolean,
     issue?: Issue | null,
-    issues?: Issue[],
+    issues?: IssueGQL[],
     dataDeps?: DataDependencies,
     //...
     _error?: ErrorType,
@@ -46,7 +46,7 @@ export type Action =
     | { type: "error", error: ErrorType }
     | { type: "setAuth", isAuth: boolean }
     | { type: "setIssue", issue: Issue | null }
-    | { type: "setIssues", issues: Issue[] }
+    | { type: "setIssues", issues: IssueGQL[] }
     | { type: "unlinkIssue", issueId: Issue["id"] }
     | { type: "setDeps", deps: DataDependencies };
 
@@ -65,7 +65,7 @@ export type AppElementPayload =
     };
 
 export type ReplyBoxSelection = {
-    id: Issue["id"],
+    id: IssueGQL["id"],
     selected: boolean,
 };
 
