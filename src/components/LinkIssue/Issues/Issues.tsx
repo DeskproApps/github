@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Issue } from "./Issue";
 import { NoFound  } from "../../common";
-import { Issue as IssueType } from "../../../services/github/types";
+import { IssueGQL as IssueType } from "../../../services/github/types";
 
 type Props = {
     issues: IssueType[],

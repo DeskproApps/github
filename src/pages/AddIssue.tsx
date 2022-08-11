@@ -12,11 +12,10 @@ import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
 import { setEntityIssueService } from "../services/entityAssociation";
 import {
-    baseRequest,
-    searchByIssueService,
+    createIssueCommentService,
     searchByIssueGraphQLService,
 } from "../services/github";
-import { Issue, Repository } from "../services/github/types";
+import { IssueGQL, Repository, RepositoryGQL } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
 import { Issues } from "../components/LinkIssue";
 import {
@@ -28,13 +27,13 @@ import {
 } from "../components/common";
 
 type OptionRepository = {
-    key: Repository["id"],
-    value: Repository["full_name"],
+    key: RepositoryGQL["id"],
+    value: RepositoryGQL["nameWithOwner"],
     label: Repository["name"],
     type: "value",
 };
 
-const getRepoOptions = (issues) => {
+const getRepoOptions = (issues: IssueGQL[]): OptionRepository[] => {
     return issues
         .map(({ repository }) => ({
             key: repository.id,
@@ -44,8 +43,8 @@ const getRepoOptions = (issues) => {
         }));
 };
 
-const getUniqRepo = (options) => {
-    return options.reduce((acc, option) => {
+const getUniqRepo = (options: OptionRepository[]) => {
+    return options.reduce((acc: OptionRepository[], option) => {
         if (!acc.some(({ value }) => value === option.value)) {
             acc.push(option);
         }
@@ -59,10 +58,10 @@ const AddIssue: FC = () => {
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
     const [searchIssue, setSearchIssue] = useState<string>("");
-    const [issues, setIssues] = useState<Issue[]>([]);
+    const [issues, setIssues] = useState<IssueGQL[]>([]);
     const [repoOptions, setRepoOptions] = useState<Array<OptionRepository>>([]);
     const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
-    const [selectedIssues, setSelectedIssues] = useState<Array<Issue["id"]>>([]);
+    const [selectedIssues, setSelectedIssues] = useState<Array<IssueGQL["id"]>>([]);
     const ticketId = state.context?.data.ticket.id;
     const currentUserLogin = state.dataDeps?.currentUser.login;
 
@@ -91,7 +90,7 @@ const AddIssue: FC = () => {
         setIssues([]);
     };
 
-    const onChangeSelectedCard = (issueId: Issue["id"]) => {
+    const onChangeSelectedCard = (issueId: IssueGQL["id"]) => {
         let newSelectedIssues = [...selectedIssues];
         if (selectedIssues.includes(issueId)) {
             newSelectedIssues = selectedIssues.filter((selectedIssueId) => selectedIssueId !== issueId);
@@ -139,71 +138,32 @@ const AddIssue: FC = () => {
 
         const linkedIssues = issues.filter(({ id }) => selectedIssues.includes(id));
 
-        linkedIssues.map((issue) => {
-            const metadata = getEntityMetadata(issue);
-            console.log(">>> metadata:", metadata);
-        })
-
-        // Promise.all(
-        //     linkedIssues.map(({ repository_url }) => baseRequest<Repository[]>(client, { rawUrl: repository_url }))
-        // )
-        //     .then((repositories) => {
-        //         const repos: Record<Repository["url"], Repository> = repositories.reduce((acc, repo) => {
-        //             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //             // @ts-ignore
-        //             acc[repo.url] = repo;
-        //             return acc;
-        //         }, {});
-        //
-        //         return linkedIssues.map((issue) => {
-        //             if (repos[issue.repository_url])    {
-        //                 issue.repository_name =  repos[issue.repository_url].full_name;
-        //             }
-        //
-        //             return issue;
-        //         });
-        //     })
-        //     .then((issuesForSave) => {
-            Promise.all([
-                ...linkedIssues.map((issue) => setEntityIssueService(
-                    client,
-                    ticketId,
-                    issue.databaseId, // ToDo: issue.databaseId || issue.id
-                    getEntityMetadata(issue),
-                )),
-                ...linkedIssues.map((issue) => {
-                    return client.setState<ClientStateIssue>(
-                        `issues/${issue.databaseId}`,
-                        { issueUrl: issue.resourcePath, nodeId: issue.id },
-                    );
-                }),
-
-                // setEntityIssueService(
-                //     client,
-                //     ticketId,
-                //     1329931768,
-                //     {"id":1329931768,"title":"One more test issue","repository":"zpawn/learn.js","milestone":"","projects":[],"assignees":[],"labels":[],"createdAt":"2022-08-05T13:19:20Z"},
-                // ),
-                // client.setState<ClientStateIssue>(
-                //     `issues/1329931768`,
-                //     { issueUrl: "https://api.github.com/repos/zpawn/learn.js/issues/148" },
-                // )
-
-                // ...linkedIssues.map((issue) => {
-                //     return baseRequest(client, {
-                //         rawUrl: issue.comments_url,
-                //         method: "POST",
-                //         data: {
-                //             body: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
-                //                 ? `, ${state.context.data.ticket.permalinkUrl}`
-                //                 : ""
-                //             }`,
-                //         },
-                //     });
-                // })
-            ])
-            .then(() => dispatch({ type: "changePage", page: "home" }))
-            .catch((error) => dispatch({ type: "error", error }));
+        Promise.all([
+            ...linkedIssues.map((issue) => setEntityIssueService(
+                client,
+                ticketId,
+                issue.databaseId,
+                getEntityMetadata(issue),
+            )),
+            ...linkedIssues.map((issue) => {
+                return client.setState<ClientStateIssue>(
+                    `issues/${issue.databaseId}`,
+                    { issueUrl: issue.resourcePath, nodeId: issue.id },
+                );
+            }),
+            ...linkedIssues.map((issue) => {
+                return createIssueCommentService(client, {
+                    repoFullName: issue.repository.nameWithOwner,
+                    issueNumber: issue.number,
+                    comment: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
+                        ? `, ${state.context.data.ticket.permalinkUrl}`
+                        : ""
+                    }`
+                });
+            }),
+        ])
+        .then(() => dispatch({ type: "changePage", page: "home" }))
+        .catch((error) => dispatch({ type: "error", error }));
     };
 
     return (
@@ -246,7 +206,7 @@ const AddIssue: FC = () => {
                     <>
                         <Issues
                             issues={issues.filter(
-                                ({ repository }) => ["any", repository.nameWithOwner].includes(selectedRepo?.value))
+                                ({ repository }) => ["any", repository.nameWithOwner].includes(selectedRepo?.value || ""))
                             }
                             selectedIssues={selectedIssues}
                             onChange={onChangeSelectedCard}

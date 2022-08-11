@@ -18,7 +18,6 @@ const getIssuesByIdsGraphQLService = (
             state,
             number,
             resourcePath,
-            createdAt,
             milestone { title, url },
             repository {
               ... on Repository {
@@ -60,14 +59,22 @@ const getIssuesByIdsGraphQLService = (
     `;
 
     return baseGraphQLRequest(client, { query, variables })
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         .then(({ nodes }) => nodes.map((issue) => ({
             ...issue,
             html_url: issue.url,
             created_at: issue.createdAt,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             assignees: issue.assignees.edges?.map(({ node }) => node) ?? [],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             labels: issue.labels.edges?.map(({ node }) => node) ?? [],
             repository: {
                 ...issue.repository,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 projects: issue.repository.projects.edges?.map(({ node }) => node) ?? [],
             },
         })));

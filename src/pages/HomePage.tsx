@@ -1,16 +1,14 @@
 import { Fragment, FC, useState, useEffect } from "react";
-import isEmpty from "lodash/isEmpty";
 import {
     HorizontalDivider,
     useDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
-import { deleteEntityIssueService, getEntityCardListService } from "../services/entityAssociation";
-import { Issue } from "../services/github/types";
+import { getEntityCardListService } from "../services/entityAssociation";
+import { Issue, IssueGQL } from "../services/github/types";
 import {
     baseRequest,
-    getIssueService,
     getIssuesByIdsGraphQLService,
 } from "../services/github";
 import { useSetAppTitle, useSetBadgeCount } from "../hooks";
@@ -21,7 +19,7 @@ const HomePage: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
-    const [issues, setIssues] = useState<Issue[]>([]);
+    const [issues, setIssues] = useState<IssueGQL[]>([]);
     const ticketId = state.context?.data.ticket.id;
 
     useSetAppTitle("GitHub Issues");
@@ -81,15 +79,6 @@ const HomePage: FC = () => {
                             });
                             return nodeIds
                         });
-
-                    // return Promise.all(issues.map((issueState) => {
-                    //     return getIssueService(client, { url: issueState.data?.issueUrl })
-                    //         .catch((error) => {
-                    //             if (error.code !== 410) {
-                    //                 dispatch({ type: "error", error });
-                    //             }
-                    //         });
-                    // }));
                 })
                 .then((nodeIds) => getIssuesByIdsGraphQLService(client, nodeIds))
                 .then(setIssues);

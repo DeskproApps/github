@@ -17,8 +17,7 @@ import {
 } from "@deskpro/app-sdk";
 import { getEntityAssociationCountService } from "../../../services/entityAssociation";
 import {
-    Issue,
-    Projects as ProjectsType,
+    IssueGQL,
     Milestone as MilestoneType,
 } from "../../../services/github/types";
 import { getDate } from "../../../utils/date";
@@ -28,13 +27,12 @@ import { GithubLink } from "../GithubLink";
 import { TwoSider } from "../TwoSider";
 import { TextBlockWithLabel } from "../TextBlockWithLabel";
 import { Link } from "../Link";
-import { OverflowTextWithLink } from "../OverflowText";
 
-type Props = Issue & {
+type Props = IssueGQL & {
     onClick?: () => void,
 };
 
-const Title: FC<Props> = ({ title, html_url, onClick }) => {
+const Title: FC<Props> = ({ title, url, onClick }) => {
     const { theme } = useDeskproAppTheme();
 
     return (
@@ -46,7 +44,7 @@ const Title: FC<Props> = ({ title, html_url, onClick }) => {
                     onClick={onClick}
                 >{title}</a>
             </H3>
-            <GithubLink href={html_url} />
+            <GithubLink href={url} />
         </Stack>
     );
 };
@@ -70,7 +68,7 @@ const StatusAndDate: FC<Props> = (props) => {
     );
 };
 
-const Assignees: FC<{ assignees: Issue["assignees"] }> = ({ assignees }) => {
+const Assignees: FC<{ assignees: IssueGQL["assignees"] }> = ({ assignees }) => {
     return (!Array.isArray(assignees) || !assignees.length)
         ? <>-</>
         : <Stack wrap="wrap" gap={6}>
@@ -88,7 +86,7 @@ const Assignees: FC<{ assignees: Issue["assignees"] }> = ({ assignees }) => {
         </Stack>
 };
 
-const Labels: FC<{ labels: Issue["labels"] }> = ({ labels }) => {
+const Labels: FC<{ labels: IssueGQL["labels"] }> = ({ labels }) => {
     const { theme } = useDeskproAppTheme();
     return (Array.isArray(labels) && labels.length > 0)
         ? (
@@ -118,16 +116,15 @@ const Milestone: FC<{
 }> = ({ milestone }) => {
     return isEmpty(milestone)
         ? (<>-</>)
-        : (<OverflowTextWithLink url={milestone.url} title={milestone.title} />);
-};
-
-const Projects: FC<{ projects: ProjectsType }> = ({ projects }) => {
-    console.log('>>> projects:', projects);
-    return (
-        <>
-            Projects FC
-        </>
-    );
+        : (
+            <P5>
+                {milestone.title}
+                {nbsp}
+                <Link href={milestone.url} target="_blank">
+                    <Icon icon={faArrowUpRightFromSquare}/>
+                </Link>
+            </P5>
+        );
 };
 
 const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels, milestone }) => {

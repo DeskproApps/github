@@ -79,10 +79,16 @@ const searchByIssueGraphQLService = (
             ...node,
             html_url: node.url,
             created_at: node.createdAt,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             assignees: node.assignees.edges?.map(({ node }) => node) ?? [],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             labels: node.labels.edges?.map(({ node }) => node) ?? [],
             repository: {
                 ...node.repository,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 projects: node.repository.projects.edges?.map(({ node }) => node) ?? [],
             },
         })));

@@ -2,10 +2,9 @@ import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
 import {
     User,
-    Label,
     Issue,
     DateTime,
-    Repository,
+    Repository, LabelGQL,
 } from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
@@ -74,7 +73,7 @@ export type EntityMetadata = {
     milestone: string,
     projects: Array<{ id: string, name: string }>,
     assignees: Array<{ username: string, name: string }>,
-    labels: Array<{ id: Label["id"], name: Label["name"] }>,
+    labels: Array<{ id: LabelGQL["id"], name: LabelGQL["name"] }>,
     createdAt: DateTime
 };
 
