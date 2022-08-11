@@ -125,7 +125,7 @@ const ViewIssuePage: FC = () => {
                 })
                 .finally(() => setLoading(false));
         }
-    }, [issueUrl]);
+    }, [issueUrl, state.issue]);
 
     const onAddNewComment = () => {
         dispatch({

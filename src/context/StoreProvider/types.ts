@@ -34,6 +34,7 @@ export interface State {
     context?: Context,
     isAuth: boolean,
     issue?: Issue | null,
+    issues?: Issue[],
     dataDeps?: DataDependencies,
     //...
     _error?: ErrorType,
@@ -45,6 +46,8 @@ export type Action =
     | { type: "error", error: ErrorType }
     | { type: "setAuth", isAuth: boolean }
     | { type: "setIssue", issue: Issue | null }
+    | { type: "setIssues", issues: Issue[] }
+    | { type: "unlinkIssue", issueId: Issue["id"] }
     | { type: "setDeps", deps: DataDependencies };
 
 export type Dispatch = (action: Action) => void;
@@ -61,9 +64,9 @@ export type AppElementPayload =
         commentsUrl: Issue["comments_url"],
     };
 
-export type ReplyBoxNoteSelection = {
-    id: string;
-    selected: boolean;
+export type ReplyBoxSelection = {
+    id: Issue["id"],
+    selected: boolean,
 };
 
 export type EntityMetadata = {

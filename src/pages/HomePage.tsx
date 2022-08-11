@@ -23,7 +23,7 @@ const HomePage: FC = () => {
     const ticketId = state.context?.data.ticket.id;
 
     useSetAppTitle("GitHub Issues");
-    useSetBadgeCount(issues);
+    useSetBadgeCount(state.issues ?? []);
 
     useEffect(() => {
         if (!client) {
