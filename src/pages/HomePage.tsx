@@ -102,6 +102,7 @@ const HomePage: FC = () => {
     }, [client, ticketId]);
 
     const onClickTitle = (url: Issue["url"]) => () => {
+        dispatch({ type: "setIssue", issue: null });
         dispatch({
             type: "changePage",
             page: "view_issue",
