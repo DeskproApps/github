@@ -19,9 +19,7 @@ const getIssuesByIdsGraphQLService = (
             number,
             resourcePath,
             createdAt,
-            milestone {
-              title
-            },
+            milestone { title, url },
             repository {
               ... on Repository {
                 name,
@@ -29,9 +27,10 @@ const getIssuesByIdsGraphQLService = (
                 id,
                 databaseId,
                 url,
+                projectsUrl,
                 projects(first: 10) {
                   edges {
-                    node { url, name, resourcePath }
+                    node { url, name }
                   }
                 }
               }
@@ -67,6 +66,10 @@ const getIssuesByIdsGraphQLService = (
             created_at: issue.createdAt,
             assignees: issue.assignees.edges?.map(({ node }) => node) ?? [],
             labels: issue.labels.edges?.map(({ node }) => node) ?? [],
+            repository: {
+                ...issue.repository,
+                projects: issue.repository.projects.edges?.map(({ node }) => node) ?? [],
+            },
         })));
 };
 

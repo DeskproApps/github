@@ -30,9 +30,7 @@ const searchByIssueGraphQLService = (
                 number,
                 resourcePath,
                 createdAt,
-                milestone {
-                  title
-                },
+                milestone { title, url },
                 repository {
                   ... on Repository {
                     name,
@@ -40,9 +38,10 @@ const searchByIssueGraphQLService = (
                     id,
                     databaseId,
                     url,
+                    projectsUrl,
                     projects(first: 10) {
                       edges {
-                        node { url, name, resourcePath }
+                        node { url, name }
                       }
                     }
                   }
@@ -82,6 +81,10 @@ const searchByIssueGraphQLService = (
             created_at: node.createdAt,
             assignees: node.assignees.edges?.map(({ node }) => node) ?? [],
             labels: node.labels.edges?.map(({ node }) => node) ?? [],
+            repository: {
+                ...node.repository,
+                projects: node.repository.projects.edges?.map(({ node }) => node) ?? [],
+            },
         })));
 };
 

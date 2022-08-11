@@ -1,6 +1,10 @@
 import { FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
-import {faArrowUpRightFromSquare, faTimes, faUser} from "@fortawesome/free-solid-svg-icons";
+import {
+    faUser,
+    faTimes,
+    faArrowUpRightFromSquare,
+} from "@fortawesome/free-solid-svg-icons";
 import {Avatar, Tag} from "@deskpro/deskpro-ui";
 import {
     H3,
@@ -11,10 +15,12 @@ import {
     useDeskproAppTheme,
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
+import { getEntityAssociationCountService } from "../../../services/entityAssociation";
 import {
-    getEntityAssociationCountService,
-} from "../../../services/entityAssociation/getEntityAssociationCountService";
-import { Issue } from "../../../services/github/types";
+    Issue,
+    Projects as ProjectsType,
+    Milestone as MilestoneType,
+} from "../../../services/github/types";
 import { getDate } from "../../../utils/date";
 import { getIssueStatueColorScheme } from "../../../utils";
 import { nbsp } from "../../../constants";
@@ -22,6 +28,7 @@ import { GithubLink } from "../GithubLink";
 import { TwoSider } from "../TwoSider";
 import { TextBlockWithLabel } from "../TextBlockWithLabel";
 import { Link } from "../Link";
+import { OverflowTextWithLink } from "../OverflowText";
 
 type Props = Issue & {
     onClick?: () => void,
@@ -106,7 +113,24 @@ const Labels: FC<{ labels: Issue["labels"] }> = ({ labels }) => {
         : <>-</>;
 };
 
-const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels }) => {
+const Milestone: FC<{
+    milestone: Pick<MilestoneType, "title" | "url">
+}> = ({ milestone }) => {
+    return isEmpty(milestone)
+        ? (<>-</>)
+        : (<OverflowTextWithLink url={milestone.url} title={milestone.title} />);
+};
+
+const Projects: FC<{ projects: ProjectsType }> = ({ projects }) => {
+    console.log('>>> projects:', projects);
+    return (
+        <>
+            Projects FC
+        </>
+    );
+};
+
+const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels, milestone }) => {
     const [ticketCount, setTicketCount] = useState<number>(0);
 
     useInitialisedDeskproAppClient((client) => {
@@ -129,11 +153,9 @@ const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels }) =
                 )}
                 rightText={repository.name}
             />
-            <TwoSider
-                leftLabel="Projects"
-                leftText="Projects"
-                rightLabel="Milestone"
-                rightText="Milestone"
+            <TextBlockWithLabel
+                label="Milestone"
+                text={<Milestone milestone={milestone} />}
             />
             <TextBlockWithLabel
                 label="Asignees"
