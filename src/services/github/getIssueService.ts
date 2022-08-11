@@ -3,7 +3,7 @@ import { baseRequest } from "./baseRequest";
 import { BASE_URL } from "./constants";
 import { isBaseUrl } from "../../utils";
 
-const getUrl = (url: string): string => {
+export const getIssueUrl = (url: string): string => {
     if (isBaseUrl(url)) {
         return url;
     } else {
@@ -12,7 +12,7 @@ const getUrl = (url: string): string => {
 };
 
 const getIssueService = (client: IDeskproClient, { url }: { url: string }) => {
-    return baseRequest(client, { rawUrl: getUrl(url) });
+    return baseRequest(client, { rawUrl: getIssueUrl(url) });
 };
 
 export { getIssueService };

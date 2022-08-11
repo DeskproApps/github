@@ -9,6 +9,7 @@ import { getEntityCardListService } from "../services/entityAssociation";
 import { Issue, IssueGQL } from "../services/github/types";
 import {
     baseRequest,
+    getIssueUrl,
     getIssuesByIdsGraphQLService,
 } from "../services/github";
 import { useSetAppTitle, useSetBadgeCount } from "../hooks";
@@ -81,7 +82,10 @@ const HomePage: FC = () => {
                         });
                 })
                 .then((nodeIds) => getIssuesByIdsGraphQLService(client, nodeIds))
-                .then(setIssues);
+                .then((issues) => {
+                    setIssues(issues);
+                    dispatch({ type: "setIssues", issues });
+                });
         };
 
         getEntityCardListService(client, ticketId)
@@ -102,7 +106,7 @@ const HomePage: FC = () => {
             type: "changePage",
             page: "view_issue",
             params: {
-                issueUrl: url,
+                issueUrl: getIssueUrl(url),
             },
         });
     };
@@ -115,7 +119,7 @@ const HomePage: FC = () => {
                     <Fragment key={issue.id} >
                         <IssueInfo
                             {...issue}
-                            onClick={onClickTitle(issue.url)}
+                            onClick={onClickTitle(issue.resourcePath)}
                         />
                         <HorizontalDivider style={{ marginBottom: 9 }}/>
                     </Fragment>
