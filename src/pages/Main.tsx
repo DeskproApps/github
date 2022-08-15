@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { match } from "ts-pattern";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -46,17 +46,11 @@ export const Main = () => {
             .finally(() => setLoading(false));
     });
 
-    useInitialisedDeskproAppClient((client) => {
+    useEffect(() => {
         if (state.isAuth) {
             dispatch({ type: "changePage", page: "home" });
-        } else {
-            Promise.all([
-                client.deleteUserState(placeholders.CODE_PATH),
-                client.deleteUserState(placeholders.OAUTH_TOKEN_PATH),
-            ])
-                .then(() => dispatch({ type: "changePage", page: "log_in" }))
-                .catch((error) => dispatch({ type: "error", error }));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isAuth]);
 
     useInitialisedDeskproAppClient((client) => {
@@ -179,6 +173,23 @@ export const Main = () => {
         500,
     );
 
+    const logout = useCallback(() => {
+        if (!client) {
+            return;
+        }
+
+        Promise.all([
+            client?.deleteUserState(placeholders.CODE_PATH),
+            client?.deleteUserState(placeholders.OAUTH_TOKEN_PATH),
+        ])
+            .then(() => {
+                dispatch({type: "setAuth", isAuth: false});
+                dispatch({ type: "changePage", page: "log_in" });
+            })
+            .catch((error) => dispatch({ type: "error", error }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [client]);
+
     useDeskproAppEvents({
         onShow: () => {
             client && setTimeout(() => client.resize(), 200);
@@ -192,7 +203,7 @@ export const Main = () => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                dispatch({type: "setAuth", isAuth: false});
+                logout();
             } else if (payload?.type === "unlinkTicket") {
                 if (client) {
                     deleteEntityIssueService(client, payload.ticketId, payload.issueId)
