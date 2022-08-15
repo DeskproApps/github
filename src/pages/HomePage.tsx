@@ -1,6 +1,4 @@
 import { Fragment, FC, useState, useEffect } from "react";
-import isArray from "lodash/isArray";
-import isEmpty from "lodash/isEmpty";
 import {
     HorizontalDivider,
     useDeskproAppClient,
@@ -8,15 +6,21 @@ import {
 import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
 import { getEntityCardListService } from "../services/entityAssociation";
-import { Issue } from "../services/github/types";
-import { baseRequest } from "../services/github";
+import { Issue, IssueGQL } from "../services/github/types";
+import {
+    baseRequest,
+    getIssueUrl,
+    getIssuesByIdsGraphQLService,
+} from "../services/github";
 import { useSetAppTitle, useSetBadgeCount } from "../hooks";
-import { Loading, IssueInfo, NoFound } from "../components/common";
+import { isBaseUrl } from "../utils";
+import { Loading, IssueInfo } from "../components/common";
 
 const HomePage: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
+    const [issues, setIssues] = useState<IssueGQL[]>([]);
     const ticketId = state.context?.data.ticket.id;
 
     useSetAppTitle("GitHub Issues");
@@ -50,20 +54,41 @@ const HomePage: FC = () => {
 
         setLoading(true);
 
-        const loadIssues = (issueIds: Array<Issue["id"] | string>) => {
-            Promise.all(issueIds.map((issueId) =>
-                client.getState<ClientStateIssue>(`issues/${issueId}`)
-            ))
-                .then((linkedIssueIds) => {
-                    return Promise.all(linkedIssueIds.map((linkedIssue) => {
-                        return baseRequest<Issue>(client, { rawUrl: linkedIssue[0].data?.issueUrl })
-                    }))
-                })
+        const loadIssues = (linkedIssueIds: string[]) => {
+            client.getState<ClientStateIssue>(`issues/*`)
                 .then((issues) => {
-                    dispatch({
-                        type: "setIssues",
-                        issues: issues.filter((issue) => !isEmpty(issue)) as Issue[],
+                    const nodeIds: string[] = [];
+                    const issueUrls: string[] = [];
+
+                    issues.forEach((issue) => {
+                        if (!linkedIssueIds.some((issueId) => issue.name === `issues/${issueId}`)) {
+                            return;
+                        }
+
+                        if (issue.data?.nodeId) {
+                            nodeIds.push(issue.data.nodeId);
+                        }
+
+                        if (!issue.data?.nodeId && isBaseUrl(issue.data?.issueUrl)) {
+                            issueUrls.push(issue.data?.issueUrl as string);
+                        }
                     });
+
+                    return Promise.
+                        all(issueUrls.map((issueUrl) => {
+                            return baseRequest<Issue>(client, { rawUrl: issueUrl })
+                        }))
+                        .then((issues) => {
+                            issues.forEach(({ node_id }) => {
+                                nodeIds.push(node_id)
+                            });
+                            return nodeIds
+                        });
+                })
+                .then((nodeIds) => getIssuesByIdsGraphQLService(client, nodeIds))
+                .then((issues) => {
+                    setIssues(issues);
+                    dispatch({ type: "setIssues", issues });
                 });
         };
 
@@ -81,11 +106,12 @@ const HomePage: FC = () => {
     }, [client, ticketId]);
 
     const onClickTitle = (url: Issue["url"]) => () => {
+        dispatch({ type: "setIssue", issue: null });
         dispatch({
             type: "changePage",
             page: "view_issue",
             params: {
-                issueUrl: url,
+                issueUrl: getIssueUrl(url),
             },
         });
     };
@@ -94,18 +120,15 @@ const HomePage: FC = () => {
         ? (<Loading/>)
         : (
             <>
-                {(isArray(state.issues) && !isEmpty(state.issues))
-                    ? state.issues.map((issue) => (
-                        <Fragment key={issue.id} >
-                            <IssueInfo
-                                {...issue}
-                                onClick={onClickTitle(issue.url)}
-                            />
-                            <HorizontalDivider style={{ marginBottom: 9 }}/>
-                        </Fragment>
-                    ))
-                    : <NoFound />
-                }
+                {issues.map((issue) => (
+                    <Fragment key={issue.id} >
+                        <IssueInfo
+                            {...issue}
+                            onClick={onClickTitle(issue.resourcePath)}
+                        />
+                        <HorizontalDivider style={{ marginBottom: 9 }}/>
+                    </Fragment>
+                ))}
             </>
         );
 };

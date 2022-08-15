@@ -87,7 +87,11 @@ const EditIssuePage: FC = () => {
                     issue.id,
                     getEntityMetadata({
                         ...issue,
-                        repository_name: values?.repository?.value || "",
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        repository: {
+                            nameWithOwner: values?.repository?.value || "",
+                        },
                     })
                 ).then(() => issue);
             })

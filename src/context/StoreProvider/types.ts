@@ -2,10 +2,9 @@ import { Reducer } from "react";
 import { Context } from "@deskpro/app-sdk";
 import {
     User,
-    Label,
     Issue,
     DateTime,
-    Repository,
+    Repository, LabelGQL, IssueGQL,
 } from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
@@ -35,7 +34,7 @@ export interface State {
     context?: Context,
     isAuth: boolean,
     issue?: Issue | null,
-    issues?: Issue[],
+    issues?: IssueGQL[],
     dataDeps?: DataDependencies,
     //...
     _error?: ErrorType,
@@ -47,7 +46,7 @@ export type Action =
     | { type: "error", error: ErrorType }
     | { type: "setAuth", isAuth: boolean }
     | { type: "setIssue", issue: Issue | null }
-    | { type: "setIssues", issues: Issue[] }
+    | { type: "setIssues", issues: IssueGQL[] }
     | { type: "unlinkIssue", issueId: Issue["id"] }
     | { type: "setDeps", deps: DataDependencies };
 
@@ -66,7 +65,7 @@ export type AppElementPayload =
     };
 
 export type ReplyBoxSelection = {
-    id: Issue["id"],
+    id: IssueGQL["id"],
     selected: boolean,
 };
 
@@ -77,10 +76,11 @@ export type EntityMetadata = {
     milestone: string,
     projects: Array<{ id: string, name: string }>,
     assignees: Array<{ username: string, name: string }>,
-    labels: Array<{ id: Label["id"], name: Label["name"] }>,
+    labels: Array<{ id: LabelGQL["id"], name: LabelGQL["name"] }>,
     createdAt: DateTime
 };
 
 export type ClientStateIssue = {
     issueUrl: Issue["url"],
+    nodeId: string,
 };

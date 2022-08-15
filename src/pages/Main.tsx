@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { match } from "ts-pattern";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -11,7 +11,7 @@ import {
 import { AppElementPayload, ReplyBoxSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
 import { deleteEntityIssueService } from "../services/entityAssociation";
-import { baseRequest, checkIsAuthService } from "../services/github";
+import { baseRequest, checkIsAuthService, getIssueCommentUrl } from "../services/github";
 import { placeholders } from "../services/github/constants";
 import {
     ticketReplyNotesSelectionStateKey,
@@ -26,7 +26,7 @@ import { ViewIssuePage } from "./ViewIssuePage";
 import { EditIssuePage } from "./EditIssuePage";
 import { AddCommentPage } from "./AddCommentPage";
 import { ErrorBlock, Loading } from "../components/common";
-import { Issue } from "../services/github/types";
+import { IssueGQL } from "../services/github/types";
 
 export const Main = () => {
     const [state, dispatch] = useStore();
@@ -46,17 +46,11 @@ export const Main = () => {
             .finally(() => setLoading(false));
     });
 
-    useInitialisedDeskproAppClient((client) => {
+    useEffect(() => {
         if (state.isAuth) {
             dispatch({ type: "changePage", page: "home" });
-        } else {
-            Promise.all([
-                client.deleteUserState(placeholders.CODE_PATH),
-                client.deleteUserState(placeholders.OAUTH_TOKEN_PATH),
-            ])
-                .then(() => dispatch({ type: "changePage", page: "log_in" }))
-                .catch((error) => dispatch({ type: "error", error }));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isAuth]);
 
     useInitialisedDeskproAppClient((client) => {
@@ -68,6 +62,8 @@ export const Main = () => {
 
     const debounceTargetAction = useDebouncedCallback<(a: TargetAction<ReplyBoxSelection[]>) => void>(
         (action: TargetAction) => {
+            dispatch({ type: "error", error: null });
+
             match<string>(action.name)
                 .with("linkTicket", () => dispatch({ type: "changePage", page: "link_issue" }))
                 .with("githubOnReplyBoxNote", () => {
@@ -88,9 +84,9 @@ export const Main = () => {
                             const commentUrls = r
                                 .filter(({ data }) => data?.selected)
                                 .map(({ data }) => data?.id)
-                                .map((issueId) => (state.issues ?? []).find(({ id }) => issueId === id) as Issue)
+                                .map((issueId) => (state.issues ?? []).find(({ id }) => issueId === id.toLowerCase()) as IssueGQL)
                                 .filter((issue) => !!issue)
-                                .map(({ comments_url }) => comments_url);
+                                .map(({ repository, number }) => getIssueCommentUrl(repository.nameWithOwner, number) );
 
                             return Promise.all(commentUrls.map((commentUrl) => baseRequest(client, {
                                 rawUrl: commentUrl,
@@ -121,9 +117,9 @@ export const Main = () => {
                             const commentUrls = r
                                 .filter(({ data }) => data?.selected)
                                 .map(({ data }) => data?.id)
-                                .map((issueId) => (state.issues ?? []).find(({ id }) => issueId === id) as Issue)
+                                .map((issueId) => (state.issues ?? []).find(({ id }) => issueId === id.toLowerCase()) as IssueGQL)
                                 .filter((issue) => !!issue)
-                                .map(({ comments_url }) => comments_url );
+                                .map(({ repository, number }) => getIssueCommentUrl(repository.nameWithOwner, number) );
 
                             return Promise.all(commentUrls.map((commentUrl) => baseRequest(client, {
                                 rawUrl: commentUrl,
@@ -147,6 +143,8 @@ export const Main = () => {
                             ).then((result) => {
                                 if (result.isSuccess) {
                                     registerReplyBoxNotesAdditionsTargetAction(client, state);
+                                } else if (!result.isSuccess && result.errors.length) {
+                                    dispatch({ type: "error", error: result.errors });
                                 }
                             });
                         }
@@ -163,6 +161,8 @@ export const Main = () => {
                             ).then((result) => {
                                 if (result.isSuccess) {
                                     registerReplyBoxEmailsAdditionsTargetAction(client, state);
+                                } else if (!result.isSuccess && result.errors.length) {
+                                    dispatch({ type: "error", error: result.errors });
                                 }
                             });
                         }
@@ -172,6 +172,23 @@ export const Main = () => {
         },
         500,
     );
+
+    const logout = useCallback(() => {
+        if (!client) {
+            return;
+        }
+
+        Promise.all([
+            client?.deleteUserState(placeholders.CODE_PATH),
+            client?.deleteUserState(placeholders.OAUTH_TOKEN_PATH),
+        ])
+            .then(() => {
+                dispatch({type: "setAuth", isAuth: false});
+                dispatch({ type: "changePage", page: "log_in" });
+            })
+            .catch((error) => dispatch({ type: "error", error }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [client]);
 
     useDeskproAppEvents({
         onShow: () => {
@@ -186,7 +203,7 @@ export const Main = () => {
             if (payload?.type === "changePage") {
                 dispatch({type: "changePage", page: payload.page, params: payload.params})
             } else if (payload?.type === "logout") {
-                dispatch({type: "setAuth", isAuth: false});
+                logout();
             } else if (payload?.type === "unlinkTicket") {
                 if (client) {
                     deleteEntityIssueService(client, payload.ticketId, payload.issueId)

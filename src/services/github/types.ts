@@ -1,4 +1,5 @@
 import { IDeskproClient } from "@deskpro/app-sdk";
+import {Issue} from "../../components/LinkIssue/Issues/Issue";
 
 export type ApiRequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
@@ -140,6 +141,48 @@ export type Issue = {
     updated_at: DateTime,
     url: string,
     user: User,
+};
+
+export type MilestoneGQL = {
+    title: Milestone["title"],
+    url: Milestone["html_url"],
+}
+
+export type RepositoryGQL = {
+    name: Repository["name"],
+    nameWithOwner: Repository["full_name"],
+    id: string,
+    databaseId: Repository["id"],
+    url: Repository["html_url"],
+    projectsUrl: string,
+};
+
+export type Member = {
+    login: User["login"],
+    name: User["name"],
+    avatarUrl: User["avatar_url"],
+};
+
+export type LabelGQL = {
+    id: string,
+    name: Label["name"],
+    color: Label["color"],
+}
+
+export type IssueGQL = {
+    id: string,
+    databaseId: Issue["id"],
+    created_at: DateTime,
+    title: Issue["title"],
+    url: Issue["html_url"],
+    state: Issue["state"],
+    number: Issue["number"],
+    resourcePath: string,
+    milestone: MilestoneGQL,
+    repository: RepositoryGQL,
+    assignees: Member[],
+    author: Member,
+    labels: LabelGQL[],
 };
 
 export type Comment = {
