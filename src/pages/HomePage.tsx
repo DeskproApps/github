@@ -54,13 +54,17 @@ const HomePage: FC = () => {
 
         setLoading(true);
 
-        const loadIssues = () => {
+        const loadIssues = (linkedIssueIds: string[]) => {
             client.getState<ClientStateIssue>(`issues/*`)
                 .then((issues) => {
                     const nodeIds: string[] = [];
                     const issueUrls: string[] = [];
 
                     issues.forEach((issue) => {
+                        if (!linkedIssueIds.some((issueId) => issue.name === `issues/${issueId}`)) {
+                            return;
+                        }
+
                         if (issue.data?.nodeId) {
                             nodeIds.push(issue.data.nodeId);
                         }
@@ -91,7 +95,7 @@ const HomePage: FC = () => {
         getEntityCardListService(client, ticketId)
             .then((issueIds) => {
                 if (Array.isArray(issueIds) && issueIds.length > 0) {
-                    return loadIssues();
+                    return loadIssues(issueIds);
                 } else {
                     dispatch({ type: "changePage", page: "link_issue" })
                 }
