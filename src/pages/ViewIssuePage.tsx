@@ -103,8 +103,14 @@ const ViewIssuePage: FC = () => {
                     ])
                 })
                 .then(([issue, repository, comments]) => {
+                    const sortedComments = comments.sort((a, b) => {
+                        const timestampFirst = (new Date(a.created_at)).getTime();
+                        const timestampSecond = (new Date(b.created_at)).getTime();
+                        return timestampSecond - timestampFirst;
+                    });
+
                     setRepository(repository);
-                    setComments(comments);
+                    setComments(sortedComments);
 
                     const users = getUniqUsersLogin(issue.user, issue.assignee, issue.assignees);
 
