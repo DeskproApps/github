@@ -7,10 +7,14 @@ import {
     Stack,
     HorizontalDivider,
     useDeskproAppClient,
+    useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { ClientStateIssue } from "../context/StoreProvider/types";
-import { setEntityIssueService } from "../services/entityAssociation";
+import {
+    setEntityIssueService,
+    getEntityCardListService,
+} from "../services/entityAssociation";
 import {
     createIssueCommentService,
     searchByIssueGraphQLService,
@@ -53,6 +57,14 @@ const getUniqRepo = (options: OptionRepository[]) => {
     }, []);
 };
 
+const filterByRepo = (selectedRepo?: string) => (issues: IssueGQL[]) => {
+    return issues.filter(({ repository }) => ["any", repository.nameWithOwner].includes(selectedRepo || ""))
+}
+
+const filterByAlreadySelected = (alreadyLinkedIssues: string[]) => (issues: IssueGQL[]) => {
+    return issues.filter(({ databaseId }) => !alreadyLinkedIssues.includes(`${databaseId}`));
+};
+
 const AddIssue: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
@@ -62,8 +74,19 @@ const AddIssue: FC = () => {
     const [repoOptions, setRepoOptions] = useState<Array<OptionRepository>>([]);
     const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
     const [selectedIssues, setSelectedIssues] = useState<Array<IssueGQL["id"]>>([]);
+    const [alreadyLinkedIssues, setAlreadyLinkedIssues] = useState<string[]>([]);
     const ticketId = state.context?.data.ticket.id;
     const currentUserLogin = state.dataDeps?.currentUser.login;
+
+    useInitialisedDeskproAppClient((client) => {
+        if (!ticketId) {
+            return;
+        }
+
+        getEntityCardListService(client, ticketId)
+            .then(setAlreadyLinkedIssues)
+            .catch(() => setAlreadyLinkedIssues([]));
+    }, [ticketId]);
 
     useEffect(() => {
         if (isArray(issues) && !isEmpty(issues)) {
@@ -205,9 +228,10 @@ const AddIssue: FC = () => {
                 : (
                     <>
                         <Issues
-                            issues={issues.filter(
-                                ({ repository }) => ["any", repository.nameWithOwner].includes(selectedRepo?.value || ""))
-                            }
+                            issues={flow([
+                                filterByRepo(selectedRepo?.value),
+                                filterByAlreadySelected(alreadyLinkedIssues),
+                            ])(issues)}
                             selectedIssues={selectedIssues}
                             onChange={onChangeSelectedCard}
                         />

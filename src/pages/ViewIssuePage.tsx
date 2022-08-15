@@ -33,6 +33,7 @@ const ViewIssuePage: FC = () => {
             return;
         }
 
+        client.deregisterElement("githubHomeButton");
         client.deregisterElement("githubPlusButton");
         client.deregisterElement("githubMenu");
         client.deregisterElement("githubEditButton");
