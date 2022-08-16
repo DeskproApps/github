@@ -76,6 +76,7 @@ const HomePage: FC = () => {
 
                     return Promise.
                         all(issueUrls.map((issueUrl) => {
+                            // ToDo: create wrapper around Promise.all which return all issues and skip removed issue in github
                             return baseRequest<Issue>(client, { rawUrl: issueUrl })
                         }))
                         .then((issues) => {

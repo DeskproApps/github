@@ -3,48 +3,42 @@ import isEmpty from "lodash/isEmpty";
 import isArray from "lodash/isArray";
 import get from "lodash/get";
 import {
-    // faPlus,
-    // faTimes,
+    faTimes,
     faCheck,
     faExternalLinkAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
 import * as yup from 'yup';
 import {
-    // Tag,
+    Tag,
     TSpan,
     InputWithDisplay,
 } from "@deskpro/deskpro-ui";
 import {
-    // Pill,
     Stack,
     Dropdown,
     DropdownValueType,
     DropdownHeaderType,
-    // Label as LabelUI,
-    // Button as ButtonUI,
     useDeskproAppTheme,
     DropdownTargetProps,
     useDeskproAppClient,
     DivAsInputWithDisplay,
 } from "@deskpro/app-sdk";
 import {
-    // getLabelsService,
+    getLabelsService,
     getProjectsService,
     getMilestonesService,
     getRepoContributorsService,
 } from "../../services/github";
-// import { getIssueStatueColorScheme } from "../../../utils";
 import {
     Label,
     Member,
     Button,
     TextArea,
     SingleSelect,
-    // EmptyInlineBlock,
     TextBlockWithLabel,
 } from "../common";
-import { Milestone, User, Project, Projects, Issue/*, Labels*/ } from "../../services/github/types";
+import { Milestone, User, Project, Projects, Issue, Labels } from "../../services/github/types";
 import { Props, Values, Option, OptionRepository } from "./types";
 
 const validationSchema = yup.object().shape({
@@ -89,7 +83,7 @@ const getInitValues = (issue?: Issue | null): Values => ({
     milestone: getOption(0, ""),
     projects: [],
     assignees: [],
-    labels: [],
+    labels: get(issue, ["labels"], []).map(({ name }) => name),
 });
 
 const isEqualRepo = (repoUrl: string, checkRepoName: string): boolean => {
@@ -105,7 +99,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser, i
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [members, setMembers] = useState<User[]>([]);
     const [projects, setProjects] = useState<Projects>([]);
-    // const [labels, setLabels] = useState<Labels>([]);
+    const [labels, setLabels] = useState<Labels>([]);
 
     const {
         values,
@@ -163,18 +157,18 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser, i
         setMilestones([]);
         setMembers([]);
         setProjects([]);
-        // setLabels([]);
+        setLabels([]);
         setFieldValue("milestone", getOption("", ""));
         setFieldValue("assignees", []);
         setFieldValue("projects", []);
-        setFieldValue("labels", []);
+        !isEditMode && setFieldValue("labels", []);
 
         Promise.all([
             getMilestonesService(client, { repoFullName: values.repository.value }),
             getRepoContributorsService(client, { repoFullName: values.repository.value }),
             getProjectsService(client, { repoFullName: values.repository.value }),
-            // getLabelsService(client, { repoFullName: values.repository.value })
-        ]).then(([milestones, members, projects/*, labels*/]) => {
+            getLabelsService(client, { repoFullName: values.repository.value })
+        ]).then(([milestones, members, projects, labels]) => {
             setMilestones(milestones);
             setProjects(projects);
             setMembers([
@@ -184,7 +178,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser, i
                     : []
                 ),
             ]);
-            // setLabels(labels);
+            setLabels(labels);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [client, values.repository?.value]);
@@ -379,18 +373,18 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser, i
                 </Dropdown>
             )}
 
-            {/*<Dropdown
+            <Dropdown
                 fetchMoreText="Fetch more"
                 autoscrollText="Autoscroll"
                 selectedIcon={faCheck}
                 externalLinkIcon={faExternalLinkAlt}
                 placement="bottom-start"
                 searchPlaceholder="Select value"
-                options={labels?.map(({ id, url, name, color }) => ({
-                    key: url,
-                    value: url,
+                options={labels?.map(({ id, name, color }) => ({
+                    key: name,
+                    value: name,
                     type: "value",
-                    selected: values.labels.includes(url),
+                    selected: values.labels.includes(name),
                     label: (
                         <Tag
                             closeIcon={faTimes}
@@ -432,7 +426,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser, i
                                     : (
                                         <Stack gap={6} wrap="wrap">
                                             {labels
-                                                .filter(({ url }) => values.labels.includes(url))
+                                                .filter(({ name }) => values.labels.includes(name))
                                                 .map(({ id, color, name }) => (
                                                     <Tag
                                                         closeIcon={faTimes}
@@ -455,7 +449,7 @@ const IssueForm: FC<Props> = ({ onSubmit, onCancel, repositories, currentUser, i
                         )}
                     />
                 )}
-            </Dropdown>*/}
+            </Dropdown>
 
             <Stack justify="space-between">
                 <Button
