@@ -19,23 +19,15 @@ import {
     createIssueCommentService,
     searchByIssueGraphQLService,
 } from "../services/github";
-import { IssueGQL, Repository, RepositoryGQL } from "../services/github/types";
+import { IssueGQL } from "../services/github/types";
 import { getEntityMetadata } from "../utils";
-import { Issues } from "../components/LinkIssue";
+import { Issues, RepoSelect } from "../components/LinkIssue";
+import { OptionRepository } from "../components/LinkIssue/RepoSelect/types";
 import {
-    Label,
     Button,
     Loading,
     InputSearch,
-    SingleSelect,
 } from "../components/common";
-
-type OptionRepository = {
-    key: RepositoryGQL["id"],
-    value: RepositoryGQL["nameWithOwner"],
-    label: Repository["name"],
-    type: "value",
-};
 
 const getRepoOptions = (issues: IssueGQL[]): OptionRepository[] => {
     return issues
@@ -197,16 +189,11 @@ const AddIssue: FC = () => {
                 onChange={onChangeSearch}
             />
 
-            <Label htmlFor="repository" label="Repository">
-                <SingleSelect
-                    showInternalSearch
-                    id="repository"
-                    label="Repository"
-                    value={selectedRepo}
-                    onChange={onChangeSelect}
-                    options={repoOptions}
-                />
-            </Label>
+            <RepoSelect
+                value={selectedRepo}
+                options={repoOptions}
+                onChange={onChangeSelect}
+            />
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button
