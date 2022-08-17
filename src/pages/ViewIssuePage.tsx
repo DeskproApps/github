@@ -5,8 +5,11 @@ import {
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
-import { baseRequest } from "../services/github";
-import { Issue, Repository, Comments, User } from "../services/github/types";
+import {
+    baseRequest,
+    getIssueByIdGraphQLService,
+} from "../services/github";
+import { Issue, Repository, Comments, User, ProjectGQL } from "../services/github/types";
 import { getUniqUsersLogin } from "../utils";
 import { ViewIssue } from "../components/ViewIssue";
 import { Loading } from "../components/common";
@@ -18,6 +21,7 @@ const ViewIssuePage: FC = () => {
     const [repository, setRepository] = useState<Repository|null>(null);
     const [users, setUsers] = useState<Record<User["id"], User>>({});
     const [comments, setComments] = useState<Comments>([]);
+    const [projects, setProjects] = useState<ProjectGQL[]>([]);
     const issueUrl = state.pageParams?.issueUrl;
 
     useEffect(() => {
@@ -100,9 +104,10 @@ const ViewIssuePage: FC = () => {
                                 per_page: 100,
                             },
                         }),
+                        getIssueByIdGraphQLService(client, issue.node_id)
                     ])
                 })
-                .then(([issue, repository, comments]) => {
+                .then(([issue, repository, comments, { projects }]) => {
                     const sortedComments = comments.sort((a, b) => {
                         const timestampFirst = (new Date(a.created_at)).getTime();
                         const timestampSecond = (new Date(b.created_at)).getTime();
@@ -111,6 +116,7 @@ const ViewIssuePage: FC = () => {
 
                     setRepository(repository);
                     setComments(sortedComments);
+                    setProjects(projects);
 
                     const users = getUniqUsersLogin(issue.user, issue.assignee, issue.assignees);
 
@@ -154,6 +160,7 @@ const ViewIssuePage: FC = () => {
                 users={users}
                 comments={comments}
                 repository={repository}
+                projects={projects}
                 onAddNewComment={onAddNewComment}
             />
         )

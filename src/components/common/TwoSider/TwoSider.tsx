@@ -11,20 +11,19 @@ export type Props = {
 };
 
 const Container = styled.div`
-   margin-bottom: -1px;
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 10px;
 `;
 
 const Side = styled.div`
-    display: inline-block;
     width: calc(49% - 6px);
 `;
 
 const Divider = styled.div`
-    display: inline-block;
     width: 1px;
-    height: 2em;
-    background-color: ${({ theme }) => theme.colors.grey20};
     margin: 0 6px;
+    background-color: ${({ theme }) => theme.colors.grey20};
 `;
 
 
@@ -32,6 +31,7 @@ const TwoSider: FC<Props> = ({ leftLabel, leftText, rightLabel, rightText }) => 
     <Container>
         <Side>
             <TextBlockWithLabel
+                marginBottom={0}
                 label={leftLabel}
                 text={leftText}
             />
@@ -39,6 +39,7 @@ const TwoSider: FC<Props> = ({ leftLabel, leftText, rightLabel, rightText }) => 
         <Divider />
         <Side>
             <TextBlockWithLabel
+                marginBottom={0}
                 label={rightLabel}
                 text={rightText}
             />

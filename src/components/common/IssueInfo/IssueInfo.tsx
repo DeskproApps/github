@@ -18,6 +18,7 @@ import {
 import { getEntityAssociationCountService } from "../../../services/entityAssociation";
 import {
     IssueGQL,
+    ProjectGQL,
     Milestone as MilestoneType,
 } from "../../../services/github/types";
 import { getDate } from "../../../utils/date";
@@ -127,7 +128,26 @@ const Milestone: FC<{
         );
 };
 
-const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels, milestone }) => {
+const Projects: FC<{ projects: ProjectGQL[] }> = ({ projects }) => {
+    return (
+        <Stack vertical>
+            {(Array.isArray(projects) && projects.length > 0)
+                ? projects.map(({ id, title, url }) => (
+                    <P5 key={id}>
+                        {title}
+                        {nbsp}
+                        <Link href={url} target="_blank">
+                            <Icon icon={faArrowUpRightFromSquare}/>
+                        </Link>
+                    </P5>
+                ))
+                : <>-</>
+            }
+        </Stack>
+    );
+};
+
+const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels, milestone, projects }) => {
     const [ticketCount, setTicketCount] = useState<number>(0);
 
     useInitialisedDeskproAppClient((client) => {
@@ -150,9 +170,11 @@ const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels, mil
                 )}
                 rightText={repository.name}
             />
-            <TextBlockWithLabel
-                label="Milestone"
-                text={<Milestone milestone={milestone} />}
+            <TwoSider
+                leftLabel="Projects"
+                leftText={<Projects projects={projects}/>}
+                rightLabel="Milestone"
+                rightText={<Milestone milestone={milestone} />}
             />
             <TextBlockWithLabel
                 label="Asignees"
