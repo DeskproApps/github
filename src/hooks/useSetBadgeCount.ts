@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { useDeskproAppClient } from "@deskpro/app-sdk";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const useSetBadgeCount = (items: any[]) => {
+const useSetBadgeCount = <T>(items: Array<T>) => {
     const { client } = useDeskproAppClient();
 
     useEffect(() => {

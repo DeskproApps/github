@@ -83,7 +83,6 @@ const ViewIssuePage: FC = () => {
         if (issueUrl) {
             setLoading(true);
 
-
             (isEmpty(state.issue)
                 ? baseRequest<Issue>(client, { rawUrl: issueUrl })
                 : Promise.resolve(state.issue) as Promise<Issue>

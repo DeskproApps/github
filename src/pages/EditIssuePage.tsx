@@ -69,6 +69,7 @@ const EditIssuePage: FC = () => {
             title: values.title,
             body: values.description,
             assignees: values.assignees,
+            labels: values.labels,
             ...(values.milestone?.value ? { milestone: values.milestone.value } : {}),
         };
 
