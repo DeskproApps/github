@@ -54,15 +54,12 @@ const CreateIssue: FC = () => {
         const newIssue = {
             title: values.title,
             body: values.description || "",
+            labels: values.labels,
             milestone: !values.milestone.value ? null : values.milestone.value,
             ...((Array.isArray(values.assignees) && values.assignees.length > 0)
                     ? { assignees: values.assignees }
                     : {}
             ),
-            // ...((Array.isArray(values.labels) && values.labels.length > 0)
-            //     ? { labels: values.labels }
-            //     : {}
-            // ),
         };
 
         dispatch({ type: "error", error: null })
