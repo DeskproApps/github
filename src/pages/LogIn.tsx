@@ -61,7 +61,7 @@ const LogInPage: FC = () => {
             setAuthUrl(`https://github.com/login/oauth/authorize?${getQueryParams({
                 client_id: clientId,
                 redirect_uri: callbackUrl,
-                scope: "repo",
+                scope: ["repo", "read:project"].join(","),
             })}`);
         } else {
             setAuthUrl(null);

@@ -24,12 +24,13 @@ import { Comments } from "./Comments";
 import { mdToHtml } from "../../utils";
 import { Props } from "./types";
 import styled from "styled-components";
+import {nbsp} from "../../constants";
 
 const Link = styled.a`
     color: ${({ theme }) => theme.colors.grey40};
 `;
 
-const ViewIssue: FC<Props> = ({ issue, repository, users, comments, onAddNewComment }) => {
+const ViewIssue: FC<Props> = ({ issue, repository, users, comments, projects, onAddNewComment }) => {
     const { theme } = useDeskproAppTheme();
 
     return (
@@ -72,9 +73,26 @@ const ViewIssue: FC<Props> = ({ issue, repository, users, comments, onAddNewComm
                 )}
             />
 
-            <TextBlockWithLabel
-                label="Milestone"
-                text={!issue.milestone
+            <TwoSider
+                leftLabel="Projects"
+                leftText={(
+                    <Stack vertical>
+                        {(Array.isArray(projects) && projects.length > 0)
+                            ? projects.map(({ id, title, url }) => (
+                                <P5 key={id}>
+                                    {title}
+                                    {nbsp}
+                                    <Link href={url} target="_blank">
+                                        <Icon icon={faArrowUpRightFromSquare}/>
+                                    </Link>
+                                </P5>
+                            ))
+                            : <>-</>
+                        }
+                    </Stack>
+                )}
+                rightLabel="Milestone"
+                rightText={!issue.milestone
                     ? "-"
                     : (
                         <P5>

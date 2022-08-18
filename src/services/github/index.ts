@@ -15,3 +15,5 @@ export { createIssueCommentService, getIssueCommentUrl } from "./createIssueComm
 export { getIssueService, getIssueUrl } from "./getIssueService";
 export { searchByIssueGraphQLService } from "./searchByIssueGraphQLService";
 export { getIssuesByIdsGraphQLService } from "./getIssuesByIdsGraphQLService";
+export { getUserReposGraphQLService } from "./getUserReposGraphQLService";
+export { getIssueByIdGraphQLService } from "./getIssueByIdGraphQLService";

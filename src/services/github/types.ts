@@ -183,6 +183,7 @@ export type IssueGQL = {
     assignees: Member[],
     author: Member,
     labels: LabelGQL[],
+    projects: ProjectGQL[],
 };
 
 export type Comment = {
@@ -229,4 +230,10 @@ export type ProjectColumn = {
     project_url: string,
     updated_at: DateTime,
     url: string,
+};
+
+export type ProjectGQL = {
+    id: string,
+    title: Project["name"],
+    url: Project["html_url"],
 };

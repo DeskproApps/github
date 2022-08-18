@@ -1,8 +1,8 @@
 import { useState, FC, ChangeEvent, useEffect } from "react";
 import flow from "lodash/flow";
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 import { useDebouncedCallback } from "use-debounce";
+import { match } from "ts-pattern";
 import {
     Stack,
     HorizontalDivider,
@@ -17,44 +17,28 @@ import {
 } from "../services/entityAssociation";
 import {
     createIssueCommentService,
+    getUserReposGraphQLService,
     searchByIssueGraphQLService,
 } from "../services/github";
-import { IssueGQL, Repository, RepositoryGQL } from "../services/github/types";
+import { IssueGQL, RepositoryGQL } from "../services/github/types";
+import { useLogout } from "../hooks";
 import { getEntityMetadata } from "../utils";
-import { Issues } from "../components/LinkIssue";
+import { Issues, RepoSelect } from "../components/LinkIssue";
+import { OptionRepository } from "../components/LinkIssue/RepoSelect/types";
 import {
-    Label,
     Button,
     Loading,
     InputSearch,
-    SingleSelect,
 } from "../components/common";
 
-type OptionRepository = {
-    key: RepositoryGQL["id"],
-    value: RepositoryGQL["nameWithOwner"],
-    label: Repository["name"],
-    type: "value",
-};
-
-const getRepoOptions = (issues: IssueGQL[]): OptionRepository[] => {
-    return issues
-        .map(({ repository }) => ({
-            key: repository.id,
-            value: repository.nameWithOwner,
-            label: repository.name,
+const getRepoOptions = (repos: RepositoryGQL[]): OptionRepository[] => {
+    return repos
+        .map(({ id, name, nameWithOwner }) => ({
+            key: id,
+            value: nameWithOwner,
+            label: name,
             type: "value",
         }));
-};
-
-const getUniqRepo = (options: OptionRepository[]) => {
-    return options.reduce((acc: OptionRepository[], option) => {
-        if (!acc.some(({ value }) => value === option.value)) {
-            acc.push(option);
-        }
-
-        return acc;
-    }, []);
 };
 
 const filterByRepo = (selectedRepo?: string) => (issues: IssueGQL[]) => {
@@ -75,6 +59,7 @@ const AddIssue: FC = () => {
     const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
     const [selectedIssues, setSelectedIssues] = useState<Array<IssueGQL["id"]>>([]);
     const [alreadyLinkedIssues, setAlreadyLinkedIssues] = useState<string[]>([]);
+    const { logout } = useLogout();
     const ticketId = state.context?.data.ticket.id;
     const currentUserLogin = state.dataDeps?.currentUser.login;
 
@@ -88,19 +73,17 @@ const AddIssue: FC = () => {
             .catch(() => setAlreadyLinkedIssues([]));
     }, [ticketId]);
 
-    useEffect(() => {
-        if (isArray(issues) && !isEmpty(issues)) {
-            const options = flow([
-                getRepoOptions,
-                getUniqRepo,
-            ])(issues);
-
-            setRepoOptions([
-                { key: "any", label: "Any", type: "value", value: "any" },
-                ...options,
-            ]);
+    useInitialisedDeskproAppClient((client) => {
+        if (!currentUserLogin) {
+            return;
         }
-    }, [issues]);
+
+        getUserReposGraphQLService(client, currentUserLogin)
+            .then((repos) => setRepoOptions([
+                { key: "any", label: "Any", type: "value", value: "any" },
+                ...getRepoOptions(repos),
+            ]));
+    }, [currentUserLogin])
 
     useEffect(() => {
         if (!isEmpty(repoOptions) && !isEmpty(repoOptions[0])) {
@@ -138,8 +121,26 @@ const AddIssue: FC = () => {
         searchByIssueGraphQLService(client, q, currentUserLogin)
             .then(setIssues)
             .catch((error) => {
+                let isErrorInsufficientScopes = false;
+
                 if (error?.code === 401) {
                     dispatch({ type: "setAuth", isAuth: false });
+                }
+
+                if (Array.isArray(error) && error.length > 0) {
+                    error.forEach(({ type }) => {
+                        match(type)
+                            .with("INSUFFICIENT_SCOPES", () => {
+                                if (!isErrorInsufficientScopes) {
+                                    isErrorInsufficientScopes = true;
+                                }
+                            })
+                            .run();
+                    });
+                }
+
+                if (isErrorInsufficientScopes) {
+                    logout();
                 }
             })
             .finally(() => setLoading(false));
@@ -197,16 +198,11 @@ const AddIssue: FC = () => {
                 onChange={onChangeSearch}
             />
 
-            <Label htmlFor="repository" label="Repository">
-                <SingleSelect
-                    showInternalSearch
-                    id="repository"
-                    label="Repository"
-                    value={selectedRepo}
-                    onChange={onChangeSelect}
-                    options={repoOptions}
-                />
-            </Label>
+            <RepoSelect
+                value={selectedRepo}
+                options={repoOptions}
+                onChange={onChangeSelect}
+            />
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button

@@ -1,5 +1,6 @@
 import { IDeskproClient } from "@deskpro/app-sdk"
 import { baseGraphQLRequest } from "./baseGraphQLRequest";
+import { getProjectsV2, getProjectsClassic } from "./utils";
 import { User } from "./types";
 
 const searchByIssueGraphQLService = (
@@ -31,6 +32,22 @@ const searchByIssueGraphQLService = (
                 resourcePath,
                 createdAt,
                 milestone { title, url },
+                projectsV2(first: 100) {
+                  edges {
+                    node {
+                      id, title, url
+                    }
+                  }
+                },
+                projectCards(first: 100) {
+                  edges {
+                    node {
+                      id, project {
+                        id, name, url,
+                      }
+                    }
+                  }
+                },
                 repository {
                   ... on Repository {
                     name,
@@ -39,11 +56,6 @@ const searchByIssueGraphQLService = (
                     databaseId,
                     url,
                     projectsUrl,
-                    projects(first: 10) {
-                      edges {
-                        node { url, name }
-                      }
-                    }
                   }
                 },
                 assignees(first: 10){
@@ -73,25 +85,25 @@ const searchByIssueGraphQLService = (
     `;
 
     return baseGraphQLRequest(client, { query, variables })
+        .then(({ search }) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        .then(({ search }) => search.edges.map(({ node }) => ({
-            ...node,
-            html_url: node.url,
-            created_at: node.createdAt,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            assignees: node.assignees.edges?.map(({ node }) => node) ?? [],
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            labels: node.labels.edges?.map(({ node }) => node) ?? [],
-            repository: {
-                ...node.repository,
+            return search.edges.map(({ node }) => ({
+                ...node,
+                html_url: node.url,
+                created_at: node.createdAt,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                projects: node.repository.projects.edges?.map(({ node }) => node) ?? [],
-            },
-        })));
+                assignees: node.assignees.edges?.map(({ node }) => node) ?? [],
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                labels: node.labels.edges?.map(({ node }) => node) ?? [],
+                projects: [
+                    ...getProjectsClassic(node?.projectCards),
+                    ...getProjectsV2(node?.projectsV2)
+                ],
+            }))
+        });
 };
 
 export { searchByIssueGraphQLService };

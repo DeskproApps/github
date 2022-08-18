@@ -1,5 +1,6 @@
 import { IDeskproClient } from "@deskpro/app-sdk";
 import { baseGraphQLRequest } from "./baseGraphQLRequest";
+import { getProjectsV2, getProjectsClassic } from "./utils";
 
 const getIssuesByIdsGraphQLService = (
     client: IDeskproClient,
@@ -19,6 +20,22 @@ const getIssuesByIdsGraphQLService = (
             number,
             resourcePath,
             milestone { title, url },
+            projectsV2(first: 100) {
+              edges {
+                node {
+                  id, title, url
+                }
+              }
+            },
+            projectCards(first: 100) {
+              edges {
+                node {
+                  id, project {
+                    id, name, url,
+                  }
+                }
+              }
+            },
             repository {
               ... on Repository {
                 name,
@@ -71,12 +88,10 @@ const getIssuesByIdsGraphQLService = (
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             labels: issue.labels.edges?.map(({ node }) => node) ?? [],
-            repository: {
-                ...issue.repository,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                projects: issue.repository.projects.edges?.map(({ node }) => node) ?? [],
-            },
+            projects: [
+                ...getProjectsClassic(issue?.projectCards),
+                ...getProjectsV2(issue?.projectsV2)
+            ],
         })));
 };
 
