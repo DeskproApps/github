@@ -337,12 +337,12 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@deskpro/app-sdk@^1.0.3":
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/@deskpro/app-sdk/-/app-sdk-1.1.7.tgz#205a92935412c539472d1b7fa73194c7ece05e4d"
-  integrity sha512-IUFjsnTTNuoWZuelIAy7dL556UlvO8oSpCNe81vJb+UHpKLgvjTfoJ8rZj8lNOXVMugDG0E8Ys5jYIqSfhTBdg==
+"@deskpro/app-sdk@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@deskpro/app-sdk/-/app-sdk-1.2.2.tgz#6099838d3e950eb045ca63f0ca9768675da28a00"
+  integrity sha512-MIdlX5fafoyMa0s2TMSYDwGg4GMCgV2yTXj6f+4k3ABVK0jy8+um/F1hf5RMO7av3j6QuAAzbEkH409K0cf+sQ==
   dependencies:
-    "@deskpro/deskpro-ui" "^2.5.1"
+    "@deskpro/deskpro-ui" "^4.1"
     "@fortawesome/fontawesome-svg-core" "^6.1.0"
     "@fortawesome/free-brands-svg-icons" "^6.1.0"
     "@fortawesome/free-regular-svg-icons" "^6.1.0"
@@ -384,14 +384,15 @@
     use-debounce "^7.0.1"
     uuid "^8.3.2"
 
-"@deskpro/deskpro-ui@^2.5.1":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@deskpro/deskpro-ui/-/deskpro-ui-2.7.0.tgz#0fde520b96bc2c4adfdc4c5d80b798177ee739fe"
-  integrity sha512-Mi3pQcvUxc10Wwu1Iiz/B1Puw2zq+ktb3SSpfUGj2e4wEOB0TYxdrdHymFoWMrmI4xcNSbT/e2H3v1HC5utBmw==
+"@deskpro/deskpro-ui@^4.1":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@deskpro/deskpro-ui/-/deskpro-ui-4.5.0.tgz#c0a7ec141bfe31132a13cbf5bd1e498d4d1de772"
+  integrity sha512-VvApzAYwlVtG3JQl9e9Ay74u8FvBTZk26EGZTHJrQjvwrF126T0Xqa/kE6kQP7W82la28u8egvYzdOaKE82fcg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.0"
     "@fortawesome/free-solid-svg-icons" "^6.1.0"
     "@fortawesome/react-fontawesome" "^0.1.18"
+    "@heroicons/react" "^1.0.6"
     "@popperjs/core" "^2.11.0"
     "@tippyjs/react" "^4.2.6"
     csstype "^3.0.10"
@@ -404,7 +405,7 @@
     simplebar "^5.3.6"
     simplebar-react "^2.3.6"
     tippy.js "^6.3.1"
-    ts-pattern "^4.0.4"
+    ts-pattern "^4.0.5"
     tslib "~2.4.0"
     type-fest "^2.12.0"
     use-debounce "^7.0.1"
@@ -568,6 +569,11 @@
   integrity sha512-Hyb+lB8T18cvLNX0S3llz7PcSOAJMLwiVKBuuzwM/nI5uoBw+gQjnf9il0fR1C3DKOI5Kc79pkJ4/xB0Uw9aFQ==
   dependencies:
     prop-types "^15.8.1"
+
+"@heroicons/react@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@heroicons/react/-/react-1.0.6.tgz#35dd26987228b39ef2316db3b1245c42eb19e324"
+  integrity sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
@@ -1164,6 +1170,11 @@
   integrity sha512-SBwbxYoyPIvxHbeHxTZX2Pe/74F/tX2/D3mMvzabdeJ25bBojfW0TyB8BHrbq/9zaaKICJZjLP+8r6AeZMFCuQ==
   dependencies:
     "@types/jest" "*"
+
+"@types/uuid@^8.3.4":
+  version "8.3.4"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
+  integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
 
 "@types/yargs-parser@*":
   version "21.0.0"
@@ -4232,10 +4243,15 @@ ts-pattern@^3.3.5:
   resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-3.3.5.tgz#9a4bde1d44f9afe7e82409820f68790232c2544c"
   integrity sha512-LD+wFR/RNckk1DrKV0LTH4KIT9wRqnnOjtEf77ovhKcVi8gf83Uf6U7OdywEua6KD9SbHadUdfolayfIUiPxzw==
 
-ts-pattern@^4.0.1, ts-pattern@^4.0.4:
+ts-pattern@^4.0.1:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-4.0.5.tgz#8e87db265b890ddb0dfc10deda36568296ebd5c3"
   integrity sha512-Bq44KCEt7JVaNLa148mBCJkcQf4l7jtLEBDuDdeuLynWDA+1a60P4D0rMkqSM9mOKLQbIWUddE9h3XKyKwBeqA==
+
+ts-pattern@^4.0.5:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-4.0.6.tgz#02b17695f6385fcc6d2f3ba7962b0952f709d348"
+  integrity sha512-sFHQYD4KoysBi7e7a2mzDPvRBeqA4w+vEyRE+P5MU9VLq8eEYxgKCgD9RNEAT+itGRWUTYN+hry94GDPLb1/Yw==
 
 tslib@2.3.1, tslib@~2.3.1:
   version "2.3.1"
@@ -4344,6 +4360,11 @@ uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uuid@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
+  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 v8-compile-cache@^2.0.3:
   version "2.3.0"
