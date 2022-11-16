@@ -4,3 +4,5 @@ export { getIssueStatueColorScheme } from "./getIssueStatueColorScheme";
 export { mdToHtml } from "./mdToHtml";
 export { getUniqUsersLogin } from "./getUniqUsersLogin";
 export { isBaseUrl } from "./isBaseUrl";
+export { isLast } from "./isLast";
+export { getPRStateColor } from "./getPRStateColor";

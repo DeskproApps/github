@@ -4,9 +4,9 @@ import { TextBlockWithLabel } from "../TextBlockWithLabel";
 import { Props as TextBlockWithLabelProps } from "../TextBlockWithLabel/types";
 
 export type Props = {
-    leftLabel: TextBlockWithLabelProps["label"],
+    leftLabel?: TextBlockWithLabelProps["label"],
     leftText: TextBlockWithLabelProps["text"],
-    rightLabel: TextBlockWithLabelProps["label"],
+    rightLabel?: TextBlockWithLabelProps["label"],
     rightText: TextBlockWithLabelProps["text"],
 };
 

@@ -1,5 +1,4 @@
 import { IDeskproClient } from "@deskpro/app-sdk";
-import {Issue} from "../../components/LinkIssue/Issues/Issue";
 
 export type ApiRequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
@@ -90,13 +89,15 @@ export type Reactions = {
     url: string,
 };
 
-// ToDo: need full typings
 export type Repository = {
-    id: string,
+    id: number,
+    node_id: string,
     name: string,
+    full_name: string,
     url: string,
     html_url: string,
-    full_name: string,
+    private: boolean,
+    owner: User,
 };
 
 export type Label = {
@@ -236,4 +237,14 @@ export type ProjectGQL = {
     id: string,
     title: Project["name"],
     url: Project["html_url"],
+};
+
+export type PullRequest = {
+    id: string,
+    number: number,
+    state: "OPEN" | "CLOSED" | "MERGED",
+    title: string,
+    url: string,
+    createdAt: DateTime,
+    updatedAt: DateTime,
 };

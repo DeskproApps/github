@@ -238,6 +238,7 @@ export const Main = () => {
                     <ErrorBlock text="An error occurred" />
                 )}
                 {page}
+                <br/><br/><br/>
             </>
         );
 };
