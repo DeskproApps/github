@@ -1,11 +1,11 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
 import {
     P5,
     H3,
-    OAuth2CallbackUrl,
     useDeskproAppClient,
-    useDeskproOAuth2Auth,
+    OAuth2StaticCallbackUrl,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { getQueryParams } from "../utils";
@@ -21,14 +21,14 @@ const LogInError = styled(P5)`
 `;
 
 const LogInPage: FC = () => {
+    const key = useMemo(() => uuidv4(), []);
     const { client } = useDeskproAppClient();
-    const { callback: initCallback } = useDeskproOAuth2Auth("code", /code=(?<token>[0-9a-f]+)$/);
 
     const [state, dispatch] = useStore();
     const [error, setError] = useState<string|null>(null);
     const [authUrl, setAuthUrl] = useState<string|null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [callback, setCallback] = useState<OAuth2CallbackUrl|undefined>(initCallback);
+    const [callback, setCallback] = useState<OAuth2StaticCallbackUrl|undefined>();
 
     const clientId =  state?.context?.settings?.client_id;
     const callbackUrl = callback?.callbackUrl;
@@ -49,16 +49,15 @@ const LogInPage: FC = () => {
 
     useEffect(() => {
         if (!callback) {
-            client?.oauth2()
-                .getCallbackUrl("code", /code=(?<token>[0-9a-f]+)$/)
-                .then((callback: OAuth2CallbackUrl) => setCallback(callback));
+            client?.oauth2().getGenericCallbackUrl(key, /code=(?<token>[0-9a-f]+)/, /state=(?<key>.+)/)
+                .then(setCallback);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initCallback]);
+    }, [client, key, callback]);
 
     useEffect(() => {
         if (callbackUrl && clientId) {
             setAuthUrl(`https://github.com/login/oauth/authorize?${getQueryParams({
+                state: key,
                 client_id: clientId,
                 redirect_uri: callbackUrl,
                 scope: ["repo", "read:project"].join(","),
@@ -78,13 +77,14 @@ const LogInPage: FC = () => {
         if (!callback || !client) {
             return;
         }
+
         callback?.poll()
-            .then(() => {
+            .then(({ token }) => {
                 setLoading(true);
 
                 const clientId = state?.context?.settings?.client_id;
 
-                return getAccessTokenService(client, clientId);
+                return getAccessTokenService(client, clientId, token);
             })
             .then(({ access_token }) => {
                 return client?.setUserState("oauth2/token", access_token)

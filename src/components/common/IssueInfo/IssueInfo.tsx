@@ -21,7 +21,7 @@ import {
     ProjectGQL,
     Milestone as MilestoneType,
 } from "../../../services/github/types";
-import { getDate } from "../../../utils/date";
+import { format } from "../../../utils/date";
 import { getIssueStatueColorScheme } from "../../../utils";
 import { nbsp } from "../../../constants";
 import { GithubLink } from "../GithubLink";
@@ -64,7 +64,7 @@ const StatusAndDate: FC<Props> = (props) => {
                 />
             }
             rightLabel="Date Created"
-            rightText={getDate(props.created_at)}
+            rightText={format(props.created_at)}
         />
     );
 };

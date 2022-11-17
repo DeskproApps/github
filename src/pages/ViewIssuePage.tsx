@@ -7,9 +7,10 @@ import {
 import { useStore } from "../context/StoreProvider/hooks";
 import {
     baseRequest,
+    getLinkedPRsToIssue,
     getIssueByIdGraphQLService,
 } from "../services/github";
-import { Issue, Repository, Comments, User, ProjectGQL } from "../services/github/types";
+import { Issue, Repository, Comments, User, ProjectGQL, PullRequest } from "../services/github/types";
 import { getUniqUsersLogin } from "../utils";
 import { ViewIssue } from "../components/ViewIssue";
 import { Loading } from "../components/common";
@@ -22,6 +23,7 @@ const ViewIssuePage: FC = () => {
     const [users, setUsers] = useState<Record<User["id"], User>>({});
     const [comments, setComments] = useState<Comments>([]);
     const [projects, setProjects] = useState<ProjectGQL[]>([]);
+    const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
     const issueUrl = state.pageParams?.issueUrl;
 
     useEffect(() => {
@@ -82,6 +84,16 @@ const ViewIssuePage: FC = () => {
             }],
         });
     }, [client, state.context?.data.ticket.id, state.issue?.id, state.issue?.comments_url]);
+
+    useEffect(() => {
+        if (!client || !state.issue?.number || !repository?.name || !repository?.owner.login) {
+            return;
+        }
+
+        getLinkedPRsToIssue(client, repository.owner.login, repository.name, state.issue.number)
+            .then(setPullRequests)
+            .catch(() => {});
+    }, [client, state.issue?.number, repository?.name, repository?.owner.login]);
 
     useInitialisedDeskproAppClient((client) => {
         if (issueUrl) {
@@ -162,6 +174,7 @@ const ViewIssuePage: FC = () => {
                 repository={repository}
                 projects={projects}
                 onAddNewComment={onAddNewComment}
+                pullRequests={pullRequests}
             />
         )
         : null;
