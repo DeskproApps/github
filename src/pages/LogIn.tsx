@@ -9,6 +9,7 @@ import {
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { getQueryParams } from "../utils";
+import { placeholders } from "../services/github/constants";
 import { AnchorButton } from "../components/common";
 import {
     getCurrentUserService,
@@ -87,7 +88,7 @@ const LogInPage: FC = () => {
                 return getAccessTokenService(client, clientId, token);
             })
             .then(({ access_token }) => {
-                return client?.setUserState("oauth2/token", access_token)
+                return client?.setUserState(placeholders.OAUTH_TOKEN_PATH, access_token, { backend: true })
             })
             .then((res) => {
                 return res?.isSuccess ? Promise.resolve() : Promise.reject()
