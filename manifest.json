@@ -3,7 +3,7 @@
   "title": "GitHub",
   "description": "View your GitHub issues from Deskpro and link them to tickets you are working on",
   "appStoreUrl": "https://www.deskpro.com/product-embed/apps/github",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "scope": "agent",
   "isSingleInstall": false,
   "hasDevMode": true,
