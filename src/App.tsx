@@ -1,3 +1,4 @@
+import { HashRouter } from "react-router-dom";
 import { DeskproAppProvider } from "@deskpro/app-sdk";
 import { StoreProvider } from "./context/StoreProvider";
 import { Main } from "./pages/Main";
@@ -18,9 +19,11 @@ TimeAgo.addDefaultLocale(en);
 function App() {
     return (
         <DeskproAppProvider>
-            <StoreProvider>
-                <Main/>
-            </StoreProvider>
+            <HashRouter>
+                <StoreProvider>
+                    <Main/>
+                </StoreProvider>
+            </HashRouter>
         </DeskproAppProvider>
     );
 }

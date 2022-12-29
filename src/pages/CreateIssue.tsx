@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     IDeskproClient,
     useDeskproAppClient,
@@ -23,6 +24,7 @@ import {
 } from "../services/github/types";
 
 const CreateIssue: FC = () => {
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const repositories = state.dataDeps?.repositories as Repository[];
@@ -106,7 +108,7 @@ const CreateIssue: FC = () => {
                     }),
                 ]);
             })
-            .then(() => dispatch({ type: "changePage", page: "home" }))
+            .then(() => navigate("/home"))
             .catch((error) => dispatch({ type: "error", error }));
     };
 
@@ -115,7 +117,7 @@ const CreateIssue: FC = () => {
             repositories={repositories}
             currentUser={currentUser}
             onSubmit={onSubmit}
-            onCancel={() => dispatch({ type: "changePage", page: "home" })}
+            onCancel={() => navigate("/home")}
         />
     );
 };

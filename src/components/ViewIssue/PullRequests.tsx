@@ -18,7 +18,7 @@ import { Props, PullRequestProps } from "./types";
 
 const PullRequest: FC<PullRequestProps> = ({ url, title, state, theme, date }) => (
     <>
-        <Stack gap={6} align="start" style={{ marginBottom: 10 }}>
+        <Stack gap={6} align="start">
             <H3 style={{ flexGrow: 1 }}>{title}</H3>
             <GithubLink href={url} />
         </Stack>

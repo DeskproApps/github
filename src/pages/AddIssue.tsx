@@ -3,6 +3,7 @@ import flow from "lodash/flow";
 import isEmpty from "lodash/isEmpty";
 import { useDebouncedCallback } from "use-debounce";
 import { match } from "ts-pattern";
+import { useNavigate } from "react-router-dom";
 import {
     Stack,
     HorizontalDivider,
@@ -50,6 +51,7 @@ const filterByAlreadySelected = (alreadyLinkedIssues: string[]) => (issues: Issu
 };
 
 const AddIssue: FC = () => {
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
@@ -98,6 +100,7 @@ const AddIssue: FC = () => {
 
     const onChangeSelectedCard = (issueId: IssueGQL["id"]) => {
         let newSelectedIssues = [...selectedIssues];
+
         if (selectedIssues.includes(issueId)) {
             newSelectedIssues = selectedIssues.filter((selectedIssueId) => selectedIssueId !== issueId);
         } else {
@@ -186,7 +189,7 @@ const AddIssue: FC = () => {
                 });
             }),
         ])
-        .then(() => dispatch({ type: "changePage", page: "home" }))
+        .then(() => navigate("/home"))
         .catch((error) => dispatch({ type: "error", error }));
     };
 
@@ -212,7 +215,7 @@ const AddIssue: FC = () => {
                 />
                 <Button
                     text="Cancel"
-                    onClick={() => dispatch({ type: "changePage", page: "home" })}
+                    onClick={() => navigate("/home")}
                     intent="secondary"
                 />
             </Stack>

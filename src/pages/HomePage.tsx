@@ -1,4 +1,5 @@
 import { Fragment, FC, useState, useEffect } from "react";
+import { useNavigate, createSearchParams } from "react-router-dom";
 import {
     HorizontalDivider,
     useDeskproAppClient,
@@ -17,6 +18,7 @@ import { isBaseUrl } from "../utils";
 import { Loading, IssueInfo } from "../components/common";
 
 const HomePage: FC = () => {
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
@@ -36,7 +38,7 @@ const HomePage: FC = () => {
 
         client?.registerElement("githubPlusButton", {
             type: "plus_button",
-            payload: { type: "changePage", page: "link_issue" },
+            payload: { type: "changePage", params: "/link_issue" },
         });
         client?.registerElement("githubMenu", {
             type: "menu",
@@ -98,22 +100,18 @@ const HomePage: FC = () => {
                 if (Array.isArray(issueIds) && issueIds.length > 0) {
                     return loadIssues(issueIds);
                 } else {
-                    dispatch({ type: "changePage", page: "link_issue" })
+                    navigate("/link_issue");
                 }
             })
             .catch((error) => dispatch({ type: "error", error }))
             .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [client, ticketId]);
+    }, [client, ticketId, dispatch, navigate]);
 
     const onClickTitle = (url: Issue["url"]) => () => {
         dispatch({ type: "setIssue", issue: null });
-        dispatch({
-            type: "changePage",
-            page: "view_issue",
-            params: {
-                issueUrl: getIssueUrl(url),
-            },
+        navigate({
+            pathname: "/view_issue",
+            search: `?${createSearchParams([["issueUrl", getIssueUrl(url)]])}`,
         });
     };
 

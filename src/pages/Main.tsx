@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import { match } from "ts-pattern";
+import { useEffect, useState, Suspense } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { ErrorBoundary } from "react-error-boundary";
+import { match } from "ts-pattern";
 import {
     Context,
     TargetAction,
@@ -29,6 +31,7 @@ import { ErrorBlock, Loading } from "../components/common";
 import { IssueGQL } from "../services/github/types";
 
 export const Main = () => {
+    const navigate = useNavigate();
     const [state, dispatch] = useStore();
     const { client } = useDeskproAppClient();
     const [loading, setLoading] = useState<boolean>(false);
@@ -49,7 +52,7 @@ export const Main = () => {
 
     useEffect(() => {
         if (state.isAuth) {
-            dispatch({ type: "changePage", page: "home" });
+            navigate("/home");
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isAuth]);
@@ -66,7 +69,7 @@ export const Main = () => {
             dispatch({ type: "error", error: null });
 
             match<string>(action.name)
-                .with("linkTicket", () => dispatch({ type: "changePage", page: "link_issue" }))
+                .with("linkTicket", () => navigate("/link_issue"))
                 .with("githubOnReplyBoxNote", () => {
                     const ticketId = action.subject;
                     const note = action.payload.note;
@@ -185,7 +188,7 @@ export const Main = () => {
         // @ts-ignore
         onElementEvent: (id: string, type: string, payload?: AppElementPayload) => {
             if (payload?.type === "changePage") {
-                dispatch({type: "changePage", page: payload.page, params: payload.params})
+                navigate(payload.params);
             } else if (payload?.type === "logout") {
                 logout();
             } else if (payload?.type === "unlinkTicket") {
@@ -208,7 +211,7 @@ export const Main = () => {
                             ])
                         })
                         .then(() => dispatch({ type: "unlinkIssue", issueId: payload.issueId }))
-                        .then(() => dispatch({ type: "changePage", page: "home" }))
+                        .then(() => navigate("/home"))
                 }
             }
 
@@ -219,25 +222,24 @@ export const Main = () => {
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
     }, [client]);
 
-    const page = !state.isAuth
-        ? <LogInPage />
-        : match(state.page)
-            .with("home", () => <HomePage />)
-            .with("log_in", () => <LogInPage />)
-            .with("link_issue", () => <LinkIssuePage />)
-            .with("view_issue", () => <ViewIssuePage />)
-            .with("edit_issue", () => <EditIssuePage />)
-            .with("add_comment", () => <AddCommentPage />)
-            .otherwise(() => <LogInPage />);
-
     return loading
         ? (<Loading />)
         : (
             <>
-                {state._error && (
-                    <ErrorBlock text="An error occurred" />
-                )}
-                {page}
+                {state._error && (<ErrorBlock />)}
+                <Suspense fallback={<Loading />}>
+                    <ErrorBoundary fallbackRender={() => (<ErrorBlock text="An error occurred..." />)}>
+                        <Routes>
+                            <Route path="/home" element={<HomePage />} />
+                            <Route path="/log_in" element={<LogInPage />} />
+                            <Route path="/link_issue" element={<LinkIssuePage />} />
+                            <Route path="/view_issue" element={<ViewIssuePage />} />
+                            <Route path="/edit_issue" element={<EditIssuePage />} />
+                            <Route path="/add_comment" element={<AddCommentPage />} />
+                            <Route index element={<LogInPage />} />
+                        </Routes>
+                    </ErrorBoundary>
+                </Suspense>
                 <br/><br/><br/>
             </>
         );
