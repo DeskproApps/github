@@ -54,6 +54,7 @@ const AddIssue: FC = () => {
     const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchIssue, setSearchIssue] = useState<string>("");
     const [issues, setIssues] = useState<IssueGQL[]>([]);
@@ -165,6 +166,8 @@ const AddIssue: FC = () => {
 
         const linkedIssues = issues.filter(({ id }) => selectedIssues.includes(id));
 
+        setIsSubmitting(true);
+
         Promise.all([
             ...linkedIssues.map((issue) => setEntityIssueService(
                 client,
@@ -190,7 +193,8 @@ const AddIssue: FC = () => {
             }),
         ])
         .then(() => navigate("/home"))
-        .catch((error) => dispatch({ type: "error", error }));
+        .catch((error) => dispatch({ type: "error", error }))
+        .finally(() => setIsSubmitting(false));
     };
 
     return (
@@ -209,7 +213,8 @@ const AddIssue: FC = () => {
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button
-                    disabled={selectedIssues.length === 0 || !selectedRepo?.value}
+                    disabled={selectedIssues.length === 0 || !selectedRepo?.value || isSubmitting}
+                    loading={isSubmitting}
                     text="Link Issue"
                     onClick={onLinkIssues}
                 />
