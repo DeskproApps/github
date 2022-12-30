@@ -34,10 +34,14 @@ export const Main = () => {
     const [state, dispatch] = useStore();
     const { client } = useDeskproAppClient();
     const [loading, setLoading] = useState<boolean>(false);
-    const { logout } = useLogout();
+    const { logout, isLoading: isLoadingLogout } = useLogout();
     const { unlinkIssue, isLoading: isLoadingUnlink } = useUnlinkIssue();
 
-    const isLoading = [loading, isLoadingUnlink].some((isLoading) => isLoading);
+    const isLoading = [
+        loading,
+        isLoadingUnlink,
+        isLoadingLogout,
+    ].some((isLoading) => isLoading);
 
     if (state._error) {
         // eslint-disable-next-line no-console
