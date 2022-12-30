@@ -57,7 +57,6 @@ export type AppElementPayload =
     | { type: "changePage", params: To }
     | {
         type: "unlinkTicket",
-        ticketId: string,
         issueId: Issue["id"],
         commentsUrl: Issue["comments_url"],
     };

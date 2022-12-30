@@ -73,7 +73,7 @@ const ViewIssuePage: FC = () => {
     }, [client, issueUrl]);
 
     useEffect(() => {
-        if (!client || !state.context?.data.ticket.id || !state.issue?.id || !state.issue.comments_url) {
+        if (!client || !state.issue?.id || !state.issue.comments_url) {
             return;
         }
 
@@ -85,11 +85,10 @@ const ViewIssuePage: FC = () => {
                     type: "unlinkTicket",
                     issueId: state.issue.id,
                     commentsUrl: state.issue.comments_url,
-                    ticketId: state.context.data.ticket.id,
                 },
             }],
         });
-    }, [client, state.context?.data.ticket.id, state.issue?.id, state.issue?.comments_url]);
+    }, [client, state.issue?.id, state.issue?.comments_url]);
 
     useEffect(() => {
         if (!client || !state.issue?.number || !repository?.name || !repository?.owner.login) {

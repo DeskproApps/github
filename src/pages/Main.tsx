@@ -12,9 +12,8 @@ import {
 } from "@deskpro/app-sdk";
 import { AppElementPayload, ReplyBoxSelection } from "../context/StoreProvider/types";
 import { useStore } from "../context/StoreProvider/hooks";
-import { deleteEntityIssueService } from "../services/entityAssociation";
 import { baseRequest, checkIsAuthService, getIssueCommentUrl } from "../services/github";
-import { useLogout } from "../hooks";
+import { useLogout, useUnlinkIssue } from "../hooks";
 import {
     ticketReplyNotesSelectionStateKey,
     ticketReplyEmailsSelectionStateKey,
@@ -36,6 +35,9 @@ export const Main = () => {
     const { client } = useDeskproAppClient();
     const [loading, setLoading] = useState<boolean>(false);
     const { logout } = useLogout();
+    const { unlinkIssue, isLoading: isLoadingUnlink } = useUnlinkIssue();
+
+    const isLoading = [loading, isLoadingUnlink].some((isLoading) => isLoading);
 
     if (state._error) {
         // eslint-disable-next-line no-console
@@ -192,27 +194,7 @@ export const Main = () => {
             } else if (payload?.type === "logout") {
                 logout();
             } else if (payload?.type === "unlinkTicket") {
-                if (client) {
-                    deleteEntityIssueService(client, payload.ticketId, payload.issueId)
-                        .then(() => baseRequest(client, {
-                            rawUrl: payload.commentsUrl,
-                            method: "POST",
-                            data: {
-                                body: `Unlinked from Deskpro ticket ${payload.ticketId}${state.context?.data?.ticket?.permalinkUrl
-                                    ? `, ${state.context.data.ticket.permalinkUrl}`
-                                    : ""
-                                }`
-                            }
-                        }))
-                        .then(() => {
-                            return Promise.all([
-                                client.deleteState(ticketReplyEmailsSelectionStateKey(payload.ticketId, payload.issueId)),
-                                client.deleteState(ticketReplyNotesSelectionStateKey(payload.ticketId, payload.issueId)),
-                            ])
-                        })
-                        .then(() => dispatch({ type: "unlinkIssue", issueId: payload.issueId }))
-                        .then(() => navigate("/home"))
-                }
+                unlinkIssue(payload);
             }
 
             match(type)
@@ -220,9 +202,9 @@ export const Main = () => {
                 .otherwise(() => {});
         },
         onTargetAction: (a) => debounceTargetAction(a as TargetAction),
-    }, [client]);
+    }, [client, unlinkIssue, logout]);
 
-    return loading
+    return isLoading
         ? (<Loading />)
         : (
             <>
