@@ -17,12 +17,11 @@ import {
     getEntityCardListService,
 } from "../services/entityAssociation";
 import {
-    createIssueCommentService,
     getUserReposGraphQLService,
     searchByIssueGraphQLService,
 } from "../services/github";
 import { IssueGQL, RepositoryGQL } from "../services/github/types";
-import { useLogout } from "../hooks";
+import { useLogout, useAutomatedComment } from "../hooks";
 import { getEntityMetadata } from "../utils";
 import { Issues, RepoSelect } from "../components/LinkIssue";
 import { OptionRepository } from "../components/LinkIssue/RepoSelect/types";
@@ -63,6 +62,7 @@ const AddIssue: FC = () => {
     const [selectedIssues, setSelectedIssues] = useState<Array<IssueGQL["id"]>>([]);
     const [alreadyLinkedIssues, setAlreadyLinkedIssues] = useState<string[]>([]);
     const { logout } = useLogout();
+    const { createAutomatedLinkedComment } = useAutomatedComment();
     const ticketId = state.context?.data.ticket.id;
     const currentUserLogin = state.dataDeps?.currentUser.login;
 
@@ -182,13 +182,9 @@ const AddIssue: FC = () => {
                 );
             }),
             ...linkedIssues.map((issue) => {
-                return createIssueCommentService(client, {
+                return createAutomatedLinkedComment({
                     repoFullName: issue.repository.nameWithOwner,
                     issueNumber: issue.number,
-                    comment: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
-                        ? `, ${state.context.data.ticket.permalinkUrl}`
-                        : ""
-                    }`
                 });
             }),
         ])

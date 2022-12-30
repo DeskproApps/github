@@ -13,6 +13,7 @@ import {
 } from "../services/github";
 import { setEntityIssueService } from "../services/entityAssociation";
 import { getEntityMetadata } from "../utils";
+import { useAutomatedComment } from "../hooks";
 import { IssueForm } from "../components/IssueForm";
 import { Values as IssueFormValues } from "../components/IssueForm/types";
 import {
@@ -27,6 +28,7 @@ const CreateIssue: FC = () => {
     const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
+    const { createAutomatedLinkedComment } = useAutomatedComment();
     const repositories = state.dataDeps?.repositories as Repository[];
     const currentUser = state.dataDeps?.currentUser as User;
     const ticketId = state.context?.data.ticket.id;
@@ -96,16 +98,7 @@ const CreateIssue: FC = () => {
                         })
                     ),
                     client.setState(`issues/${issue.id}`, { issueUrl: issue.url }),
-                    baseRequest(client, {
-                        rawUrl: issue.comments_url,
-                        method: "POST",
-                        data: {
-                            body: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
-                                ? `, ${state.context.data.ticket.permalinkUrl}`
-                                : ""
-                            }`,
-                        },
-                    }),
+                    createAutomatedLinkedComment(issue.comments_url),
                 ]);
             })
             .then(() => navigate("/home"))
