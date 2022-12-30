@@ -26,11 +26,12 @@ const useAutomatedComment: UseAutomatedComment = () => {
     const { client } = useDeskproAppClient();
     const { context } = useDeskproLatestAppContext();
 
+    const dontAddComment = get(context, ["settings", "dont_add_comment_when_linking_issue"]) === true;
     const ticketId = get(context, ["data", "ticket", "id"], "");
     const permalinkUrl = get(context, ["data", "ticket", "permalinkUrl"], "");
 
     const createAutomatedLinkedComment = useCallback((param: Issue["comments_url"]|Params) => {
-        if (!client || !ticketId) {
+        if (!client || !ticketId || dontAddComment) {
             return Promise.resolve();
         }
 
@@ -49,10 +50,10 @@ const useAutomatedComment: UseAutomatedComment = () => {
                 repoFullName: param.repoFullName,
             })
         }
-    }, [client, ticketId, permalinkUrl]);
+    }, [client, ticketId, permalinkUrl, dontAddComment]);
 
     const createAutomatedUnlinkedComment = useCallback((param: Issue["comments_url"]|Params) => {
-        if (!client || !ticketId) {
+        if (!client || !ticketId || dontAddComment) {
             return Promise.resolve();
         }
 
@@ -74,7 +75,7 @@ const useAutomatedComment: UseAutomatedComment = () => {
             });
         }
 
-    }, [client, ticketId, permalinkUrl]);
+    }, [client, ticketId, permalinkUrl, dontAddComment]);
 
     return {
         createAutomatedLinkedComment,

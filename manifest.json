@@ -3,7 +3,7 @@
   "title": "GitHub",
   "description": "View your GitHub issues from Deskpro and link them to tickets you are working on",
   "appStoreUrl": "https://www.deskpro.com/product-embed/apps/github",
-  "version": "1.0.28",
+  "version": "1.0.27",
   "scope": "agent",
   "isSingleInstall": false,
   "hasDevMode": true,
@@ -25,13 +25,23 @@
       "title": "Client ID",
       "type": "string",
       "isRequired": true,
-      "isBackendOnly": false
+      "isBackendOnly": false,
+      "order": 10
     },
     "client_secret": {
       "title": "Client secret",
       "type": "string",
       "isRequired": true,
-      "isBackendOnly": true
+      "isBackendOnly": true,
+      "order": 20
+    },
+    "dont_add_comment_when_linking_issue": {
+      "title": "Don't leave a comment on the issue in GitHub when it is linked to a ticket in Deskpro",
+      "description": "",
+      "type": "boolean",
+      "isRequired": false,
+      "isBackendOnly": false,
+      "order": 30
     }
   },
   "entityAssociations": {
