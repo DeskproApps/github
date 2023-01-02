@@ -21,7 +21,11 @@ import {
     searchByIssueGraphQLService,
 } from "../services/github";
 import { IssueGQL, RepositoryGQL } from "../services/github/types";
-import { useLogout, useAutomatedComment } from "../hooks";
+import {
+    useLogout,
+    useDeskproLabel,
+    useAutomatedComment,
+} from "../hooks";
 import { getEntityMetadata } from "../utils";
 import { Issues, RepoSelect } from "../components/LinkIssue";
 import { OptionRepository } from "../components/LinkIssue/RepoSelect/types";
@@ -63,6 +67,7 @@ const AddIssue: FC = () => {
     const [alreadyLinkedIssues, setAlreadyLinkedIssues] = useState<string[]>([]);
     const { logout } = useLogout();
     const { createAutomatedLinkedComment } = useAutomatedComment();
+    const { addDeskproLabel } = useDeskproLabel();
     const ticketId = state.context?.data.ticket.id;
     const currentUserLogin = state.dataDeps?.currentUser.login;
 
@@ -187,6 +192,7 @@ const AddIssue: FC = () => {
                     issueNumber: issue.number,
                 });
             }),
+            ...linkedIssues.map((issue) => addDeskproLabel(issue))
         ])
         .then(() => navigate("/home"))
         .catch((error) => dispatch({ type: "error", error }))

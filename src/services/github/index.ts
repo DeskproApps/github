@@ -18,3 +18,4 @@ export { getIssuesByIdsGraphQLService } from "./getIssuesByIdsGraphQLService";
 export { getUserReposGraphQLService } from "./getUserReposGraphQLService";
 export { getIssueByIdGraphQLService } from "./getIssueByIdGraphQLService";
 export { getLinkedPRsToIssue } from "./getLinkedPRsToIssue";
+export { createLabelService } from "./createLabelService";

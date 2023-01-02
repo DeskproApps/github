@@ -2,6 +2,7 @@ import { IDeskproClient } from "@deskpro/app-sdk";
 import { baseRequest } from "./baseRequest";
 import { BASE_URL } from "./constants";
 import { isBaseUrl } from "../../utils";
+import { Issue } from "./types";
 
 export const getIssueUrl = (url: string): string => {
     if (isBaseUrl(url)) {
@@ -12,7 +13,7 @@ export const getIssueUrl = (url: string): string => {
 };
 
 const getIssueService = (client: IDeskproClient, { url }: { url: string }) => {
-    return baseRequest(client, { rawUrl: getIssueUrl(url) });
+    return baseRequest<Issue>(client, { rawUrl: getIssueUrl(url) });
 };
 
 export { getIssueService };

@@ -73,7 +73,7 @@ const ViewIssuePage: FC = () => {
     }, [client, issueUrl]);
 
     useEffect(() => {
-        if (!client || !state.issue?.id || !state.issue.comments_url) {
+        if (!client || !state.issue?.url) {
             return;
         }
 
@@ -83,12 +83,11 @@ const ViewIssuePage: FC = () => {
                 title: "Unlink Ticket",
                 payload: {
                     type: "unlinkTicket",
-                    issueId: state.issue.id,
-                    commentsUrl: state.issue.comments_url,
+                    issueUrl: state.issue.url,
                 },
             }],
         });
-    }, [client, state.issue?.id, state.issue?.comments_url]);
+    }, [client, state.issue?.url]);
 
     useEffect(() => {
         if (!client || !state.issue?.number || !repository?.name || !repository?.owner.login) {

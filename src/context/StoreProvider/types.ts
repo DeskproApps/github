@@ -57,8 +57,7 @@ export type AppElementPayload =
     | { type: "changePage", params: To }
     | {
         type: "unlinkTicket",
-        issueId: Issue["id"],
-        commentsUrl: Issue["comments_url"],
+        issueUrl: Issue["url"],
     };
 
 export type ReplyBoxSelection = {

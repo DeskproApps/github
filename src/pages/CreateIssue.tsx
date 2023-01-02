@@ -13,7 +13,10 @@ import {
 } from "../services/github";
 import { setEntityIssueService } from "../services/entityAssociation";
 import { getEntityMetadata } from "../utils";
-import { useAutomatedComment } from "../hooks";
+import {
+    useDeskproLabel,
+    useAutomatedComment,
+} from "../hooks";
 import { IssueForm } from "../components/IssueForm";
 import { Values as IssueFormValues } from "../components/IssueForm/types";
 import {
@@ -29,6 +32,7 @@ const CreateIssue: FC = () => {
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const { createAutomatedLinkedComment } = useAutomatedComment();
+    const { addDeskproLabel } = useDeskproLabel();
     const repositories = state.dataDeps?.repositories as Repository[];
     const currentUser = state.dataDeps?.currentUser as User;
     const ticketId = state.context?.data.ticket.id;
@@ -99,6 +103,7 @@ const CreateIssue: FC = () => {
                     ),
                     client.setState(`issues/${issue.id}`, { issueUrl: issue.url }),
                     createAutomatedLinkedComment(issue.comments_url),
+                    addDeskproLabel(issue),
                 ]);
             })
             .then(() => navigate("/home"))
