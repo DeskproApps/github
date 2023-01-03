@@ -50,6 +50,16 @@
       "isRequired": false,
       "isBackendOnly": false,
       "order": 40
+    },
+    "callback_url": {
+      "title": "Callback URL",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/callback"
+      },
+      "isRequired": false,
+      "isBackendOnly": false,
+      "order": 50
     }
   },
   "entityAssociations": {

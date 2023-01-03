@@ -42,10 +42,6 @@ const LogInPage: FC = () => {
         client.deregisterElement("githubPlusButton");
         client.deregisterElement("githubHomeButton");
         client.deregisterElement("githubMenu");
-
-        client?.registerElement("myRefreshButton", {
-            type: "refresh_button"
-        });
     }, [client]);
 
     useEffect(() => {
