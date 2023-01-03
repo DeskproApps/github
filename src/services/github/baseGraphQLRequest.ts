@@ -3,13 +3,19 @@ import { placeholders } from "./constants";
 
 const GRAPHQL_URL = "https://api.github.com/graphql";
 
+export  type Params = {
+    query: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    variables?: Record<string, any>,
+    skipError?: boolean,
+}
+
 /**
  * Base request service
  */
 const baseGraphQLRequest = async (
     client: IDeskproClient,
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    { query, variables = {} }: { query: string, variables?: Record<string, any> },
+    { query, variables = {}, skipError = false }: Params,
 ) => {
     const dpFetch = await proxyFetch(client);
 
@@ -38,7 +44,7 @@ const baseGraphQLRequest = async (
     try {
         const response = await res.json();
 
-        if (response?.errors?.length) {
+        if (!skipError && response?.errors?.length) {
             return Promise.reject(response?.errors);
         }
 

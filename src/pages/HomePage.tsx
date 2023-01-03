@@ -88,7 +88,7 @@ const HomePage: FC = () => {
                             return nodeIds
                         });
                 })
-                .then((nodeIds) => getIssuesByIdsGraphQLService(client, nodeIds))
+                .then((nodeIds) => getIssuesByIdsGraphQLService(client, nodeIds, { skipError: true }))
                 .then((issues) => {
                     setIssues(issues);
                     dispatch({ type: "setIssues", issues });
