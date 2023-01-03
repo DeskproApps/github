@@ -1,6 +1,7 @@
-import { FC, useState, useEffect, useMemo } from "react";
+import { FC, useState, useEffect, useMemo, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
+import { createSearchParams } from "react-router-dom";
 import {
     P5,
     H3,
@@ -8,7 +9,6 @@ import {
     OAuth2StaticCallbackUrl,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
-import { getQueryParams } from "../utils";
 import { placeholders } from "../services/github/constants";
 import { AnchorButton } from "../components/common";
 import {
@@ -31,7 +31,7 @@ const LogInPage: FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [callback, setCallback] = useState<OAuth2StaticCallbackUrl|undefined>();
 
-    const clientId =  state?.context?.settings?.client_id;
+    const clientId = state?.context?.settings?.client_id;
     const callbackUrl = callback?.callbackUrl;
 
     useEffect(() => {
@@ -42,10 +42,6 @@ const LogInPage: FC = () => {
         client.deregisterElement("githubPlusButton");
         client.deregisterElement("githubHomeButton");
         client.deregisterElement("githubMenu");
-
-        client?.registerElement("myRefreshButton", {
-            type: "refresh_button"
-        });
     }, [client]);
 
     useEffect(() => {
@@ -57,12 +53,12 @@ const LogInPage: FC = () => {
 
     useEffect(() => {
         if (callbackUrl && clientId) {
-            setAuthUrl(`https://github.com/login/oauth/authorize?${getQueryParams({
-                state: key,
-                client_id: clientId,
-                redirect_uri: callbackUrl,
-                scope: ["repo", "read:project"].join(","),
-            })}`);
+            setAuthUrl(`https://github.com/login/oauth/authorize?${createSearchParams([
+                ["state", key],
+                ["client_id", clientId],
+                ["redirect_uri", callbackUrl],
+                ["scope", ["repo", "read:project"].join(",")],
+            ])}`);
         } else {
             setAuthUrl(null);
         }
@@ -74,7 +70,7 @@ const LogInPage: FC = () => {
         console.error(`Github LogIn: ${error}`);
     }
 
-    const onSignIn = () => {
+    const onSignIn = useCallback(() => {
         if (!callback || !client) {
             return;
         }
@@ -82,9 +78,6 @@ const LogInPage: FC = () => {
         callback?.poll()
             .then(({ token }) => {
                 setLoading(true);
-
-                const clientId = state?.context?.settings?.client_id;
-
                 return getAccessTokenService(client, clientId, token);
             })
             .then(({ access_token }) => {
@@ -101,7 +94,7 @@ const LogInPage: FC = () => {
             })
             .catch((error) => setError(error?.code === 401 ? error.message : error))
             .finally(() => setLoading(false));
-    };
+    }, [client, callback, clientId, dispatch]);
 
     return (
         <>

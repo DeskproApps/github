@@ -18,16 +18,17 @@ const Link = styled.a`
     :hover {
       border-color: ${({ theme }) => (theme.colors.brandShade60)};
     };
-    border-radius: 9px;
+    border-radius: 12px;
     border: 1px solid transparent;
     color: ${({ theme }) => (theme.colors.brandShade100)}
 `;
 
-export const TrelloIcon = styled(Icon)`
+export const GithubIcon = styled(Icon)`
     display: inline-block !important;
     width: 12px;
     height: 12px;
     padding: 0 6px 0 0;
+    cursor: pointer;
 `;
 
 const GithubLink = ({ href }: Props) => {
@@ -44,7 +45,7 @@ const GithubLink = ({ href }: Props) => {
                 closeIcon={faArrowUpRightFromSquare}
                 label={(
                     <Container>
-                        <TrelloIcon icon={<GithubLogo/>} />
+                        <GithubIcon icon={<GithubLogo/>} />
                         <Stack>
                             <Icon icon={faArrowUpRightFromSquare} />
                         </Stack>

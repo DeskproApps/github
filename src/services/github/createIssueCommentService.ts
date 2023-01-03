@@ -1,6 +1,6 @@
 import { IDeskproClient } from "@deskpro/app-sdk";
 import { baseRequest } from "./baseRequest";
-import { Issue, Repository } from "./types";
+import { Issue, Repository, Comment } from "./types";
 import { BASE_URL } from "./constants";
 
 export type Params = {
@@ -18,7 +18,7 @@ const createIssueCommentService = (client: IDeskproClient, {
     issueNumber,
     comment,
 }: Params) => {
-    return baseRequest<Issue>(client, {
+    return baseRequest<Comment>(client, {
         url: `/repos/${repoFullName}/issues/${issueNumber}/comments`,
         method: "POST",
         data: { body: comment },

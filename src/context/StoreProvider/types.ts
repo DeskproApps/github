@@ -1,4 +1,5 @@
 import { Reducer } from "react";
+import { To } from "react-router-dom";
 import { Context } from "@deskpro/app-sdk";
 import {
     User,
@@ -29,8 +30,6 @@ export type DataDependencies = {
 };
 
 export interface State {
-    page?: Page;
-    pageParams?: PageParams,
     context?: Context,
     isAuth: boolean,
     issue?: Issue | null,
@@ -41,7 +40,6 @@ export interface State {
 }
 
 export type Action =
-    | { type: "changePage", page: Page, params?: PageParams }
     | { type: "loadContext", context: Context }
     | { type: "error", error: ErrorType }
     | { type: "setAuth", isAuth: boolean }
@@ -56,12 +54,10 @@ export type StoreReducer = Reducer<State, Action>;
 
 export type AppElementPayload =
     | { type: "logout" }
-    | { type: "changePage", page: Page, params?: PageParams }
+    | { type: "changePage", params: To }
     | {
         type: "unlinkTicket",
-        ticketId: string,
-        issueId: Issue["id"],
-        commentsUrl: Issue["comments_url"],
+        issueUrl: Issue["url"],
     };
 
 export type ReplyBoxSelection = {

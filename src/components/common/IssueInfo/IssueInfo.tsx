@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, MouseEvent, useState, useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
 import {
     faUser,
@@ -35,6 +35,10 @@ type Props = IssueGQL & {
 
 const Title: FC<Props> = ({ title, url, onClick }) => {
     const { theme } = useDeskproAppTheme();
+    const onClickTitle = useCallback((e: MouseEvent) => {
+        e.preventDefault();
+        onClick && onClick();
+    }, [onClick]);
 
     return (
         <Stack gap={6} style={{ marginBottom: "6px" }} align="center">
@@ -42,7 +46,7 @@ const Title: FC<Props> = ({ title, url, onClick }) => {
                 <a
                     href="#"
                     style={{ color: theme.colors.cyan100, textDecoration: "none" }}
-                    onClick={onClick}
+                    onClick={onClickTitle}
                 >{title}</a>
             </H3>
             <GithubLink href={url} />
@@ -159,16 +163,16 @@ const TicketsInfo: FC<Props> = ({ id, repository, number, assignees, labels, mil
             <TwoSider
                 leftLabel="Issue ID"
                 leftText={number}
-                rightLabel={(
-                    <>
-                        Repository
+                rightLabel="Repository"
+                rightText={(
+                    <P5>
+                        {repository.name}
                         {nbsp}
                         <Link href={repository?.url ?? ""} target="_blank">
                             <Icon icon={faArrowUpRightFromSquare} />
                         </Link>
-                    </>
+                    </P5>
                 )}
-                rightText={repository.name}
             />
             <TwoSider
                 leftLabel="Projects"

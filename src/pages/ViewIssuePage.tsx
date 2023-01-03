@@ -1,5 +1,6 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
+import { useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
 import {
     useDeskproAppClient,
     useInitialisedDeskproAppClient,
@@ -16,6 +17,8 @@ import { ViewIssue } from "../components/ViewIssue";
 import { Loading } from "../components/common";
 
 const ViewIssuePage: FC = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
@@ -24,7 +27,8 @@ const ViewIssuePage: FC = () => {
     const [comments, setComments] = useState<Comments>([]);
     const [projects, setProjects] = useState<ProjectGQL[]>([]);
     const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
-    const issueUrl = state.pageParams?.issueUrl;
+
+    const issueUrl = searchParams.get("issueUrl");
 
     useEffect(() => {
         if (!client || !state.issue?.number) {
@@ -46,13 +50,13 @@ const ViewIssuePage: FC = () => {
 
         client.registerElement("githubHomeButton", {
             type: "home_button",
-            payload: { type: "changePage", page: "home" }
+            payload: { type: "changePage", params: "/home" }
         });
 
     }, [client]);
 
     useEffect(() => {
-        if (!client || !state.pageParams?.issueUrl) {
+        if (!client || !issueUrl) {
             return;
         }
 
@@ -60,14 +64,16 @@ const ViewIssuePage: FC = () => {
             type: "edit_button",
             payload: {
                 type: "changePage",
-                page: "edit_issue",
-                params: { issueUrl: state.pageParams.issueUrl }
+                params: {
+                    pathname: "/edit_issue",
+                    search: `?${createSearchParams([["issueUrl", issueUrl]])}`,
+                }
             },
         });
-    }, [client, state.pageParams?.issueUrl]);
+    }, [client, issueUrl]);
 
     useEffect(() => {
-        if (!client || !state.context?.data.ticket.id || !state.issue?.id || !state.issue.comments_url) {
+        if (!client || !state.issue?.url) {
             return;
         }
 
@@ -77,13 +83,11 @@ const ViewIssuePage: FC = () => {
                 title: "Unlink Ticket",
                 payload: {
                     type: "unlinkTicket",
-                    issueId: state.issue.id,
-                    commentsUrl: state.issue.comments_url,
-                    ticketId: state.context.data.ticket.id,
+                    issueUrl: state.issue.url,
                 },
             }],
         });
-    }, [client, state.context?.data.ticket.id, state.issue?.id, state.issue?.comments_url]);
+    }, [client, state.issue?.url]);
 
     useEffect(() => {
         if (!client || !state.issue?.number || !repository?.name || !repository?.owner.login) {
@@ -151,17 +155,18 @@ const ViewIssuePage: FC = () => {
         }
     }, [issueUrl, state.issue]);
 
-    const onAddNewComment = () => {
-        dispatch({
-            type: "changePage",
-            page: "add_comment",
-            params: {
-                issueUrl,
-                repoFullName: repository?.full_name,
-                commentUrl: state.issue?.comments_url,
-            },
-        });
-    };
+    const onAddNewComment = useCallback(() => {
+        if (repository?.full_name && state.issue?.comments_url && issueUrl) {
+            navigate({
+                pathname: "/add_comment",
+                search: `?${createSearchParams([
+                    ["issueUrl", issueUrl],
+                    ["repoFullName", repository?.full_name],
+                    ["commentUrl", state.issue?.comments_url],
+                ])}`
+            });
+        }
+    }, [navigate, issueUrl, repository?.full_name, state.issue?.comments_url]);
 
     return loading
         ? (<Loading/>)

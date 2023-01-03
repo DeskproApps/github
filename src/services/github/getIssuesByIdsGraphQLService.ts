@@ -1,10 +1,11 @@
 import { IDeskproClient } from "@deskpro/app-sdk";
-import { baseGraphQLRequest } from "./baseGraphQLRequest";
+import { baseGraphQLRequest, Params } from "./baseGraphQLRequest";
 import { getProjectsV2, getProjectsClassic } from "./utils";
 
 const getIssuesByIdsGraphQLService = (
     client: IDeskproClient,
     ids: string[],
+    params?: Partial<Pick<Params, "skipError">>,
 ) => {
     const variables = { ids };
     const query = `
@@ -75,10 +76,10 @@ const getIssuesByIdsGraphQLService = (
       }
     `;
 
-    return baseGraphQLRequest(client, { query, variables })
+    return baseGraphQLRequest(client, { query, variables, ...params })
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        .then(({ nodes }) => nodes.map((issue) => ({
+        .then(({ nodes }) => nodes.filter((issue) => Boolean(issue)).map((issue) => ({
             ...issue,
             html_url: issue.url,
             created_at: issue.createdAt,

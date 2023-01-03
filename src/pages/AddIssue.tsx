@@ -3,6 +3,7 @@ import flow from "lodash/flow";
 import isEmpty from "lodash/isEmpty";
 import { useDebouncedCallback } from "use-debounce";
 import { match } from "ts-pattern";
+import { useNavigate } from "react-router-dom";
 import {
     Stack,
     HorizontalDivider,
@@ -16,12 +17,15 @@ import {
     getEntityCardListService,
 } from "../services/entityAssociation";
 import {
-    createIssueCommentService,
     getUserReposGraphQLService,
     searchByIssueGraphQLService,
 } from "../services/github";
 import { IssueGQL, RepositoryGQL } from "../services/github/types";
-import { useLogout } from "../hooks";
+import {
+    useLogout,
+    useDeskproLabel,
+    useAutomatedComment,
+} from "../hooks";
 import { getEntityMetadata } from "../utils";
 import { Issues, RepoSelect } from "../components/LinkIssue";
 import { OptionRepository } from "../components/LinkIssue/RepoSelect/types";
@@ -50,8 +54,10 @@ const filterByAlreadySelected = (alreadyLinkedIssues: string[]) => (issues: Issu
 };
 
 const AddIssue: FC = () => {
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchIssue, setSearchIssue] = useState<string>("");
     const [issues, setIssues] = useState<IssueGQL[]>([]);
@@ -60,6 +66,8 @@ const AddIssue: FC = () => {
     const [selectedIssues, setSelectedIssues] = useState<Array<IssueGQL["id"]>>([]);
     const [alreadyLinkedIssues, setAlreadyLinkedIssues] = useState<string[]>([]);
     const { logout } = useLogout();
+    const { createAutomatedLinkedComment } = useAutomatedComment();
+    const { addDeskproLabel } = useDeskproLabel();
     const ticketId = state.context?.data.ticket.id;
     const currentUserLogin = state.dataDeps?.currentUser.login;
 
@@ -98,6 +106,7 @@ const AddIssue: FC = () => {
 
     const onChangeSelectedCard = (issueId: IssueGQL["id"]) => {
         let newSelectedIssues = [...selectedIssues];
+
         if (selectedIssues.includes(issueId)) {
             newSelectedIssues = selectedIssues.filter((selectedIssueId) => selectedIssueId !== issueId);
         } else {
@@ -162,6 +171,8 @@ const AddIssue: FC = () => {
 
         const linkedIssues = issues.filter(({ id }) => selectedIssues.includes(id));
 
+        setIsSubmitting(true);
+
         Promise.all([
             ...linkedIssues.map((issue) => setEntityIssueService(
                 client,
@@ -176,18 +187,16 @@ const AddIssue: FC = () => {
                 );
             }),
             ...linkedIssues.map((issue) => {
-                return createIssueCommentService(client, {
+                return createAutomatedLinkedComment({
                     repoFullName: issue.repository.nameWithOwner,
                     issueNumber: issue.number,
-                    comment: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
-                        ? `, ${state.context.data.ticket.permalinkUrl}`
-                        : ""
-                    }`
                 });
             }),
+            ...linkedIssues.map((issue) => addDeskproLabel(issue))
         ])
-        .then(() => dispatch({ type: "changePage", page: "home" }))
-        .catch((error) => dispatch({ type: "error", error }));
+        .then(() => navigate("/home"))
+        .catch((error) => dispatch({ type: "error", error }))
+        .finally(() => setIsSubmitting(false));
     };
 
     return (
@@ -206,13 +215,14 @@ const AddIssue: FC = () => {
 
             <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
                 <Button
-                    disabled={selectedIssues.length === 0 || !selectedRepo?.value}
+                    disabled={selectedIssues.length === 0 || !selectedRepo?.value || isSubmitting}
+                    loading={isSubmitting}
                     text="Link Issue"
                     onClick={onLinkIssues}
                 />
                 <Button
                     text="Cancel"
-                    onClick={() => dispatch({ type: "changePage", page: "home" })}
+                    onClick={() => navigate("/home")}
                     intent="secondary"
                 />
             </Stack>

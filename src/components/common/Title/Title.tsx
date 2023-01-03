@@ -1,8 +1,13 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { H1 } from "@deskpro/app-sdk";
 
-const Title: FC = ({ children }) => (
-    <H1 style={{ marginBottom: 14 }}>{children}</H1>
+type Props = {
+    children: ReactNode,
+    marginBottom?: number,
+};
+
+const Title: FC<Props> = ({ children, marginBottom = 14 }) => (
+    <H1 style={{ marginBottom }}>{children}</H1>
 );
 
 export { Title };
