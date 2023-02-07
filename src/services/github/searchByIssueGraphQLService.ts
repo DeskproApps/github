@@ -1,15 +1,13 @@
 import { IDeskproClient } from "@deskpro/app-sdk"
 import { baseGraphQLRequest } from "./baseGraphQLRequest";
 import { getProjectsV2, getProjectsClassic } from "./utils";
-import { User } from "./types";
 
 const searchByIssueGraphQLService = (
     client: IDeskproClient,
     q: string,
-    login: User["login"],
 ) => {
     const variables = {
-        q: `${q} involves:${login} is:issue in:title`
+        q: `${q} is:issue`
     };
     const query = `
       query SearchByIssues($q: String!) {

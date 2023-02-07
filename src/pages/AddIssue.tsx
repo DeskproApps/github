@@ -16,17 +16,14 @@ import {
     setEntityIssueService,
     getEntityCardListService,
 } from "../services/entityAssociation";
-import {
-    getUserReposGraphQLService,
-    searchByIssueGraphQLService,
-} from "../services/github";
-import { IssueGQL, RepositoryGQL } from "../services/github/types";
+import { searchByIssueGraphQLService } from "../services/github";
+import { IssueGQL } from "../services/github/types";
 import {
     useLogout,
     useDeskproLabel,
     useAutomatedComment,
 } from "../hooks";
-import { getEntityMetadata } from "../utils";
+import { getEntityMetadata, getRepoOptionsFromIssues } from "../utils";
 import { Issues, RepoSelect } from "../components/LinkIssue";
 import { OptionRepository } from "../components/LinkIssue/RepoSelect/types";
 import {
@@ -34,16 +31,6 @@ import {
     Loading,
     InputSearch,
 } from "../components/common";
-
-const getRepoOptions = (repos: RepositoryGQL[]): OptionRepository[] => {
-    return repos
-        .map(({ id, name, nameWithOwner }) => ({
-            key: id,
-            value: nameWithOwner,
-            label: name,
-            type: "value",
-        }));
-};
 
 const filterByRepo = (selectedRepo?: string) => (issues: IssueGQL[]) => {
     return issues.filter(({ repository }) => ["any", repository.nameWithOwner].includes(selectedRepo || ""))
@@ -69,7 +56,6 @@ const AddIssue: FC = () => {
     const { createAutomatedLinkedComment } = useAutomatedComment();
     const { addDeskproLabel } = useDeskproLabel();
     const ticketId = state.context?.data.ticket.id;
-    const currentUserLogin = state.dataDeps?.currentUser.login;
 
     useInitialisedDeskproAppClient((client) => {
         if (!ticketId) {
@@ -81,27 +67,23 @@ const AddIssue: FC = () => {
             .catch(() => setAlreadyLinkedIssues([]));
     }, [ticketId]);
 
-    useInitialisedDeskproAppClient((client) => {
-        if (!currentUserLogin) {
-            return;
-        }
-
-        getUserReposGraphQLService(client, currentUserLogin)
-            .then((repos) => setRepoOptions([
-                { key: "any", label: "Any", type: "value", value: "any" },
-                ...getRepoOptions(repos),
-            ]));
-    }, [currentUserLogin])
-
     useEffect(() => {
         if (!isEmpty(repoOptions) && !isEmpty(repoOptions[0])) {
             setSelectedRepo(repoOptions[0]);
         }
     }, [repoOptions]);
 
+    useEffect(() => {
+        setRepoOptions([
+            { key: "any", label: "Any", type: "value", value: "any" },
+            ...getRepoOptionsFromIssues(issues),
+        ]);
+    }, [issues]);
+
     const onClearSearch = () => {
         setSearchIssue("");
         setIssues([]);
+        setSelectedRepo(repoOptions[0]);
     };
 
     const onChangeSelectedCard = (issueId: IssueGQL["id"]) => {
@@ -116,18 +98,19 @@ const AddIssue: FC = () => {
     };
 
     const searchInGithub = useDebouncedCallback<(q: string) => void>((q) => {
-        if (!client || !currentUserLogin) {
+        if (!client) {
             return;
         }
 
         if (!q || q.length < 2) {
             setIssues([]);
+            setRepoOptions([{ key: "any", label: "Any", type: "value", value: "any" }]);
             return;
         }
 
         setLoading(true);
 
-        searchByIssueGraphQLService(client, q, currentUserLogin)
+        searchByIssueGraphQLService(client, q)
             .then(setIssues)
             .catch((error) => {
                 let isErrorInsufficientScopes = false;
