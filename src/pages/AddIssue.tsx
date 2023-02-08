@@ -1,12 +1,11 @@
-import { useState, FC, ChangeEvent, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import get from "lodash/get";
 import flow from "lodash/flow";
 import isEmpty from "lodash/isEmpty";
 import { useDebouncedCallback } from "use-debounce";
 import { match } from "ts-pattern";
 import { useNavigate } from "react-router-dom";
 import {
-    Stack,
-    HorizontalDivider,
     useDeskproAppClient,
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
@@ -16,34 +15,22 @@ import {
     setEntityIssueService,
     getEntityCardListService,
 } from "../services/entityAssociation";
-import {
-    getUserReposGraphQLService,
-    searchByIssueGraphQLService,
-} from "../services/github";
-import { IssueGQL, RepositoryGQL } from "../services/github/types";
+import { searchByIssueGraphQLService } from "../services/github";
+import { IssueGQL } from "../services/github/types";
 import {
     useLogout,
     useDeskproLabel,
     useAutomatedComment,
 } from "../hooks";
-import { getEntityMetadata } from "../utils";
-import { Issues, RepoSelect } from "../components/LinkIssue";
-import { OptionRepository } from "../components/LinkIssue/RepoSelect/types";
 import {
-    Button,
-    Loading,
-    InputSearch,
-} from "../components/common";
-
-const getRepoOptions = (repos: RepositoryGQL[]): OptionRepository[] => {
-    return repos
-        .map(({ id, name, nameWithOwner }) => ({
-            key: id,
-            value: nameWithOwner,
-            label: name,
-            type: "value",
-        }));
-};
+    getEntityMetadata,
+    createSearchQuery,
+    getRepoOptionsFromIssues,
+} from "../utils";
+import { LinkIssue } from "../components/LinkIssue";
+import type { FC, ChangeEvent } from "react";
+import type { OptionRepository, FilterValues } from "../components/LinkIssue/types";
+import type { Filters } from "../utils/createSearchQuery";
 
 const filterByRepo = (selectedRepo?: string) => (issues: IssueGQL[]) => {
     return issues.filter(({ repository }) => ["any", repository.nameWithOwner].includes(selectedRepo || ""))
@@ -65,11 +52,12 @@ const AddIssue: FC = () => {
     const [selectedRepo, setSelectedRepo] = useState<OptionRepository|null>(null);
     const [selectedIssues, setSelectedIssues] = useState<Array<IssueGQL["id"]>>([]);
     const [alreadyLinkedIssues, setAlreadyLinkedIssues] = useState<string[]>([]);
+    const [filters, setFilters] = useState<Filters>({});
     const { logout } = useLogout();
     const { createAutomatedLinkedComment } = useAutomatedComment();
     const { addDeskproLabel } = useDeskproLabel();
     const ticketId = state.context?.data.ticket.id;
-    const currentUserLogin = state.dataDeps?.currentUser.login;
+    const currentUserLogin = get(state, ["dataDeps", "currentUser", "login"]);
 
     useInitialisedDeskproAppClient((client) => {
         if (!ticketId) {
@@ -81,27 +69,23 @@ const AddIssue: FC = () => {
             .catch(() => setAlreadyLinkedIssues([]));
     }, [ticketId]);
 
-    useInitialisedDeskproAppClient((client) => {
-        if (!currentUserLogin) {
-            return;
-        }
-
-        getUserReposGraphQLService(client, currentUserLogin)
-            .then((repos) => setRepoOptions([
-                { key: "any", label: "Any", type: "value", value: "any" },
-                ...getRepoOptions(repos),
-            ]));
-    }, [currentUserLogin])
-
     useEffect(() => {
         if (!isEmpty(repoOptions) && !isEmpty(repoOptions[0])) {
             setSelectedRepo(repoOptions[0]);
         }
     }, [repoOptions]);
 
+    useEffect(() => {
+        setRepoOptions([
+            { key: "any", label: "Any", type: "value", value: "any" },
+            ...getRepoOptionsFromIssues(issues),
+        ]);
+    }, [issues]);
+
     const onClearSearch = () => {
         setSearchIssue("");
         setIssues([]);
+        setSelectedRepo(repoOptions[0]);
     };
 
     const onChangeSelectedCard = (issueId: IssueGQL["id"]) => {
@@ -115,19 +99,20 @@ const AddIssue: FC = () => {
         setSelectedIssues(newSelectedIssues);
     };
 
-    const searchInGithub = useDebouncedCallback<(q: string) => void>((q) => {
+    const searchInGithub = useDebouncedCallback<(q: string, filters: Filters) => void>((q, filters) => {
         if (!client || !currentUserLogin) {
             return;
         }
 
         if (!q || q.length < 2) {
             setIssues([]);
+            setRepoOptions([{ key: "any", label: "Any", type: "value", value: "any" }]);
             return;
         }
 
         setLoading(true);
 
-        searchByIssueGraphQLService(client, q, currentUserLogin)
+        searchByIssueGraphQLService(client, createSearchQuery(q, filters))
             .then(setIssues)
             .catch((error) => {
                 let isErrorInsufficientScopes = false;
@@ -157,10 +142,9 @@ const AddIssue: FC = () => {
 
     const onChangeSearch = ({ target: { value: q }}: ChangeEvent<HTMLInputElement>) => {
         setSearchIssue(q);
-        searchInGithub(q);
     };
 
-    const onChangeSelect = (option: OptionRepository) => {
+    const onChangeSelectedRepo = (option: OptionRepository) => {
         setSelectedRepo(option);
     };
 
@@ -199,52 +183,36 @@ const AddIssue: FC = () => {
         .finally(() => setIsSubmitting(false));
     };
 
+    const onCancel = useCallback(() => navigate("/home"), [navigate]);
+
+    const onChangeFilter = (values: FilterValues) => {
+        setFilters({ ...values, login: currentUserLogin });
+    };
+
+    useEffect(() => {
+        searchInGithub(searchIssue, filters);
+    }, [searchIssue, filters, searchInGithub]);
+
     return (
-        <div style={{ minHeight: "500px" }}>
-            <InputSearch
-                value={searchIssue}
-                onClear={onClearSearch}
-                onChange={onChangeSearch}
-            />
-
-            <RepoSelect
-                value={selectedRepo}
-                options={repoOptions}
-                onChange={onChangeSelect}
-            />
-
-            <Stack justify="space-between" style={{ paddingBottom: "4px" }}>
-                <Button
-                    disabled={selectedIssues.length === 0 || !selectedRepo?.value || isSubmitting}
-                    loading={isSubmitting}
-                    text="Link Issue"
-                    onClick={onLinkIssues}
-                />
-                <Button
-                    text="Cancel"
-                    onClick={() => navigate("/home")}
-                    intent="secondary"
-                />
-            </Stack>
-
-            <HorizontalDivider style={{ marginBottom: 10 }}/>
-
-            {loading
-                ? (<Loading/>)
-                : (
-                    <>
-                        <Issues
-                            issues={flow([
-                                filterByRepo(selectedRepo?.value),
-                                filterByAlreadySelected(alreadyLinkedIssues),
-                            ])(issues)}
-                            selectedIssues={selectedIssues}
-                            onChange={onChangeSelectedCard}
-                        />
-                    </>
-                )
-            }
-        </div>
+        <LinkIssue
+            loading={loading}
+            issues={flow([
+                filterByRepo(selectedRepo?.value),
+                filterByAlreadySelected(alreadyLinkedIssues),
+            ])(issues)}
+            selectedIssues={selectedIssues}
+            onCancel={onCancel}
+            onChangeSelectedCard={onChangeSelectedCard}
+            onLinkIssues={onLinkIssues}
+            selectedRepo={selectedRepo}
+            isSubmitting={isSubmitting}
+            repoOptions={repoOptions}
+            onChangeSelectedRepo={onChangeSelectedRepo}
+            searchIssue={searchIssue}
+            onClearSearch={onClearSearch}
+            onChangeSearch={onChangeSearch}
+            onChangeFilter={onChangeFilter}
+        />
     );
 };
 

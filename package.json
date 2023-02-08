@@ -10,6 +10,7 @@
     "serve": "vite preview",
     "lint": "eslint --max-warnings 0 --ext ts,tsx ./src",
     "test": "cross-env NODE_OPTIONS=--max-old-space-size=1024 jest --maxWorkers=75%",
+    "test:watch": "cross-env NODE_OPTIONS=--max-old-space-size=1024 jest --watch --maxWorkers=75%",
     "test:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=1024 jest --maxWorkers=75% --coverage"
   },
   "dependencies": {
@@ -40,7 +41,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.4.0",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash": "^4.14.191",
     "@types/react": "^18.0.26",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-dom": "^18.0.10",
