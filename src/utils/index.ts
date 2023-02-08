@@ -7,3 +7,4 @@ export { isBaseUrl } from "./isBaseUrl";
 export { isLast } from "./isLast";
 export { getPRStateColor } from "./getPRStateColor";
 export { getRepoOptionsFromIssues } from "./getRepoOptionsFromIssues";
+export { createSearchQuery } from "./createSearchQuery";

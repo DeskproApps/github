@@ -1,2 +1,1 @@
-export { Issues } from "./Issues";
-export { RepoSelect } from "./RepoSelect";
+export { LinkIssue } from "./LinkIssue";

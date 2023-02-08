@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
     faCheck,
     faCaretDown,
@@ -9,8 +9,15 @@ import {
     DropdownTargetProps,
     DivAsInputWithDisplay,
 } from "@deskpro/deskpro-ui";
-import { Props } from "./types";
-import { Label } from "../../common";
+import { Label } from "../../../common";
+import type { FC } from "react";
+import type { OptionRepository } from "../../types";
+
+type Props = {
+    value: OptionRepository|null,
+    options: OptionRepository[],
+    onChange: (option: OptionRepository) => void,
+};
 
 const RepoSelect: FC<Props> = ({ value, onChange, options }) => {
     const [input, setInput] = useState<string>("");

@@ -6,9 +6,7 @@ const searchByIssueGraphQLService = (
     client: IDeskproClient,
     q: string,
 ) => {
-    const variables = {
-        q: `${q} is:issue`
-    };
+    const variables = { q };
     const query = `
       query SearchByIssues($q: String!) {
         search(first: 100, type: ISSUE, query: $q) {

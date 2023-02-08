@@ -6,7 +6,7 @@ const getRepoOptionsFromIssues = (issues: IssueGQL[]): Array<{
     value: RepositoryGQL["nameWithOwner"],
     label: RepositoryGQL["name"],
     type: "value",
-}>=> {
+}> => {
     if (!Array.isArray(issues) || issues.length === 0) {
         return [];
     }
