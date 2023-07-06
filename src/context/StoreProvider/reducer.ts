@@ -8,11 +8,6 @@ export const initialState: State = {
 
 export const reducer: StoreReducer = (state: State, action: Action): State => {
     return match<[State, Action]>([state, action])
-        .with([__, { type: "changePage" }], ([prevState, action]) => ({
-            ...prevState,
-            page: action.page,
-            pageParams: action.params,
-        }))
         .with([__, { type: "loadContext" }], ([prevState, action]) => ({
             ...prevState,
             context: action.context,
@@ -28,6 +23,14 @@ export const reducer: StoreReducer = (state: State, action: Action): State => {
         .with([__, { type: "setIssue" }], ([prevState, action]) => ({
             ...prevState,
             issue: action.issue,
+        }))
+        .with([__, { type: "setIssues" }], ([prevState, action]) => ({
+            ...prevState,
+            issues: action.issues,
+        }))
+        .with([__, { type: "unlinkIssue" }], ([prevState, action]) => ({
+            ...prevState,
+            issues: (prevState.issues ?? []).filter(({ databaseId }) => databaseId !== action.issueId),
         }))
         .with([__, { type: "setDeps" }], ([prevState, action]) => ({
             ...prevState,

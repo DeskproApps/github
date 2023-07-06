@@ -1,1 +1,1 @@
-export { Issues } from "./Issues";
+export { LinkIssue } from "./LinkIssue";

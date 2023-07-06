@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Checkbox, HorizontalDivider } from "@deskpro/app-sdk";
-import { Issue as IssueType } from "../../../services/github/types";
+import { IssueGQL as IssueType } from "../../../services/github/types";
 import { Card, CardMedia, CardBody, IssueInfo } from "../../common";
 
 const Issue: FC<IssueType & {

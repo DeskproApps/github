@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     IDeskproClient,
     useDeskproAppClient,
@@ -12,6 +13,10 @@ import {
 } from "../services/github";
 import { setEntityIssueService } from "../services/entityAssociation";
 import { getEntityMetadata } from "../utils";
+import {
+    useDeskproLabel,
+    useAutomatedComment,
+} from "../hooks";
 import { IssueForm } from "../components/IssueForm";
 import { Values as IssueFormValues } from "../components/IssueForm/types";
 import {
@@ -23,8 +28,11 @@ import {
 } from "../services/github/types";
 
 const CreateIssue: FC = () => {
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
+    const { createAutomatedLinkedComment } = useAutomatedComment();
+    const { addDeskproLabel } = useDeskproLabel();
     const repositories = state.dataDeps?.repositories as Repository[];
     const currentUser = state.dataDeps?.currentUser as User;
     const ticketId = state.context?.data.ticket.id;
@@ -54,15 +62,12 @@ const CreateIssue: FC = () => {
         const newIssue = {
             title: values.title,
             body: values.description || "",
+            labels: values.labels,
             milestone: !values.milestone.value ? null : values.milestone.value,
             ...((Array.isArray(values.assignees) && values.assignees.length > 0)
                     ? { assignees: values.assignees }
                     : {}
             ),
-            // ...((Array.isArray(values.labels) && values.labels.length > 0)
-            //     ? { labels: values.labels }
-            //     : {}
-            // ),
         };
 
         dispatch({ type: "error", error: null })
@@ -89,23 +94,19 @@ const CreateIssue: FC = () => {
                         issue.id,
                         getEntityMetadata({
                             ...issue,
-                            repository_name: values.repository.value,
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            repository: {
+                                nameWithOwner: values.repository.value
+                            },
                         })
                     ),
                     client.setState(`issues/${issue.id}`, { issueUrl: issue.url }),
-                    baseRequest(client, {
-                        rawUrl: issue.comments_url,
-                        method: "POST",
-                        data: {
-                            body: `Linked to Deskpro ticket ${ticketId}${state.context?.data?.ticket?.permalinkUrl
-                                ? `, ${state.context.data.ticket.permalinkUrl}`
-                                : ""
-                            }`,
-                        },
-                    }),
+                    createAutomatedLinkedComment(issue.comments_url),
+                    addDeskproLabel(issue),
                 ]);
             })
-            .then(() => dispatch({ type: "changePage", page: "home" }))
+            .then(() => navigate("/home"))
             .catch((error) => dispatch({ type: "error", error }));
     };
 
@@ -114,7 +115,7 @@ const CreateIssue: FC = () => {
             repositories={repositories}
             currentUser={currentUser}
             onSubmit={onSubmit}
-            onCancel={() => dispatch({ type: "changePage", page: "home" })}
+            onCancel={() => navigate("/home")}
         />
     );
 };

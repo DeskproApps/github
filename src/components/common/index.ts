@@ -14,3 +14,5 @@ export { Title } from "./Title";
 export { TextArea } from "./TextArea";
 export { EmptyInlineBlock } from "./EmptyInlineBlock";
 export { Member } from "./Member";
+export { Link } from "./Link";
+export { OverflowText, OverflowTextWithLink } from "./OverflowText";

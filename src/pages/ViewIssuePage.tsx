@@ -1,24 +1,34 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import isEmpty from "lodash/isEmpty";
+import { useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
 import {
     useDeskproAppClient,
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
-import { baseRequest } from "../services/github";
-import { Issue, Repository, Comments, User } from "../services/github/types";
+import {
+    baseRequest,
+    getLinkedPRsToIssue,
+    getIssueByIdGraphQLService,
+} from "../services/github";
+import { Issue, Repository, Comments, User, ProjectGQL, PullRequest } from "../services/github/types";
 import { getUniqUsersLogin } from "../utils";
 import { ViewIssue } from "../components/ViewIssue";
 import { Loading } from "../components/common";
 
 const ViewIssuePage: FC = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
     const [state, dispatch] = useStore();
     const [loading, setLoading] = useState<boolean>(false);
     const [repository, setRepository] = useState<Repository|null>(null);
     const [users, setUsers] = useState<Record<User["id"], User>>({});
     const [comments, setComments] = useState<Comments>([]);
-    const issueUrl = state.pageParams?.issueUrl;
+    const [projects, setProjects] = useState<ProjectGQL[]>([]);
+    const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
+
+    const issueUrl = searchParams.get("issueUrl");
 
     useEffect(() => {
         if (!client || !state.issue?.number) {
@@ -33,19 +43,20 @@ const ViewIssuePage: FC = () => {
             return;
         }
 
+        client.deregisterElement("githubHomeButton");
         client.deregisterElement("githubPlusButton");
         client.deregisterElement("githubMenu");
         client.deregisterElement("githubEditButton");
 
         client.registerElement("githubHomeButton", {
             type: "home_button",
-            payload: { type: "changePage", page: "home" }
+            payload: { type: "changePage", params: "/home" }
         });
 
     }, [client]);
 
     useEffect(() => {
-        if (!client || !state.pageParams?.issueUrl) {
+        if (!client || !issueUrl) {
             return;
         }
 
@@ -53,14 +64,16 @@ const ViewIssuePage: FC = () => {
             type: "edit_button",
             payload: {
                 type: "changePage",
-                page: "edit_issue",
-                params: { issueUrl: state.pageParams.issueUrl }
+                params: {
+                    pathname: "/edit_issue",
+                    search: `?${createSearchParams([["issueUrl", issueUrl]])}`,
+                }
             },
         });
-    }, [client, state.pageParams?.issueUrl]);
+    }, [client, issueUrl]);
 
     useEffect(() => {
-        if (!client || !state.context?.data.ticket.id || !state.issue?.id || !state.issue.comments_url) {
+        if (!client || !state.issue?.url) {
             return;
         }
 
@@ -70,18 +83,25 @@ const ViewIssuePage: FC = () => {
                 title: "Unlink Ticket",
                 payload: {
                     type: "unlinkTicket",
-                    issueId: state.issue.id,
-                    commentsUrl: state.issue.comments_url,
-                    ticketId: state.context.data.ticket.id,
+                    issueUrl: state.issue.url,
                 },
             }],
         });
-    }, [client, state.context?.data.ticket.id, state.issue?.id, state.issue?.comments_url]);
+    }, [client, state.issue?.url]);
+
+    useEffect(() => {
+        if (!client || !state.issue?.number || !repository?.name || !repository?.owner.login) {
+            return;
+        }
+
+        getLinkedPRsToIssue(client, repository.owner.login, repository.name, state.issue.number)
+            .then(setPullRequests)
+            .catch(() => {});
+    }, [client, state.issue?.number, repository?.name, repository?.owner.login]);
 
     useInitialisedDeskproAppClient((client) => {
         if (issueUrl) {
             setLoading(true);
-
 
             (isEmpty(state.issue)
                 ? baseRequest<Issue>(client, { rawUrl: issueUrl })
@@ -100,11 +120,19 @@ const ViewIssuePage: FC = () => {
                                 per_page: 100,
                             },
                         }),
+                        getIssueByIdGraphQLService(client, issue.node_id)
                     ])
                 })
-                .then(([issue, repository, comments]) => {
+                .then(([issue, repository, comments, { projects }]) => {
+                    const sortedComments = comments.sort((a, b) => {
+                        const timestampFirst = (new Date(a.created_at)).getTime();
+                        const timestampSecond = (new Date(b.created_at)).getTime();
+                        return timestampSecond - timestampFirst;
+                    });
+
                     setRepository(repository);
-                    setComments(comments);
+                    setComments(sortedComments);
+                    setProjects(projects);
 
                     const users = getUniqUsersLogin(issue.user, issue.assignee, issue.assignees);
 
@@ -125,19 +153,20 @@ const ViewIssuePage: FC = () => {
                 })
                 .finally(() => setLoading(false));
         }
-    }, [issueUrl]);
+    }, [issueUrl, state.issue]);
 
-    const onAddNewComment = () => {
-        dispatch({
-            type: "changePage",
-            page: "add_comment",
-            params: {
-                issueUrl,
-                repoFullName: repository?.full_name,
-                commentUrl: state.issue?.comments_url,
-            },
-        });
-    };
+    const onAddNewComment = useCallback(() => {
+        if (repository?.full_name && state.issue?.comments_url && issueUrl) {
+            navigate({
+                pathname: "/add_comment",
+                search: `?${createSearchParams([
+                    ["issueUrl", issueUrl],
+                    ["repoFullName", repository?.full_name],
+                    ["commentUrl", state.issue?.comments_url],
+                ])}`
+            });
+        }
+    }, [navigate, issueUrl, repository?.full_name, state.issue?.comments_url]);
 
     return loading
         ? (<Loading/>)
@@ -148,7 +177,9 @@ const ViewIssuePage: FC = () => {
                 users={users}
                 comments={comments}
                 repository={repository}
+                projects={projects}
                 onAddNewComment={onAddNewComment}
+                pullRequests={pullRequests}
             />
         )
         : null;

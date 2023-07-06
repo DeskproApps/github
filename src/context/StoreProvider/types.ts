@@ -1,11 +1,11 @@
 import { Reducer } from "react";
+import { To } from "react-router-dom";
 import { Context } from "@deskpro/app-sdk";
 import {
     User,
-    Label,
     Issue,
     DateTime,
-    Repository,
+    Repository, LabelGQL, IssueGQL,
 } from "../../services/github/types";
 
 export type ErrorType = Error | string | unknown;
@@ -30,22 +30,22 @@ export type DataDependencies = {
 };
 
 export interface State {
-    page?: Page;
-    pageParams?: PageParams,
     context?: Context,
     isAuth: boolean,
     issue?: Issue | null,
+    issues?: IssueGQL[],
     dataDeps?: DataDependencies,
     //...
     _error?: ErrorType,
 }
 
 export type Action =
-    | { type: "changePage", page: Page, params?: PageParams }
     | { type: "loadContext", context: Context }
     | { type: "error", error: ErrorType }
     | { type: "setAuth", isAuth: boolean }
     | { type: "setIssue", issue: Issue | null }
+    | { type: "setIssues", issues: IssueGQL[] }
+    | { type: "unlinkIssue", issueId: Issue["id"] }
     | { type: "setDeps", deps: DataDependencies };
 
 export type Dispatch = (action: Action) => void;
@@ -54,17 +54,15 @@ export type StoreReducer = Reducer<State, Action>;
 
 export type AppElementPayload =
     | { type: "logout" }
-    | { type: "changePage", page: Page, params?: PageParams }
+    | { type: "changePage", params: To }
     | {
         type: "unlinkTicket",
-        ticketId: string,
-        issueId: Issue["id"],
-        commentsUrl: Issue["comments_url"],
+        issueUrl: Issue["url"],
     };
 
-export type ReplyBoxNoteSelection = {
-    id: string;
-    selected: boolean;
+export type ReplyBoxSelection = {
+    id: IssueGQL["id"],
+    selected: boolean,
 };
 
 export type EntityMetadata = {
@@ -74,10 +72,11 @@ export type EntityMetadata = {
     milestone: string,
     projects: Array<{ id: string, name: string }>,
     assignees: Array<{ username: string, name: string }>,
-    labels: Array<{ id: Label["id"], name: Label["name"] }>,
+    labels: Array<{ id: LabelGQL["id"], name: LabelGQL["name"] }>,
     createdAt: DateTime
 };
 
 export type ClientStateIssue = {
     issueUrl: Issue["url"],
+    nodeId: string,
 };

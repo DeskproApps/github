@@ -15,6 +15,7 @@ const LinkIssuePage: FC = () => {
     const { loading } = useLoadDataDependencies();
 
     const { client } = useDeskproAppClient();
+
     useSetAppTitle("Add Issue");
 
     useEffect(() => {
@@ -24,7 +25,7 @@ const LinkIssuePage: FC = () => {
 
         client?.deregisterElement("githubPlusButton");
         client?.deregisterElement("githubHomeButton");
-        client.deregisterElement("githubEditButton");
+        client?.deregisterElement("githubEditButton");
 
         client?.registerElement("githubMenu", {
             type: "menu",

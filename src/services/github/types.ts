@@ -89,13 +89,15 @@ export type Reactions = {
     url: string,
 };
 
-// ToDo: need full typings
 export type Repository = {
-    id: string,
+    id: number,
+    node_id: string,
     name: string,
+    full_name: string,
     url: string,
     html_url: string,
-    full_name: string,
+    private: boolean,
+    owner: User,
 };
 
 export type Label = {
@@ -142,6 +144,49 @@ export type Issue = {
     user: User,
 };
 
+export type MilestoneGQL = {
+    title: Milestone["title"],
+    url: Milestone["html_url"],
+}
+
+export type RepositoryGQL = {
+    name: Repository["name"],
+    nameWithOwner: Repository["full_name"],
+    id: string,
+    databaseId: Repository["id"],
+    url: Repository["html_url"],
+    projectsUrl: string,
+};
+
+export type Member = {
+    login: User["login"],
+    name: User["name"],
+    avatarUrl: User["avatar_url"],
+};
+
+export type LabelGQL = {
+    id: string,
+    name: Label["name"],
+    color: Label["color"],
+}
+
+export type IssueGQL = {
+    id: string,
+    databaseId: Issue["id"],
+    created_at: DateTime,
+    title: Issue["title"],
+    url: Issue["html_url"],
+    state: Issue["state"],
+    number: Issue["number"],
+    resourcePath: string,
+    milestone: MilestoneGQL,
+    repository: RepositoryGQL,
+    assignees: Member[],
+    author: Member,
+    labels: LabelGQL[],
+    projects: ProjectGQL[],
+};
+
 export type Comment = {
     author_association: "COLLABORATOR"|"CONTRIBUTOR"|"FIRST_TIMER"|"FIRST_TIME_CONTRIBUTOR"|"MANNEQUIN"|"MEMBER"|"NONE"|"OWNER",
     body: string,
@@ -186,4 +231,20 @@ export type ProjectColumn = {
     project_url: string,
     updated_at: DateTime,
     url: string,
+};
+
+export type ProjectGQL = {
+    id: string,
+    title: Project["name"],
+    url: Project["html_url"],
+};
+
+export type PullRequest = {
+    id: string,
+    number: number,
+    state: "OPEN" | "CLOSED" | "MERGED",
+    title: string,
+    url: string,
+    createdAt: DateTime,
+    updatedAt: DateTime,
 };

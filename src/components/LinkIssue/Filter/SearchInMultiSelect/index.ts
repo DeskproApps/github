@@ -1,0 +1,1 @@
+export { SearchInMultiSelect } from "./SearchInMultiSelect";

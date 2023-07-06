@@ -1,14 +1,15 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useMemo, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
+import { createSearchParams } from "react-router-dom";
 import {
     P5,
     H3,
-    OAuth2CallbackUrl,
     useDeskproAppClient,
-    useDeskproOAuth2Auth,
+    OAuth2StaticCallbackUrl,
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
-import { getQueryParams } from "../utils";
+import { placeholders } from "../services/github/constants";
 import { AnchorButton } from "../components/common";
 import {
     getCurrentUserService,
@@ -21,16 +22,16 @@ const LogInError = styled(P5)`
 `;
 
 const LogInPage: FC = () => {
+    const key = useMemo(() => uuidv4(), []);
     const { client } = useDeskproAppClient();
-    const { callback: initCallback } = useDeskproOAuth2Auth("code", /code=(?<token>[0-9a-f]+)$/);
 
     const [state, dispatch] = useStore();
     const [error, setError] = useState<string|null>(null);
     const [authUrl, setAuthUrl] = useState<string|null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [callback, setCallback] = useState<OAuth2CallbackUrl|undefined>(initCallback);
+    const [callback, setCallback] = useState<OAuth2StaticCallbackUrl|undefined>();
 
-    const clientId =  state?.context?.settings?.client_id;
+    const clientId = state?.context?.settings?.client_id;
     const callbackUrl = callback?.callbackUrl;
 
     useEffect(() => {
@@ -41,28 +42,23 @@ const LogInPage: FC = () => {
         client.deregisterElement("githubPlusButton");
         client.deregisterElement("githubHomeButton");
         client.deregisterElement("githubMenu");
-
-        client?.registerElement("myRefreshButton", {
-            type: "refresh_button"
-        });
     }, [client]);
 
     useEffect(() => {
         if (!callback) {
-            client?.oauth2()
-                .getCallbackUrl("code", /code=(?<token>[0-9a-f]+)$/)
-                .then((callback: OAuth2CallbackUrl) => setCallback(callback));
+            client?.oauth2().getGenericCallbackUrl(key, /code=(?<token>[0-9a-f]+)/, /state=(?<key>.+)/)
+                .then(setCallback);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initCallback]);
+    }, [client, key, callback]);
 
     useEffect(() => {
         if (callbackUrl && clientId) {
-            setAuthUrl(`https://github.com/login/oauth/authorize?${getQueryParams({
-                client_id: clientId,
-                redirect_uri: callbackUrl,
-                scope: "repo",
-            })}`);
+            setAuthUrl(`https://github.com/login/oauth/authorize?${createSearchParams([
+                ["state", key],
+                ["client_id", clientId],
+                ["redirect_uri", callbackUrl],
+                ["scope", ["repo", "read:project"].join(",")],
+            ])}`);
         } else {
             setAuthUrl(null);
         }
@@ -74,20 +70,18 @@ const LogInPage: FC = () => {
         console.error(`Github LogIn: ${error}`);
     }
 
-    const onSignIn = () => {
+    const onSignIn = useCallback(() => {
         if (!callback || !client) {
             return;
         }
+
         callback?.poll()
-            .then(() => {
+            .then(({ token }) => {
                 setLoading(true);
-
-                const clientId = state?.context?.settings?.client_id;
-
-                return getAccessTokenService(client, clientId);
+                return getAccessTokenService(client, clientId, token);
             })
             .then(({ access_token }) => {
-                return client?.setUserState("oauth2/token", access_token)
+                return client?.setUserState(placeholders.OAUTH_TOKEN_PATH, access_token, { backend: true })
             })
             .then((res) => {
                 return res?.isSuccess ? Promise.resolve() : Promise.reject()
@@ -100,7 +94,7 @@ const LogInPage: FC = () => {
             })
             .catch((error) => setError(error?.code === 401 ? error.message : error))
             .finally(() => setLoading(false));
-    };
+    }, [client, callback, clientId, dispatch]);
 
     return (
         <>

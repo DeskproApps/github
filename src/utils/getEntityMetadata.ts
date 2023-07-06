@@ -1,21 +1,21 @@
 import isEmpty from "lodash/isEmpty";
 import { EntityMetadata } from "../context/StoreProvider/types";
-import { Issue } from "../services/github/types";
+import { IssueGQL } from "../services/github/types";
 
-const getEntityMetadata = (issue: Issue): undefined|EntityMetadata => {
+const getEntityMetadata = (issue: IssueGQL): undefined|EntityMetadata => {
     if (!issue || isEmpty(issue)) {
         return undefined;
     }
 
     return {
-        id: issue.id,
+        id: issue.databaseId,
         title: issue.title,
-        repository: issue?.repository_name || "",
+        repository: issue?.repository.nameWithOwner || "",
         milestone: issue?.milestone?.title || "",
         projects: [],
         // ToDo: need user full info
-        assignees: issue.assignees?.map(({ login }) => ({ name: "", username: login })) || [],
-        labels: issue.labels?.map(({ id, name }) => ({ id, name })) || [],
+        assignees: issue.assignees?.map(({ login, name }) => ({ name: name || "", username: login })) ?? [],
+        labels: issue.labels?.map(({ id, name }) => ({ id, name })) ?? [],
         createdAt: issue.created_at,
     };
 };

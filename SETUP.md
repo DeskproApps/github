@@ -23,7 +23,7 @@ Enter the following details for your new OAuth app:
 
 * Application Name - "Deskpro GitHub App"
 * Homepage URL - You or your company's website URL
-* Authorized Callback URL - Enter your Deskpro instance's URL with the `/apps-oauth` path, e.g. `https://myhelpdesk.deskpro.com/apps-oauth`
+* Authorized Callback URL - You can copy it in the GitHub App settings on the settings tab in the Deskpro
 
 Then click "Register application"
 

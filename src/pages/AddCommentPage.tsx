@@ -2,12 +2,12 @@ import { FC, useState, useCallback } from "react";
 import get from "lodash/get";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
 import {
     Stack,
     useDeskproAppClient,
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
-import { useStore } from "../context/StoreProvider/hooks";
 import { baseRequest } from "../services/github";
 import { useSetAppTitle } from "../hooks";
 import {
@@ -26,12 +26,13 @@ const initValues = {
 };
 
 const AddCommentPage: FC = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const { client } = useDeskproAppClient();
-    const [state, dispatch] = useStore();
     const [error, setError] = useState<string|null>(null);
 
-    const issueUrl = state.pageParams?.issueUrl;
-    const commentUrl = state.pageParams?.commentUrl;
+    const issueUrl = searchParams.get("issueUrl");
+    const commentUrl = searchParams.get("commentUrl");
 
     const {
         errors,
@@ -43,7 +44,7 @@ const AddCommentPage: FC = () => {
         validationSchema,
         initialValues: initValues,
         onSubmit: async (values) => {
-            if (!client || !commentUrl || !values.comment) {
+            if (!client || !commentUrl || !values.comment || !issueUrl) {
                 return;
             }
 
@@ -57,10 +58,11 @@ const AddCommentPage: FC = () => {
                 },
             })
                 .then(() => {
-                    dispatch({
-                        type: "changePage",
-                        page: "view_issue",
-                        params: { issueUrl },
+                    navigate({
+                        pathname: "/view_issue",
+                        search: `?${createSearchParams([
+                            ["issueUrl", issueUrl],
+                        ])}`,
                     });
                 })
                 .catch((error) => {
@@ -79,16 +81,18 @@ const AddCommentPage: FC = () => {
 
         client.registerElement("githubHomeButton", {
             type: "home_button",
-            payload: { type: "changePage", page: "home" }
+            payload: { type: "changePage", params: "/home" }
         });
     });
 
-    const onCancel = useCallback(() => dispatch({
-        type: "changePage",
-        page: "view_issue",
-        params: { issueUrl },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }), [issueUrl]);
+    const onCancel = useCallback(() => {
+        if (issueUrl) {
+            navigate({
+                pathname: "/view_issue",
+                search: `?${createSearchParams([ ["issueUrl", issueUrl]])}`,
+            })
+        }
+    }, [issueUrl, navigate]);
 
     if (error) {
         // eslint-disable-next-line no-console
