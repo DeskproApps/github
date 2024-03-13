@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { P1 } from "@deskpro/app-sdk";
+import { P1 } from "@deskpro/deskpro-ui";
 
 type Props = {
     text?: string,

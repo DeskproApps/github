@@ -1,6 +1,6 @@
 import { FC, ReactElement, isValidElement } from "react";
 import styled from "styled-components";
-import { P8, P5, Stack } from "@deskpro/app-sdk";
+import { P8, P5, Stack } from "@deskpro/deskpro-ui";
 import { Props } from "./types";
 
 const Container = styled.div<Props>`

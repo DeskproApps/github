@@ -3,8 +3,8 @@ import get from "lodash/get";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
+import { Stack } from "@deskpro/deskpro-ui";
 import {
-    Stack,
     useDeskproAppClient,
     useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";

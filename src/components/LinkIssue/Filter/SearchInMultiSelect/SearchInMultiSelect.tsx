@@ -1,15 +1,9 @@
 import React from "react";
 import {faCaretDown, faCheck, faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
-import {
-    Dropdown,
-    DivAsInputWithDisplay,
-} from "@deskpro/app-sdk";
+import { Dropdown, DivAsInputWithDisplay } from "@deskpro/deskpro-ui";
 import { Label } from "../../../common";
 import type { FC } from "react";
-import type {
-    DropdownValueType,
-    DropdownTargetProps,
-} from "@deskpro/app-sdk";
+import type { DropdownValueType, DropdownTargetProps } from "@deskpro/deskpro-ui";
 import type { FilterValues, SearchInValue } from "../../types";
 
 type Props = {

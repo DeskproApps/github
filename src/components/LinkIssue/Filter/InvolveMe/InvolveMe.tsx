@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox } from "@deskpro/app-sdk";
+import { Checkbox } from "@deskpro/deskpro-ui";
 import { Label } from "../../../common";
 import type { FC } from "react";
 import type { FieldInputProps } from "formik";

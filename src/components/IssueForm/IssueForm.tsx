@@ -12,17 +12,17 @@ import * as yup from 'yup';
 import {
     Tag,
     TSpan,
-    InputWithDisplay,
-} from "@deskpro/deskpro-ui";
-import {
     Stack,
     Dropdown,
+    InputWithDisplay,
     DropdownValueType,
     DropdownHeaderType,
-    useDeskproAppTheme,
     DropdownTargetProps,
-    useDeskproAppClient,
     DivAsInputWithDisplay,
+} from "@deskpro/deskpro-ui";
+import {
+    useDeskproAppTheme,
+    useDeskproAppClient,
 } from "@deskpro/app-sdk";
 import {
     getLabelsService,

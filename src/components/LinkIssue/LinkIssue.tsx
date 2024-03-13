@@ -1,13 +1,7 @@
 import React from "react";
-import {
-    Stack,
-    HorizontalDivider,
-} from "@deskpro/app-sdk";
-import {
-    Button,
-    Loading,
-    InputSearch,
-} from "../common";
+import { Stack } from "@deskpro/deskpro-ui";
+import { HorizontalDivider } from "@deskpro/app-sdk";
+import { Button, Loading, InputSearch } from "../common";
 import { Issues } from "./Issues";
 import { Filter } from "./Filter";
 import type { FC, ChangeEvent } from "react";

@@ -1,12 +1,7 @@
 import { FC, Fragment } from "react";
 import capitalize from "lodash/capitalize";
-import {
-    H3,
-    Pill,
-    Stack,
-    HorizontalDivider,
-    useDeskproAppTheme,
-} from "@deskpro/app-sdk";
+import { H3, Pill, Stack } from "@deskpro/deskpro-ui";
+import { HorizontalDivider, useDeskproAppTheme } from "@deskpro/app-sdk";
 import {
     Title,
     TwoSider,

@@ -5,16 +5,8 @@ import {
     faTimes,
     faArrowUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import {Avatar, Tag} from "@deskpro/deskpro-ui";
-import {
-    H3,
-    P5,
-    Pill,
-    Icon,
-    Stack,
-    useDeskproAppTheme,
-    useInitialisedDeskproAppClient,
-} from "@deskpro/app-sdk";
+import { Avatar, Tag, H3, P5, Pill, Icon, Stack } from "@deskpro/deskpro-ui";
+import { useDeskproAppTheme, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
 import { getEntityAssociationCountService } from "../../../services/entityAssociation";
 import {
     IssueGQL,

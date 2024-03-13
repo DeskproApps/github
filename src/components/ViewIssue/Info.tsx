@@ -1,20 +1,8 @@
 import { FC } from "react";
 import { faArrowUpRightFromSquare, faTimes, faUser } from "@fortawesome/free-solid-svg-icons";
-import { Tag, Icon, Avatar } from "@deskpro/deskpro-ui";
-import {
-    H3,
-    P5,
-    Pill,
-    Stack,
-    HorizontalDivider,
-    useDeskproAppTheme,
-} from "@deskpro/app-sdk";
-import {
-    Link,
-    TwoSider,
-    GithubLink,
-    TextBlockWithLabel,
-} from "../common";
+import { Tag, Icon, Avatar, H3, P5, Pill, Stack } from "@deskpro/deskpro-ui";
+import { HorizontalDivider, useDeskproAppTheme } from "@deskpro/app-sdk";
+import { Link, TwoSider, GithubLink, TextBlockWithLabel } from "../common";
 import { mdToHtml, getIssueStatueColorScheme } from "../../utils";
 import { format } from "../../utils/date";
 import { nbsp } from "../../constants";

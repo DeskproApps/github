@@ -5,9 +5,7 @@ import { InvolveMe } from "./InvolveMe";
 import { SearchInMultiSelect } from "./SearchInMultiSelect";
 import { RepoSelect } from "./RepoSelect";
 import type { FC } from "react";
-import type {
-    DropdownValueType,
-} from "@deskpro/app-sdk";
+import type { DropdownValueType } from "@deskpro/deskpro-ui";
 import type { OptionRepository, FilterValues, SearchInValue } from "../types";
 
 type Props = {

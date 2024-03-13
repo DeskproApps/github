@@ -2,12 +2,8 @@ import { FC, useState, useEffect, useMemo, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
 import { createSearchParams } from "react-router-dom";
-import {
-    P5,
-    H3,
-    useDeskproAppClient,
-    OAuth2StaticCallbackUrl,
-} from "@deskpro/app-sdk";
+import { P5, H3 } from "@deskpro/deskpro-ui";
+import { useDeskproAppClient, OAuth2StaticCallbackUrl } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { placeholders } from "../services/github/constants";
 import { AnchorButton } from "../components/common";

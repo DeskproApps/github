@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { H1 } from "@deskpro/app-sdk";
+import { H1 } from "@deskpro/deskpro-ui";
 
 type Props = {
     children: ReactNode,

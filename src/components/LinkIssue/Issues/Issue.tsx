@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { Checkbox, HorizontalDivider } from "@deskpro/app-sdk";
+import { Checkbox } from "@deskpro/deskpro-ui";
+import { HorizontalDivider } from "@deskpro/app-sdk";
 import { IssueGQL as IssueType } from "../../../services/github/types";
 import { Card, CardMedia, CardBody, IssueInfo } from "../../common";
 

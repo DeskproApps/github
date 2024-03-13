@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { Avatar } from "@deskpro/deskpro-ui";
-import { P5, Stack } from "@deskpro/app-sdk";
+import { P5, Stack, Avatar } from "@deskpro/deskpro-ui";
 import { Props } from "./types";
 
 const Member: FC<Props> = ({ name, icon, avatarUrl }) => {

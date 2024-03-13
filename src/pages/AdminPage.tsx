@@ -3,10 +3,8 @@ import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { faCopy, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { P1, Input, IconButton } from "@deskpro/deskpro-ui";
 import {
-    P1,
-    Input,
-    IconButton,
     LoadingSpinner,
     useDeskproAppTheme,
     useInitialisedDeskproAppClient,

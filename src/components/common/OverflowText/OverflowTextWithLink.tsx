@@ -1,7 +1,7 @@
 import{ FC } from "react"
 import styled from "styled-components";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import { P5, Icon, Stack } from "@deskpro/app-sdk";
+import { P5, Icon, Stack } from "@deskpro/deskpro-ui";
 import { OverflowText } from "./OverflowText";
 import { Link } from "../Link";
 import {nbsp} from "../../../constants";
