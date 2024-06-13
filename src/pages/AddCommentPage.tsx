@@ -18,7 +18,7 @@ import {
 } from "../components/common";
 
 const validationSchema = yup.object().shape({
-    comment: yup.string(),
+    comment: yup.string().required(),
 });
 
 const initValues = {
@@ -35,6 +35,8 @@ const AddCommentPage: FC = () => {
     const commentUrl = searchParams.get("commentUrl");
 
     const {
+        errors,
+        touched,
         handleSubmit,
         isSubmitting,
         getFieldProps,
@@ -106,6 +108,7 @@ const AddCommentPage: FC = () => {
                         minHeight="auto"
                         placeholder="Enter comment"
                         {...getFieldProps("comment")}
+                        error={!!(touched.comment && errors.comment)}
                     />
                 </Label>
 
