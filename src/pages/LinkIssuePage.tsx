@@ -8,7 +8,7 @@ import {
 import { useSetAppTitle, useLoadDataDependencies } from "../hooks";
 import { AddIssue } from "./AddIssue";
 import { CreateIssue } from "./CreateIssue";
-import { Loading } from "../components/common";
+import { Loading, Container } from "../components/common";
 
 const LinkIssuePage: FC = () => {
     const [selected, setSelected] = useState<TwoButtonGroupProps["selected"]>("one");
@@ -45,7 +45,7 @@ const LinkIssuePage: FC = () => {
     }
 
     return (
-        <>
+        <Container>
             <TwoButtonGroup
                 selected={selected}
                 oneIcon={faSearch}
@@ -57,7 +57,7 @@ const LinkIssuePage: FC = () => {
             />
             {selected === "one" && <AddIssue />}
             {selected === "two" && <CreateIssue />}
-        </>
+        </Container>
     );
 };
 

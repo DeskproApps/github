@@ -6,7 +6,7 @@ import { P5, H3 } from "@deskpro/deskpro-ui";
 import { useDeskproAppClient, OAuth2StaticCallbackUrl } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { placeholders } from "../services/github/constants";
-import { AnchorButton } from "../components/common";
+import { AnchorButton, Container } from "../components/common";
 import {
     getCurrentUserService,
     getAccessTokenService,
@@ -93,7 +93,7 @@ const LogInPage: FC = () => {
     }, [client, callback, clientId, dispatch]);
 
     return (
-        <>
+        <Container>
             <H3 style={{ marginBottom: !error ? 14 : 2 }}>Log into your GitHub Account</H3>
             {error && (<LogInError>An error occurred, please try again.</LogInError>)}
             <AnchorButton
@@ -104,7 +104,7 @@ const LogInPage: FC = () => {
                 href={authUrl || ""}
                 onClick={onSignIn}
             />
-        </>
+        </Container>
     );
 };
 

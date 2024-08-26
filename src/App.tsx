@@ -1,6 +1,6 @@
-import { useEffect, Suspense } from "react";
+import { useEffect, Suspense, useMemo } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { match } from "ts-pattern";
 import {
@@ -33,15 +33,17 @@ import { EditIssuePage } from "./pages/EditIssuePage";
 import { AddCommentPage } from "./pages/AddCommentPage";
 import { AdminPage } from "./pages/AdminPage";
 import { Main } from "./pages/Main";
-import { ErrorBlock, Loading } from "./components/common";
+import { ErrorBlock, Loading, AppContainer } from "./components/common";
 import { IssueGQL } from "./services/github/types";
 
 const App = () => {
     const navigate = useNavigate();
+    const { pathname } = useLocation();
     const [state, dispatch] = useStore();
     const { client } = useDeskproAppClient();
     const { logout, isLoading: isLoadingLogout } = useLogout();
     const { unlinkIssue, isLoading: isLoadingUnlink } = useUnlinkIssue();
+    const isAdmin = useMemo(() => pathname.includes("/admin/"), [pathname]);
 
     const isLoading = [
         isLoadingUnlink,
@@ -216,8 +218,8 @@ const App = () => {
     }
 
     return (
-        <>
-            {state._error && (<ErrorBlock />)}
+        <AppContainer isAdmin={isAdmin}>
+            {state._error ? <ErrorBlock /> : ""}
             <Suspense fallback={<Loading />}>
                 <ErrorBoundary fallbackRender={() => (<ErrorBlock text="An error occurred..." />)}>
                     <Routes>
@@ -232,8 +234,7 @@ const App = () => {
                     </Routes>
                 </ErrorBoundary>
             </Suspense>
-            <br/><br/><br/>
-        </>
+        </AppContainer>
     );
 }
 
