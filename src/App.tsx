@@ -1,4 +1,4 @@
-import { useEffect, Suspense, useMemo } from "react";
+import { useEffect, Suspense } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
@@ -43,7 +43,7 @@ const App = () => {
     const { client } = useDeskproAppClient();
     const { logout, isLoading: isLoadingLogout } = useLogout();
     const { unlinkIssue, isLoading: isLoadingUnlink } = useUnlinkIssue();
-    const isAdmin = useMemo(() => pathname.includes("/admin/"), [pathname]);
+    const isAdmin = pathname.includes("/admin/");
 
     const isLoading = [
         isLoadingUnlink,
