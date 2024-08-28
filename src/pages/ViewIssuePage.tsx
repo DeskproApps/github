@@ -14,7 +14,7 @@ import {
 import { Issue, Repository, Comments, User, ProjectGQL, PullRequest } from "../services/github/types";
 import { getUniqUsersLogin } from "../utils";
 import { ViewIssue } from "../components/ViewIssue";
-import { Loading } from "../components/common";
+import { Loading, Container } from "../components/common";
 
 const ViewIssuePage: FC = () => {
     const [searchParams] = useSearchParams();
@@ -168,21 +168,26 @@ const ViewIssuePage: FC = () => {
         }
     }, [navigate, issueUrl, repository?.full_name, state.issue?.comments_url]);
 
-    return loading
-        ? (<Loading/>)
-        : (state.issue && repository)
-        ? (
-            <ViewIssue
-                issue={state.issue}
-                users={users}
-                comments={comments}
-                repository={repository}
-                projects={projects}
-                onAddNewComment={onAddNewComment}
-                pullRequests={pullRequests}
-            />
-        )
-        : null;
+    return (
+        <Container>
+            {loading
+                ? (<Loading/>)
+                : (state.issue && repository)
+                ? (
+                    <ViewIssue
+                        issue={state.issue}
+                        users={users}
+                        comments={comments}
+                        repository={repository}
+                        projects={projects}
+                        onAddNewComment={onAddNewComment}
+                        pullRequests={pullRequests}
+                    />
+                )
+                : null
+            }
+        </Container>
+    );
 };
 
 export { ViewIssuePage };

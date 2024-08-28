@@ -15,7 +15,7 @@ import {
 } from "../services/github";
 import { useSetAppTitle, useSetBadgeCount } from "../hooks";
 import { isBaseUrl } from "../utils";
-import { Loading, IssueInfo } from "../components/common";
+import { Loading, IssueInfo, Container } from "../components/common";
 
 const HomePage: FC = () => {
     const navigate = useNavigate();
@@ -115,21 +115,25 @@ const HomePage: FC = () => {
         });
     };
 
-    return loading
-        ? (<Loading/>)
-        : (
-            <>
-                {issues.map((issue) => (
-                    <Fragment key={issue.id} >
-                        <IssueInfo
-                            {...issue}
-                            onClick={onClickTitle(issue.resourcePath)}
-                        />
-                        <HorizontalDivider style={{ marginBottom: 9 }}/>
-                    </Fragment>
-                ))}
-            </>
-        );
+    return (
+        <Container>
+            {loading
+                ? (<Loading/>)
+                : (
+                    <>
+                        {issues.map((issue) => (
+                            <Fragment key={issue.id} >
+                                <IssueInfo
+                                    {...issue}
+                                    onClick={onClickTitle(issue.resourcePath)}
+                                />
+                                <HorizontalDivider style={{ marginBottom: 9 }}/>
+                            </Fragment>
+                        ))}
+                    </>
+                )}
+        </Container>
+    )
 };
 
 export { HomePage };

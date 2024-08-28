@@ -5,6 +5,7 @@ import {
 } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { checkIsAuthService } from "../services/github";
+import { Container } from "../components/common";
 
 export const Main = () => {
     const navigate = useNavigate();
@@ -19,6 +20,8 @@ export const Main = () => {
     });
 
     return (
-        <LoadingSpinner/>
+        <Container>
+            <LoadingSpinner/>
+        </Container>
     );
 };

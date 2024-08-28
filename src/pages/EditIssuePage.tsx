@@ -20,7 +20,7 @@ import { setEntityIssueService } from "../services/entityAssociation";
 import { baseRequest } from "../services/github";
 import { Issue, Repository, User } from "../services/github/types";
 import { IssueForm, Values } from "../components/IssueForm";
-import { Loading, ErrorBlock } from "../components/common";
+import { Loading, ErrorBlock, Container } from "../components/common";
 
 const EditIssuePage: FC = () => {
     const [searchParams] = useSearchParams();
@@ -118,20 +118,25 @@ const EditIssuePage: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [client, issueUrl]);
 
-    return loading
-        ? (<Loading />)
-        : (
-            <>
-                {error && <ErrorBlock text={error} />}
-                <IssueForm
-                    issue={state.issue}
-                    repositories={repositories}
-                    currentUser={currentUser}
-                    onSubmit={onSubmit}
-                    onCancel={onCancel}
-                />
-            </>
-        );
+    return (
+        <Container>
+            {loading
+                ? (<Loading />)
+                : (
+                    <>
+                        {error && <ErrorBlock text={error} />}
+                        <IssueForm
+                            issue={state.issue}
+                            repositories={repositories}
+                            currentUser={currentUser}
+                            onSubmit={onSubmit}
+                            onCancel={onCancel}
+                        />
+                    </>
+                )
+            }
+        </Container>
+    );
 };
 
 export { EditIssuePage };

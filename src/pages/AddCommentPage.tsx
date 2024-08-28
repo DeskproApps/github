@@ -14,6 +14,7 @@ import {
     Label,
     Button,
     TextArea,
+    Container,
     ErrorBlock,
 } from "../components/common";
 
@@ -98,7 +99,7 @@ const AddCommentPage: FC = () => {
     }
 
     return (
-        <>
+        <Container>
             {error && <ErrorBlock text={`Upload file error: ${error}`} />}
             <form onSubmit={handleSubmit}>
                 <Label htmlFor="comment" label="New comment">
@@ -124,7 +125,7 @@ const AddCommentPage: FC = () => {
                     />
                 </Stack>
             </form>
-        </>
+        </Container>
     );
 };
 
