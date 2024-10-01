@@ -37,7 +37,7 @@
     "simplebar": "^6.2.5",
     "styled-components": "^5.3.6",
     "tippy.js": "^6.3.7",
-    "ts-pattern": "^3.3.5",
+    "ts-pattern": "^5.4.0",
     "use-debounce": "^8.0.1",
     "uuid": "^9.0.0",
     "yup": "^0.32.11"
