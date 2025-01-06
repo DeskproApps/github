@@ -40,10 +40,16 @@ const LogInPage: FC = () => {
         client.deregisterElement("githubMenu");
     }, [client]);
 
+    const selfHosted=true;
     useEffect(() => {
         if (!callback) {
-            client?.oauth2().getGenericCallbackUrl(key, /code=(?<token>[0-9a-f]+)/, /state=(?<key>.+)/)
-                .then(setCallback);
+            if (selfHosted === true) {
+                client?.oauth2().getGenericCallbackUrl(key, /code=(?<token>[0-9a-f]+)/, /state=(?<key>.+)/)
+                    .then(setCallback);
+            } else {
+                client?.oauth2().getGenericCallbackUrl(key, /code=(?<token>[0-9a-f]+)/, /state=(?<key>.+)/)
+                    .then(setCallback);
+            }
         }
     }, [client, key, callback]);
 
