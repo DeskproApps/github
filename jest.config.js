@@ -8,7 +8,7 @@ const esModules = ["d3-array", "d3-hierarchy", "internmap", "d3-scale", "pretty-
 module.exports = {
     clearMocks: true,
     setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
-    testEnvironment: "jsdom",
+    testEnvironment: "jest-environment-jsdom",
     transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
     modulePathIgnorePatterns: ["/node_modules/", ".dist"],
     maxWorkers: "75%",
