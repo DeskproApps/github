@@ -35,13 +35,5 @@ module.exports = {
         "mocks",
         ".app-story.tsx",
         "main.tsx",
-    ],
-    // coverageThreshold: {
-    //     global: {
-    //         branches: 60,
-    //         functions: 60,
-    //         lines: 60,
-    //         statements: 60
-    //     }
-    // }
+    ]
 };
