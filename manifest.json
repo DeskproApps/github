@@ -24,17 +24,24 @@
     }
   ],
   "settings": {
+    "use_deskpro_sass": {
+      "title": "Use Deskpro SAAS",
+      "type": "boolean",
+      "isRequired": false,
+      "isBackendOnly": false,
+      "order": 5
+    },
     "client_id": {
       "title": "Client ID",
       "type": "string",
-      "isRequired": true,
+      "isRequired": false,
       "isBackendOnly": false,
       "order": 10
     },
     "client_secret": {
       "title": "Client secret",
       "type": "string",
-      "isRequired": true,
+      "isRequired": false,
       "isBackendOnly": true,
       "order": 20
     },

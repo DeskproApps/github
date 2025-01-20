@@ -30,13 +30,16 @@ const AdminPage: FC = () => {
   useInitialisedDeskproAppClient(
     (client) => {
       client
-        .oauth2()
-        .getAdminGenericCallbackUrl(
-          key,
-          /code=(?<token>[0-9a-f]+)/,
-          /state=(?<key>.+)/
-        )
-        .then(({ callbackUrl }) => setCallbackUrl(callbackUrl));
+        .startOauth2Local(
+          ({ state, callbackUrl, codeChallenge }) => {
+            setCallbackUrl(callbackUrl)
+            return `https://idp.example.com/authorize?client_id=xxx&state=${state}&code_challenge=${codeChallenge}&redirect_uri=${callbackUrl}`
+          },
+          /\?code=(?<code>.+?)&/,
+          async function convertResponseToToken(code: string) {
+            return undefined as any; // This is never called, we are only interested in getting the URL, not actually authing.
+          },
+        );
     },
     [key]
   );
