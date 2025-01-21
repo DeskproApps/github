@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from "react";
+import { FC, useState } from "react";
 import styled from "styled-components";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { faCopy, faCheck } from "@fortawesome/free-solid-svg-icons";
