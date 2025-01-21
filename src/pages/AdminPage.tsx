@@ -1,6 +1,5 @@
 import { FC, useState, useMemo } from "react";
 import styled from "styled-components";
-import { v4 as uuidv4 } from "uuid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { faCopy, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { P1, Input, IconButton } from "@deskpro/deskpro-ui";
@@ -22,7 +21,6 @@ const AdminPage: FC = () => {
   const { theme } = useDeskproAppTheme();
   const [callbackUrl, setCallbackUrl] = useState<string | null>(null);
   const [isCopy, setIsCopy] = useState<boolean>(false);
-  const key = useMemo(() => uuidv4(), []);
   const { context } = useDeskproLatestAppContext<unknown, { client_id: string, use_deskpro_sass: boolean }>();
 
   const onClickCopy = () => {
@@ -54,7 +52,7 @@ const AdminPage: FC = () => {
         }
       )
     },
-    [key]
+    []
   );
 
   if (!callbackUrl) {
