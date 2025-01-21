@@ -84,6 +84,7 @@ const LogInPage: FC = () => {
       dispatch({ type: "setAuth", isAuth:  true });
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Unknown error');
+      setLoading(false);
     }
   }, [setAuthorizationUrl, context?.settings.client_id, context?.settings.use_deskpro_sass]);
 
