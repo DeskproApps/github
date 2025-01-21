@@ -1,5 +1,4 @@
 import { IDeskproClient, proxyFetch } from "@deskpro/app-sdk";
-import { getQueryParams } from "../../utils";
 import { createSearchParams } from "react-router-dom";
 
 const getAccessTokenService = (
