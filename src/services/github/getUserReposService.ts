@@ -6,9 +6,9 @@ const getUserReposService = (client: IDeskproClient, page?: number) => {
     return baseRequest<Repository[]>(client, {
         url: "/user/repos",
         queryParams: {
-            per_page: 100,
+            per_page: "100",
             affiliation: "owner,collaborator,organization_member",
-            ...(page ? { page } : {}),
+            ...(page ? { page: page.toString() } : {}),
         }
     })
 };

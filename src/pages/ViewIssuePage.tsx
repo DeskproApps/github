@@ -117,7 +117,7 @@ const ViewIssuePage: FC = () => {
                         baseRequest<Comments>(client, {
                             rawUrl: issue.comments_url,
                             queryParams: {
-                                per_page: 100,
+                                per_page: "100",
                             },
                         }),
                         getIssueByIdGraphQLService(client, issue.node_id)
