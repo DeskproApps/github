@@ -36,4 +36,11 @@ module.exports = {
         ".app-story.tsx",
         "main.tsx",
     ],
+    coverageThreshold: {
+        global: {
+            branches: 1,
+            functions: 0,
+            lines: 0,
+        },
+    },
 };
