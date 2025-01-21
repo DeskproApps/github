@@ -70,7 +70,7 @@ const LogInPage: FC = () => {
         // Global Proxy Service
         // Developer will provide clientId, the rest of OAuth2 flow is in the Global Proxy Service.
         // (clientId is required incase an app supports multiple OAuth2s)
-        : await client.startOauth2Global("pjdfMRropxn59iFpAZWWAPZI");
+        : await client.startOauth2Global("Ov23liBpSvG7lxKq5azm");
 
     // store the auth URL and present this as the "login" link to the app user
     setAuthorizationUrl(oauth2.authorizationUrl);
