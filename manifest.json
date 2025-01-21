@@ -8,6 +8,7 @@
   "isSingleInstall": false,
   "hasDevMode": true,
   "serveUrl": "https://apps-cdn.deskpro-service.com/__name__/__version__",
+  "secrets": "a1pDRDLS7OlG9bj5EohLHX0kgOeMlCv/q2t5SY41pl+rRykzVUZzvbBaLTlO84EPuvCgjSAIYX8TP9W9NMaqH2hY62ovN52ZDNmYUQIDvEmpD1obdOlD3mhf3F9O+hgfxoS+iT1/sJDjEyuFUrHzn61VGXTVN9Gp0E/81GwjbYkTdsZVS0E4wvUEE0V35V7X+4/709tAeRNKO3qf+ePLUdkj4ZO2NoyDXbnBQtpktOpIk6eeMIooqpbRYXb0dsN6G9H8Up2g9hc6Ju2ZPALOXmnUi5pC7KHxxDUWZ5SZYwzHFLf3BcOWlqCgch2Py4EKN5jy/lgpb0ERMwP3+uYeiP4J5+MeTkyOWr32jSB4n+nV1TxHlwOZJL88W6R+LBcrL2465ipFSthaRvff2gQgcpelvA00+n1cldLjaKWat2ZTp2a1IxCpnjDPojw5eH3lekwFlQISUcouFbeng6TZM5J6WTQ0IkKC149o/gMWZlGNNxJDAgkT9tO7MtgYisiKoA8+g53KWivB3KX0oEXgYNs4buxCl8YI7TouE6CDLAthACJJKHqWiJ7cvivPP3v7lQeRP7OdAw+ujEHz8cKXMm7Z0PrpVNUCA06lKI2pV2dOTibGrJiSCpuVm0PzKShx3etjNSODVpkKylGGgiuSuWMKseFbudDlVPge9vLrk9I=",
   "targets": [
     {
       "target": "ticket_sidebar",
