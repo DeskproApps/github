@@ -1,9 +1,8 @@
-import { FC, useState, useEffect, useMemo, useCallback } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { FC, useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { createSearchParams } from "react-router-dom";
 import { P5, H3 } from "@deskpro/deskpro-ui";
-import { proxyFetch, useDeskproAppClient, useDeskproLatestAppContext, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
+import { useDeskproAppClient, useDeskproLatestAppContext, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { placeholders } from "../services/github/constants";
 import { AnchorButton, Container } from "../components/common";
@@ -20,9 +19,7 @@ const LogInError = styled(P5)`
 const LogInPage: FC = () => {
   const { client } = useDeskproAppClient();
   const { context } = useDeskproLatestAppContext<unknown, { client_id: string, use_deskpro_sass: boolean }>();
-  console.log({ context })
-
-  const [state, dispatch] = useStore();
+  const dispatch = useStore()[1];
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [authorizationUrl, setAuthorizationUrl] = useState<string>();
@@ -56,7 +53,7 @@ const LogInPage: FC = () => {
         // apps client will "augment" the IDP's authorize URL with the required redirect URI, OAuth gateway, etc.
         // we also need to let Deskpro know how to "acquire" the auth code
         ? await client.startOauth2Local(
-          ({ state, callbackUrl, codeChallenge }) => {
+          ({ state, callbackUrl }) => {
             return `https://github.com/login/oauth/authorize?${createSearchParams([
               ["state", state],
               ["client_id", clientId],
@@ -67,7 +64,7 @@ const LogInPage: FC = () => {
           /\?code=(?<code>.+?)&/,
           async function convertResponseToToken(code: string) {
             const auth = await getAccessTokenService(client, clientId, code);
-            return { data: { access_token: auth.access_token! } };
+            return { data: { access_token: auth.access_token } };
           },
         )
         // Global Proxy Service
@@ -81,14 +78,12 @@ const LogInPage: FC = () => {
     try {
       // Poll will resolve when OAuth2 has succeeded or failed. 
       const pollResult = await oauth2.poll();
-      console.log("Auth Code Acquired!", pollResult);
 
       await client.setUserState(placeholders.OAUTH_TOKEN_PATH, pollResult.data.access_token, { backend: true });
       await getCurrentUserService(client);
       dispatch({ type: "setAuth", isAuth:  true });
     } catch (error) {
-      // Some Generic Error occurred (no internet?)
-      console.log("Error!", error);
+      setError(error instanceof Error ? error.message : 'Unknown error');
     }
   }, [setAuthorizationUrl, context?.settings.client_id, context?.settings.use_deskpro_sass]);
 

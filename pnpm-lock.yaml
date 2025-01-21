@@ -80,9 +80,6 @@ importers:
       use-debounce:
         specifier: ^8.0.4
         version: 8.0.4(react@17.0.2)
-      uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
       yup:
         specifier: ^0.32.11
         version: 0.32.11
@@ -2810,10 +2807,6 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    hasBin: true
-
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
 
   v8-compile-cache@2.4.0:
@@ -6014,8 +6007,6 @@ snapshots:
       react: 17.0.2
 
   uuid@8.3.2: {}
-
-  uuid@9.0.1: {}
 
   v8-compile-cache@2.4.0: {}
 
