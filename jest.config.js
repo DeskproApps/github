@@ -35,5 +35,5 @@ module.exports = {
         "mocks",
         ".app-story.tsx",
         "main.tsx",
-    ]
+    ],
 };
