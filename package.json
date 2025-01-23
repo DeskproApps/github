@@ -39,7 +39,7 @@
     "styled-components": "^6.1.14",
     "tippy.js": "^6.3.7",
     "ts-pattern": "^3.3.5",
-    "use-debounce": "^8.0.4",
+    "use-debounce": "^10.0.4",
     "uuid": "^9.0.1",
     "yup": "^0.32.11"
   },
