@@ -18,7 +18,7 @@ const searchByIssueService = (
         queryParams: {
             state: "all",
             q: `${query}+type:issue repo:${repo}`,
-            per_page: 100,
+            per_page: "100",
         },
         headers: {
             Accept: "application/vnd.github+json",

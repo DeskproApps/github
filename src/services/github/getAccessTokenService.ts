@@ -1,12 +1,12 @@
 import { IDeskproClient, proxyFetch } from "@deskpro/app-sdk";
-import { getQueryParams } from "../../utils";
+import { createSearchParams } from "react-router-dom";
 
 const getAccessTokenService = (
     client: IDeskproClient,
     clientId: string,
     code: string,
-): Promise<{ access_token?: string }> => {
-    const requestUrl = `https://github.com/login/oauth/access_token?${getQueryParams({
+): Promise<{ access_token: string }> => {
+    const requestUrl = `https://github.com/login/oauth/access_token?${createSearchParams({
         client_id: clientId,
         client_secret: "__client_secret__",
         code,
@@ -36,11 +36,7 @@ const getAccessTokenService = (
                 throw new Error(`POST ${requestUrl}: Response Status [${res.status}]`);
             }
 
-            try {
-                return res.json();
-            } catch (e) {
-                return {};
-            }
+            return res.json();
         });
 };
 

@@ -9,7 +9,7 @@ export type RequestParams = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: any,
     headers?: Record<string, string>,
-    queryParams?: Record<string, string|number|boolean>,
+    queryParams?: Record<string, string|string[]>,
 };
 
 export type Request = <T>(

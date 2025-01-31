@@ -2,7 +2,7 @@ import isEmpty from "lodash/isEmpty";
 import { proxyFetch } from "@deskpro/app-sdk";
 import { Request } from "./types";
 import { BASE_URL, placeholders } from "./constants";
-import { getQueryParams } from "../../utils";
+import { createSearchParams } from "react-router-dom";
 
 const baseRequest: Request = async (client, {
     url,
@@ -18,7 +18,7 @@ const baseRequest: Request = async (client, {
     const headers: Record<string, string> = {};
 
     const baseUrl = `${rawUrl ? rawUrl : `${BASE_URL}${url}`}`;
-    const params = `${isEmpty(queryParams) ? "" : `?${getQueryParams(queryParams, true)}`}`;
+    const params = `${isEmpty(queryParams) ? "" : `?${createSearchParams(queryParams)}`}`;
     const requestUrl = `${baseUrl}${params}`;
 
     if (data instanceof FormData) {
