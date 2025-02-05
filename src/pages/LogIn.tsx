@@ -1,8 +1,8 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { FC, useState, useCallback } from "react";
 import styled from "styled-components";
 import { createSearchParams } from "react-router-dom";
 import { P5, H3 } from "@deskpro/deskpro-ui";
-import { useDeskproAppClient, useDeskproLatestAppContext, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
+import { useDeskproLatestAppContext, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
 import { useStore } from "../context/StoreProvider/hooks";
 import { placeholders } from "../services/github/constants";
 import { AnchorButton, Container } from "../components/common";
@@ -17,22 +17,17 @@ const LogInError = styled(P5)`
 `;
 
 const LogInPage: FC = () => {
-  const { client } = useDeskproAppClient();
   const { context } = useDeskproLatestAppContext<unknown, { client_id: string, use_deskpro_sass: boolean }>();
-  const dispatch = useStore()[1];
+  const [, dispatch] = useStore();
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [authorizationUrl, setAuthorizationUrl] = useState<string>();
 
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-
+  useInitialisedDeskproAppClient((client) => {
     client.deregisterElement("githubPlusButton");
     client.deregisterElement("githubHomeButton");
     client.deregisterElement("githubMenu");
-  }, [client]);
+  }, []);
 
 
   useInitialisedDeskproAppClient(async (client) => {
@@ -46,6 +41,7 @@ const LogInPage: FC = () => {
       // Local mode requires a clientId.
       return;
     }
+
     const oauth2 =
       mode === 'local'
         // Local Version (custom/self-hosted app)
@@ -74,6 +70,7 @@ const LogInPage: FC = () => {
 
     // store the auth URL and present this as the "login" link to the app user
     setAuthorizationUrl(oauth2.authorizationUrl);
+    setLoading(false);
 
     try {
       // Poll will resolve when OAuth2 has succeeded or failed. 
@@ -100,8 +97,8 @@ const LogInPage: FC = () => {
       <AnchorButton
         text="Log In"
         target="_blank"
-        loading={!authorizationUrl || loading}
-        disabled={!authorizationUrl || loading}
+        loading={loading}
+        disabled={loading}
         href={authorizationUrl || ""}
         onClick={onSignIn}
       />
