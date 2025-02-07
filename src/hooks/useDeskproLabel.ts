@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import get from "lodash/get";
 import has from "lodash/has";
 import replace from "lodash/replace";
 import toLower from "lodash/toLower";
@@ -14,6 +13,7 @@ import {
     createLabelService,
 } from "../services/github";
 import { Issue, IssueGQL, Labels, Label } from "../services/github/types";
+import { Settings } from "../types";
 
 type UseDeskproLabel = () => {
     addDeskproLabel: (issue: Issue|IssueGQL) => Promise<Issue|void>,
@@ -27,8 +27,8 @@ const isRestIssue = (issue: Issue|IssueGQL): issue is Issue => {
 const useDeskproLabel: UseDeskproLabel = () => {
     const { client } = useDeskproAppClient();
     const { theme } = useDeskproAppTheme();
-    const { context } = useDeskproLatestAppContext();
-    const dontAddDeskproLabel = get(context, ["settings", "dont_add_deskpro_label"]) === true;
+    const { context } = useDeskproLatestAppContext<unknown, Settings>();
+    const dontAddDeskproLabel = context?.settings.dont_add_deskpro_label === true;
 
     const deskproLabel = useMemo(() => ({
         name: "Deskpro",

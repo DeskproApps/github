@@ -10,6 +10,7 @@ import {
   getCurrentUserService,
   getAccessTokenService,
 } from "../services/github";
+import { Settings } from "../types";
 
 const LogInError = styled(P5)`
     margin-bottom: 8px;
@@ -17,7 +18,7 @@ const LogInError = styled(P5)`
 `;
 
 const LogInPage: FC = () => {
-  const { context } = useDeskproLatestAppContext<unknown, { client_id: string, use_deskpro_sass: boolean }>();
+  const { context } = useDeskproLatestAppContext<unknown, Settings>();
   const [, dispatch] = useStore();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

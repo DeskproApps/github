@@ -9,7 +9,7 @@ export type RequestParams = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: any,
     headers?: Record<string, string>,
-    queryParams?: Record<string, string|string[]>,
+    queryParams?: Record<string, string | string[]>,
 };
 
 export type Request = <T>(
@@ -188,14 +188,14 @@ export type IssueGQL = {
 };
 
 export type Comment = {
-    author_association: "COLLABORATOR"|"CONTRIBUTOR"|"FIRST_TIMER"|"FIRST_TIME_CONTRIBUTOR"|"MANNEQUIN"|"MEMBER"|"NONE"|"OWNER",
+    author_association: "COLLABORATOR" | "CONTRIBUTOR" | "FIRST_TIMER" | "FIRST_TIME_CONTRIBUTOR" | "MANNEQUIN" | "MEMBER" | "NONE" | "OWNER",
     body: string,
     created_at: DateTime,
     html_url: string,
     id: number,
     issue_url: string,
     node_id: string,
-    performed_via_github_app: null|object,
+    performed_via_github_app: null | object,
     reactions: Reactions
     updated_at: DateTime,
     url: string,

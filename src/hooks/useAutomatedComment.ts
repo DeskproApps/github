@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import get from "lodash/get";
 import isString from "lodash/isString";
 import {
     useDeskproAppClient,
@@ -7,6 +6,7 @@ import {
 } from "@deskpro/app-sdk";
 import { baseRequest, createIssueCommentService } from "../services/github";
 import { Issue, Comment, Repository } from "../services/github/types";
+import { Settings } from "../types";
 
 export type Params = {
     repoFullName: Repository["full_name"],
@@ -24,11 +24,11 @@ type UseAutomatedComment = () => {
 
 const useAutomatedComment: UseAutomatedComment = () => {
     const { client } = useDeskproAppClient();
-    const { context } = useDeskproLatestAppContext();
+    const { context } = useDeskproLatestAppContext<{ ticket: { id: number, permalinkUrl: string } }, Settings>();
 
-    const dontAddComment = get(context, ["settings", "dont_add_comment_when_linking_issue"]) === true;
-    const ticketId = get(context, ["data", "ticket", "id"], "");
-    const permalinkUrl = get(context, ["data", "ticket", "permalinkUrl"], "");
+    const dontAddComment = context?.settings?.dont_add_comment_when_linking_issue === true;
+    const ticketId = context?.data?.ticket.id ?? '';
+    const permalinkUrl = context?.data?.ticket.permalinkUrl ?? '';
 
     const createAutomatedLinkedComment = useCallback((param: Issue["comments_url"] | Params) => {
         if (!client || !ticketId || dontAddComment) {

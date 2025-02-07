@@ -10,6 +10,7 @@ import {
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { createSearchParams } from "react-router-dom";
+import { Settings } from "../types";
 
 const Description = styled(P1)`
   margin-top: 8px;
@@ -21,7 +22,7 @@ const AdminPage: FC = () => {
   const { theme } = useDeskproAppTheme();
   const [callbackUrl, setCallbackUrl] = useState<string | null>(null);
   const [isCopy, setIsCopy] = useState<boolean>(false);
-  const { context } = useDeskproLatestAppContext<unknown, { client_id: string, use_deskpro_sass: boolean }>();
+  const { context } = useDeskproLatestAppContext<unknown, Settings>();
 
   const onClickCopy = () => {
     setIsCopy(true);
