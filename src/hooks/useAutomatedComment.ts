@@ -15,11 +15,11 @@ export type Params = {
 
 type UseAutomatedComment = () => {
     createAutomatedLinkedComment: (
-        commentsUrl: Issue["comments_url"]|Params,
-    ) => Promise<Comment|void>,
+        commentsUrl: Issue["comments_url"] | Params,
+    ) => Promise<Comment | void>,
     createAutomatedUnlinkedComment: (
-        commentsUrl: Issue["comments_url"]|Params,
-    ) => Promise<Comment|void>,
+        commentsUrl: Issue["comments_url"] | Params,
+    ) => Promise<Comment | void>,
 };
 
 const useAutomatedComment: UseAutomatedComment = () => {
@@ -30,7 +30,7 @@ const useAutomatedComment: UseAutomatedComment = () => {
     const ticketId = get(context, ["data", "ticket", "id"], "");
     const permalinkUrl = get(context, ["data", "ticket", "permalinkUrl"], "");
 
-    const createAutomatedLinkedComment = useCallback((param: Issue["comments_url"]|Params) => {
+    const createAutomatedLinkedComment = useCallback((param: Issue["comments_url"] | Params) => {
         if (!client || !ticketId || dontAddComment) {
             return Promise.resolve();
         }
@@ -52,7 +52,7 @@ const useAutomatedComment: UseAutomatedComment = () => {
         }
     }, [client, ticketId, permalinkUrl, dontAddComment]);
 
-    const createAutomatedUnlinkedComment = useCallback((param: Issue["comments_url"]|Params) => {
+    const createAutomatedUnlinkedComment = useCallback((param: Issue["comments_url"] | Params) => {
         if (!client || !ticketId || dontAddComment) {
             return Promise.resolve();
         }
