@@ -25,7 +25,7 @@
     }
   ],
   "settings": {
-    "use_deskpro_sass": {
+    "use_deskpro_saas": {
       "title": "Use Deskpro SAAS",
       "type": "boolean",
       "isRequired": false,
@@ -37,7 +37,7 @@
       "type": "string",
       "isRequired": false,
       "isBackendOnly": false,
-      "condition": "settings.use_deskpro_sass != true",
+      "condition": "settings.use_deskpro_saas != true",
       "order": 10
     },
     "client_secret": {
@@ -45,7 +45,7 @@
       "type": "string",
       "isRequired": false,
       "isBackendOnly": true,
-      "condition": "settings.use_deskpro_sass != true",
+      "condition": "settings.use_deskpro_saas != true",
       "order": 20
     },
     "dont_add_comment_when_linking_issue": {
@@ -68,7 +68,7 @@
       "title": "Callback URL",
       "type": "app_embedded",
       "options": { "entrypoint": "#/admin/callback" },
-      "condition": "settings.use_deskpro_sass != true",
+      "condition": "settings.use_deskpro_saas != true",
       "isRequired": false,
       "isBackendOnly": false,
       "order": 50

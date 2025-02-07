@@ -32,12 +32,12 @@ const LogInPage: FC = () => {
 
 
   useInitialisedDeskproAppClient(async (client) => {
-    if (context?.settings.use_deskpro_sass === undefined) {
+    if (context?.settings.use_deskpro_saas === undefined) {
       // Make sure settings have loaded.
       return;
     }
     const clientId = context?.settings.client_id;
-    const mode = context?.settings.use_deskpro_sass ? 'global' : 'local';
+    const mode = context?.settings.use_deskpro_saas ? 'global' : 'local';
     if (mode === 'local' && typeof clientId !== 'string') {
       // Local mode requires a clientId.
       return;
@@ -84,7 +84,7 @@ const LogInPage: FC = () => {
       setError(error instanceof Error ? error.message : 'Unknown error');
       setLoading(false);
     }
-  }, [setAuthorizationUrl, context?.settings.client_id, context?.settings.use_deskpro_sass]);
+  }, [setAuthorizationUrl, context?.settings.client_id, context?.settings.use_deskpro_saas]);
 
   const onSignIn = useCallback(() => {
     setLoading(true);
