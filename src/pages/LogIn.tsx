@@ -37,7 +37,7 @@ const LogInPage: FC = () => {
       return;
     }
     const clientId = context?.settings.client_id;
-    const mode = context?.settings.use_advanced_connect === true ? 'global' : 'local';
+    const mode = context?.settings.use_advanced_connect === false ? 'global' : 'local';
     if (mode === 'local' && typeof clientId !== 'string') {
       // Local mode requires a clientId.
       return;
