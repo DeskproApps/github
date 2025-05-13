@@ -26,7 +26,7 @@
 The GitHub App enhances your Deskpro experience by integrating GitHub's powerful issue tracking and repository management features directly into your helpdesk. With this app, agents can link tickets to GitHub issues, track their progress in real-time, and streamline collaboration between support and development teams.
 
 ## **Setting up the app in Deskpro**
-You can follow our [set-up guide](./SETUP.md) for a step-by-step guide to setting up the GitHub app in Deskpro.
+You can follow our [setup guide](./SETUP.md) for a step-by-step guide to setting up the GitHub app in Deskpro.
 
 ## Development
 
