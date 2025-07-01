@@ -1,27 +1,56 @@
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import {
     LoadingSpinner,
-    useInitialisedDeskproAppClient,
+    // useDeskproLatestAppContext,
+    // useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
-import { useStore } from "../context/StoreProvider/hooks";
-import { checkIsAuthService } from "../services/github";
+// import { useStore } from "../context/StoreProvider/hooks";
+// import { checkIsAuthService } from "../services/github";
 import { Container } from "../components/common";
+import { Button } from "@deskpro/deskpro-ui";
+import { useEffect, useState } from "react";
 
 export const Main = () => {
-    const navigate = useNavigate();
-    const [, dispatch] = useStore();
+    // const { context } = useDeskproLatestAppContext()
+    // console.log("Context Data: ", context?.data)
+    const [errorState, setErrorState] = useState<string | null>(null)
+    // const navigate = useNavigate();
+    // const [, dispatch] = useStore();
 
-    useInitialisedDeskproAppClient((client) => {
-        checkIsAuthService(client)
-            .then((isAuth) => {
-                dispatch({ type: "setAuth", isAuth })
-                navigate(isAuth ? "/home" : "/log_in")
-            })
-    });
+    useEffect(() => {
+        if (errorState === "left") {
+            throw new Error("hello")
+        }
+
+        if (errorState === "right") {
+            throw "HI"
+        }
+
+
+
+    }, [errorState])
+
+    // throw "String" 
+
+    // useInitialisedDeskproAppClient((client) => {
+    //     checkIsAuthService(client)
+    //         .then((isAuth) => {
+    //             dispatch({ type: "setAuth", isAuth })
+    //             navigate(isAuth ? "/home" : "/log_in")
+    //         })
+    // });
 
     return (
         <Container>
-            <LoadingSpinner/>
+            <Button
+                text="Left Error"
+                onClick={() => { setErrorState("left") }}
+            />
+            <Button
+                text="Right Error"
+                onClick={() => { setErrorState("right") }}
+            />
+            <LoadingSpinner />
         </Container>
     );
 };
