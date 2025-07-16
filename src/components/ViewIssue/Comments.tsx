@@ -6,8 +6,9 @@ import { Avatar, P1, P11, Stack, Button } from "@deskpro/deskpro-ui";
 import { Title } from "../common";
 import { mdToHtml } from "../../utils";
 import { CommentProps } from "./types";
+import { DeskproAppTheme } from "@deskpro/app-sdk";
 
-const TimeAgo = styled(ReactTimeAgo)`
+const TimeAgo = styled(ReactTimeAgo)<DeskproAppTheme>`
     color: ${({ theme }) => theme.colors.grey80};
 `;
 

@@ -5,7 +5,7 @@ import {
     Stack,
     RoundedLabelTag,
 } from "@deskpro/deskpro-ui";
-import { useDeskproAppTheme } from "@deskpro/app-sdk";
+import { DeskproAppTheme, useDeskproAppTheme } from "@deskpro/app-sdk";
 import { GithubLogo } from "./GithubLogo";
 import { Props } from "./types";
 
@@ -14,7 +14,7 @@ const Container = styled(Stack)`
   padding: 2px;
 `;
 
-const Link = styled.a`
+const Link = styled.a<DeskproAppTheme>`
     :hover {
       border-color: ${({ theme }) => (theme.colors.brandShade60)};
     };
