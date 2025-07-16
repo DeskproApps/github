@@ -4,10 +4,11 @@ import {
     TextAreaWithDisplay,
     TextAreaWithDisplayProps,
 } from "@deskpro/deskpro-ui";
+import { DeskproAppTheme } from "@deskpro/app-sdk";
 
 type Props = TextAreaWithDisplayProps & {
     minHeight?: number | string | "auto",
-};
+} & DeskproAppTheme;
 
 const TextArea = styled(
     forwardRef(({ minHeight, ...props }: Props, ref: Ref<HTMLTextAreaElement>) =>

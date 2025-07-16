@@ -2,6 +2,7 @@ import { FC } from "react";
 import styled from "styled-components";
 import { TextBlockWithLabel } from "../TextBlockWithLabel";
 import { Props as TextBlockWithLabelProps } from "../TextBlockWithLabel/types";
+import { DeskproAppTheme } from "@deskpro/app-sdk";
 
 export type Props = {
     leftLabel?: TextBlockWithLabelProps["label"],
@@ -20,7 +21,7 @@ const Side = styled.div`
     width: calc(49% - 6px);
 `;
 
-const Divider = styled.div`
+const Divider = styled.div<DeskproAppTheme>`
     width: 1px;
     margin: 0 6px;
     background-color: ${({ theme }) => theme.colors.grey20};
