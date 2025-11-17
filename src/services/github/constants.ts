@@ -5,6 +5,6 @@ export const placeholders = {
     CODE: "[user[oauth2/code]]",
     OAUTH_TOKEN_PATH: "oauth2/token",
     TOKEN: `[user[oauth2/token]]`,
-};
+} as const;
 
 export const BASE_URL = "https://api.github.com";

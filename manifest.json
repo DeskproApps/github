@@ -93,7 +93,12 @@
       {
         "url": "https://github.com/.*",
         "methods": ["GET", "POST"],
-        "timeout": 10
+        "timeout": 10,
+        "settingsInjection": {
+          "client_secret": {
+            "querystring": ["client_secret"]
+          }
+        }
       }
     ]
   }
