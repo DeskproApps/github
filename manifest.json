@@ -91,7 +91,7 @@
         "timeout": 10
       },
       {
-        "url": "https://github.com/.*",
+        "url": "https://github.com/login/oauth/access_token",
         "methods": ["GET", "POST"],
         "timeout": 10,
         "settingsInjection": {
