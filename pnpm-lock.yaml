@@ -81,8 +81,8 @@ importers:
         specifier: ^3.3.5
         version: 3.3.5
       use-debounce:
-        specifier: ^8.0.4
-        version: 8.0.4(react@17.0.2)
+        specifier: ^10.0.5
+        version: 10.0.5(react@17.0.2)
       yup:
         specifier: ^0.32.11
         version: 0.32.11
@@ -3266,14 +3266,14 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  use-debounce@10.0.5:
+    resolution: {integrity: sha512-Q76E3lnIV+4YT9AHcrHEHYmAd9LKwUAbPXDm7FlqVGDHiSOhX3RDjT8dm0AxbJup6WgOb1YEcKyCr11kBJR5KQ==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '*'
+
   use-debounce@7.0.1:
     resolution: {integrity: sha512-fOrzIw2wstbAJuv8PC9Vg4XgwyTLEOdq4y/Z3IhVl8DAE4svRcgyEUvrEXu+BMNgMoc3YND6qLT61kkgEKXh7Q==}
-    engines: {node: '>= 10.0.0'}
-    peerDependencies:
-      react: '>=16.8.0'
-
-  use-debounce@8.0.4:
-    resolution: {integrity: sha512-fGqsYQzl8kLHF2QpQSgIwgOgJmnh6j5L6SIzQiHdLfwp3q1egUL3btq5Bg2SJysH6A0ILLgT2IqXZKoNJr0nFw==}
     engines: {node: '>= 10.0.0'}
     peerDependencies:
       react: '>=16.8.0'
@@ -6980,11 +6980,11 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-debounce@7.0.1(react@17.0.2):
+  use-debounce@10.0.5(react@17.0.2):
     dependencies:
       react: 17.0.2
 
-  use-debounce@8.0.4(react@17.0.2):
+  use-debounce@7.0.1(react@17.0.2):
     dependencies:
       react: 17.0.2
 
